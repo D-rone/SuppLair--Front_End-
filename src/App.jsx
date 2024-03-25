@@ -5,7 +5,6 @@ import { router } from "./routers/mainRouter.jsx";
 function App() {
   return (
     <>
-      <div>Hello</div>
       <RouterProvider router={router} />
     </>
   );
