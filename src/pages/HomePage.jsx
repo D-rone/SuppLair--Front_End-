@@ -1,11 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import TopBar from "../components/home/TopBar";
+import SideBar from "../components/home/SideBar";
+import HomeBody from "../components/home/HomeBody";
 
 function HomePage() {
+  const [openSideBar, setOpenSideBar] = useState(true);
   return (
-    <div>
+    <>
       <TopBar />
-    </div>
+      {/* Top Bar Spacer */}
+
+      <div className="h-14"></div>
+      <div className="relative flex">
+        <SideBar openSideBar={openSideBar} setOpenSideBar={setOpenSideBar} />
+        <HomeBody openSideBar={openSideBar} />
+      </div>
+    </>
   );
 }
 

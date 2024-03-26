@@ -7,6 +7,7 @@ export default {
         supplair: {
           primary: "#0D6EFD",
           secondary: "#2D324A",
+          sidebar: "#F7F7FE",
         },
       },
       fontFamily: {
@@ -14,7 +15,12 @@ export default {
       },
       spacing: {
         "1/10": "10%",
-        "14.5" : "58px"
+        11.5: "46px",
+        "1/5": "20%",
+        _pageBody: "calc(100vh - 56px)",
+      },
+      borderWidth: {
+        3: "3px",
       },
     },
   },
