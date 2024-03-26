@@ -5,8 +5,16 @@ export default {
     extend: {
       colors: {
         supplair: {
-          primary: "#1e86e0ed",
+          primary: "#0D6EFD",
+          secondary: "#2D324A",
         },
+      },
+      fontFamily: {
+        raleway: ["Raleway"],
+      },
+      spacing: {
+        "1/10": "10%",
+        "14.5" : "58px"
       },
     },
   },
