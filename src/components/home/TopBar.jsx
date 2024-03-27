@@ -6,6 +6,7 @@ import _dropDown from "../../assets/images/dropDown.svg";
 import _noProfilePic from "../../assets/images/noProfilePic.png";
 import _bell from "../../assets/images/bell.svg";
 import { useScreenContext } from "../../pages/HomePage";
+import { NavLink } from "react-router-dom";
 
 let searchFormController = (event) => {
   event.preventDefault();
@@ -24,12 +25,16 @@ function TopBar() {
       <div className="w-1/4">
         {showLogoText ? (
           <div className="relative left-[10%] w-fit hover:cursor-pointer">
-            <img src={_logoIcon} id="topBar_logo" alt="" className="inline h-8 mr-2" />
-            <img src={_logoText} id="topBar_logo" alt="" className="inline h-6 mt-1 " />
+            <NavLink to={"/"}>
+              <img src={_logoIcon} id="topBar_logo" alt="" className="inline h-8 mr-2" />
+              <img src={_logoText} id="topBar_logo" alt="" className="inline h-6 mt-1 " />
+            </NavLink>
           </div>
         ) : (
           <div className="flex justify-center w-full hover:cursor-pointer">
-            <img src={_logoIcon} id="topBar_logo" alt="" className="inline h-8 mr-2" />
+            <NavLink to={"/"}>
+              <img src={_logoIcon} id="topBar_logo" alt="" className="inline h-8 mr-2" />
+            </NavLink>
           </div>
         )}
       </div>
