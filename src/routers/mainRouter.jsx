@@ -1,19 +1,21 @@
 import { createBrowserRouter } from "react-router-dom";
-import Login from "../components/auth/login/Login";
-import SignUp from "../components/auth/signup/SignUp";
-import ResetPwd from "../components/auth/reset-pwd/ResetPwd";
-import NotFound from "../components/NotFound";
-import UserDetailsPage from "../pages/UserDetailsPage";
-import HomePage from "../pages/HomePage";
-import Dashboard from "../components/home/dashboard/Dashboard";
-import Products from "../components/home/inventory/Products";
-import GroupProducts from "../components/home/inventory/GroupProducts";
-import Orders from "../components/home/sales/Orders";
-import Clients from "../components/home/sales/Clients";
-import Announcements from "../components/home/announcements/Announcements";
-import Users from "../components/home/users_roles/Users";
-import Roles from "../components/home/users_roles/Roles";
-import Billing from "../components/home/billing/Billing";
+import { lazy } from "react";
+
+const Login = lazy(() => import("../components/auth/login/Login"));
+const SignUp = lazy(() => import("../components/auth/signup/SignUp"));
+const ResetPwd = lazy(() => import("../components/auth/reset-pwd/ResetPwd"));
+const NotFound = lazy(() => import("../components/NotFound"));
+const UserDetailsPage = lazy(() => import("../pages/UserDetailsPage"));
+const HomePage = lazy(() => import("../pages/HomePage"));
+const Dashboard = lazy(() => import("../components/home/dashboard/Dashboard"));
+const Products = lazy(() => import("../components/home/inventory/Products"));
+const GroupProducts = lazy(() => import("../components/home/inventory/GroupProducts"));
+const Orders = lazy(() => import("../components/home/sales/Orders"));
+const Clients = lazy(() => import("../components/home/sales/Clients"));
+const Announcements = lazy(() => import("../components/home/announcements/Announcements"));
+const Users = lazy(() => import("../components/home/users_roles/Users"));
+const Roles = lazy(() => import("../components/home/users_roles/Roles"));
+const Billing = lazy(() => import("../components/home/billing/Billing"));
 
 export const router = createBrowserRouter([
   {
