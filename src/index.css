@@ -3,3 +3,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: "Raleway";
+  src: url("./assets/fonts/Raleway-Regular.ttf") format("truetype"); /* Adjust the path and format accordingly */
+  font-weight: normal;
+  font-style: normal;
+}
+#root {
+  height: 100vh;
+}
