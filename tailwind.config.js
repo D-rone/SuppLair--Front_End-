@@ -14,13 +14,7 @@ export default {
         raleway: ["Raleway"],
       },
       spacing: {
-        "1/10": "10%",
-        11.5: "46px",
-        "1/5": "20%",
         _pageBody: "calc(100vh - 56px)",
-      },
-      borderWidth: {
-        3: "3px",
       },
     },
   },

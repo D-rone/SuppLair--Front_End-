@@ -6,10 +6,13 @@ import NotFound from "../components/NotFound";
 import UserDetailsPage from "../pages/UserDetailsPage";
 import HomePage from "../pages/HomePage";
 import Dashboard from "../components/home/dashboard/Dashboard";
-import Inventory from "../components/home/inventory/Inventory";
-import Sales from "../components/home/sales/Sales";
+import Products from "../components/home/inventory/Products";
+import GroupProducts from "../components/home/inventory/GroupProducts";
+import Orders from "../components/home/sales/Orders";
+import Clients from "../components/home/sales/Clients";
 import Announcements from "../components/home/announcements/Announcements";
-import Users_Roles from "../components/home/users_roles/Users_Roles";
+import Users from "../components/home/users_roles/Users";
+import Roles from "../components/home/users_roles/Roles";
 import Billing from "../components/home/billing/Billing";
 
 export const router = createBrowserRouter([
@@ -18,10 +21,13 @@ export const router = createBrowserRouter([
     element: <HomePage />,
     children: [
       { path: "", element: <Dashboard /> },
-      { path: "inventory", element: <Inventory /> },
-      { path: "sales", element: <Sales /> },
+      { path: "products", element: <Products /> },
+      { path: "group_products", element: <GroupProducts /> },
+      { path: "orders", element: <Orders /> },
+      { path: "clients", element: <Clients /> },
       { path: "announcements", element: <Announcements /> },
-      { path: "users_roles", element: <Users_Roles /> },
+      { path: "users", element: <Users /> },
+      { path: "roles", element: <Roles /> },
       { path: "billing", element: <Billing /> },
     ],
   },
