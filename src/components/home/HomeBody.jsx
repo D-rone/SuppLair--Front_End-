@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import { Outlet } from "react-router-dom";
-import { useScreenContext } from "../../pages/HomePage";
 import { ScaleLoader } from "react-spinners";
+import { useScreenContext } from "../../App";
 
 function HomeBody() {
   let { foldingSideBar, setSideBar } = useScreenContext();

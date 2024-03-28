@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import _openSideBar from "../../assets/images/openSideBar.svg";
-import { useScreenContext } from "../../pages/HomePage";
+import { useScreenContext } from "../../App";
 
 function SideBar() {
   let { foldingSideBar, sideBar, setSideBar } = useScreenContext();
@@ -161,7 +161,7 @@ function SideBar() {
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <g clip-path="url(#clip0_209_470)">
+                  <g clipPath="url(#clip0_209_470)">
                     <path
                       d="M29.8087 8.0625H24.37V6.82031C24.37 3.34219 21.302 0.609375 17.3973 0.609375C13.4926 0.609375 10.4246 3.34219 10.4246 6.82031V13.0312H13.2137V10.5469H18.7918V8.0625H13.2137V6.82031C13.2137 4.70859 15.0266 3.09375 17.3973 3.09375C19.768 3.09375 21.5809 4.70859 21.5809 6.82031V13.0312H24.37V10.5469H27.2985L28.5536 27.9375H6.38048L7.49611 10.5469H7.63556V8.0625H4.98594L3.3125 30.4219H31.3427L29.8087 8.0625Z"
                       fill={activeMenu.sales ? "#0D6EFD" : "black"}
@@ -224,9 +224,9 @@ function SideBar() {
                   <path
                     d="M11.6667 4.84291V22.6536C11.6667 23.9495 10.6161 25 9.32024 25C8.32861 25 7.44403 24.3766 7.11051 23.4428L4.24863 15.2438M21 14.3333C23.2091 14.3333 25 12.5425 25 10.3333C25 8.12419 23.2091 6.33333 21 6.33333M4.24863 15.2438C2.33906 14.4321 1 12.5391 1 10.3333C1 7.38781 3.38781 5 6.33332 5H8.77611C14.2436 5 18.9425 3.35454 21 1L21 19.6667C18.9425 17.3121 14.2436 15.6667 8.77611 15.6667L6.3333 15.6667C5.59357 15.6667 4.88902 15.5161 4.24863 15.2438Z"
                     stroke={isActive ? "white" : "black"}
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   />
                 </svg>
                 <p>Announcements</p>
@@ -252,35 +252,35 @@ function SideBar() {
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <g clip-path="url(#clip0_209_490)">
-                    <g clip-path="url(#clip1_209_490)">
+                  <g clipPath="url(#clip0_209_490)">
+                    <g clipPath="url(#clip1_209_490)">
                       <path
                         d="M22.7703 32.6484V29.9818C22.7703 28.5673 22.2084 27.2107 21.2082 26.2105C20.2081 25.2103 18.8515 24.6484 17.437 24.6484H6.77035C5.35586 24.6484 3.9993 25.2103 2.99911 26.2105C1.99891 27.2107 1.43701 28.5673 1.43701 29.9818V32.6484"
                         stroke={activeMenu.users_roles ? "#0D6EFD" : "black"}
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       />
                       <path
                         d="M12.1034 19.3151C15.0489 19.3151 17.4367 16.9273 17.4367 13.9818C17.4367 11.0363 15.0489 8.64844 12.1034 8.64844C9.15783 8.64844 6.77002 11.0363 6.77002 13.9818C6.77002 16.9273 9.15783 19.3151 12.1034 19.3151Z"
                         stroke={activeMenu.users_roles ? "#0D6EFD" : "black"}
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       />
                       <path
                         d="M30.77 32.6484V29.9818C30.7691 28.8001 30.3758 27.6521 29.6518 26.7182C28.9279 25.7843 27.9142 25.1172 26.77 24.8218"
                         stroke={activeMenu.users_roles ? "#0D6EFD" : "black"}
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       />
                       <path
                         d="M21.437 8.82178C22.5842 9.11551 23.6011 9.78271 24.3272 10.7182C25.0533 11.6537 25.4475 12.8042 25.4475 13.9884C25.4475 15.1727 25.0533 16.3232 24.3272 17.2587C23.6011 18.1942 22.5842 18.8614 21.437 19.1551"
                         stroke={activeMenu.users_roles ? "#0D6EFD" : "black"}
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       />
                     </g>
                   </g>
@@ -362,7 +362,7 @@ function SideBar() {
                     />
                   </g>
                   <g id="frame">
-                    <rect class="cls-1" height="32" width="32" />
+                    <rect className="cls-1" height="32" width="32" />
                   </g>
                 </svg>
                 <p>Billing</p>

@@ -5,8 +5,8 @@ import _search from "../../assets/images/search.svg";
 import _dropDown from "../../assets/images/dropDown.svg";
 import _noProfilePic from "../../assets/images/noProfilePic.png";
 import _bell from "../../assets/images/bell.svg";
-import { useScreenContext } from "../../pages/HomePage";
 import { NavLink } from "react-router-dom";
+import { useScreenContext } from "../../App";
 
 let searchFormController = (event) => {
   event.preventDefault();

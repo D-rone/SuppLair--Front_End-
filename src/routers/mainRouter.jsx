@@ -1,12 +1,17 @@
 import { createBrowserRouter } from "react-router-dom";
-import { lazy } from "react";
+import { Suspense, lazy } from "react";
 
-const Login = lazy(() => import("../components/auth/login/Login"));
 const SignUp = lazy(() => import("../components/auth/signup/SignUp"));
+const Login = lazy(() => import("../components/auth/login/Login"));
 const ResetPwd = lazy(() => import("../components/auth/reset-pwd/ResetPwd"));
-const NotFound = lazy(() => import("../components/NotFound"));
-const UserDetailsPage = lazy(() => import("../pages/UserDetailsPage"));
+const ConfirmPwd = lazy(() => import("../components/auth/reset-pwd/ConfirmPwd"));
+
+import NotFound from "../components/NotFound";
+import { ScaleLoader } from "react-spinners";
+
 const HomePage = lazy(() => import("../pages/HomePage"));
+const UserDetailsPage = lazy(() => import("../pages/UserDetailsPage"));
+
 const Dashboard = lazy(() => import("../components/home/dashboard/Dashboard"));
 const Products = lazy(() => import("../components/home/inventory/Products"));
 const GroupProducts = lazy(() => import("../components/home/inventory/GroupProducts"));
@@ -33,9 +38,55 @@ export const router = createBrowserRouter([
       { path: "billing", element: <Billing /> },
     ],
   },
-  { path: "reset-password", element: <ResetPwd /> },
-  { path: "signup", element: <SignUp /> },
-  { path: "login", element: <Login /> },
-  { path: "user-details", element: <UserDetailsPage /> },
+  {
+    path: "reset-password",
+    element: (
+      <Suspense fallback={<LoadingScreenAuth />}>
+        <ResetPwd />
+      </Suspense>
+    ),
+  },
+  {
+    path: "signup",
+    element: (
+      <Suspense fallback={<LoadingScreenAuth />}>
+        <SignUp />
+      </Suspense>
+    ),
+  },
+  {
+    path: "login",
+    element: (
+      <Suspense fallback={<LoadingScreenAuth />}>
+        <Login />
+      </Suspense>
+    ),
+  },
+  {
+    path: "confirm-password",
+    element: (
+      <Suspense fallback={<LoadingScreenAuth />}>
+        <ConfirmPwd />
+      </Suspense>
+    ),
+  },
+
+  {
+    path: "user-details",
+    element: (
+      <Suspense fallback={<LoadingScreenAuth />}>
+        <UserDetailsPage />
+      </Suspense>
+    ),
+  },
+
   { path: "*", element: <NotFound /> },
 ]);
+
+function LoadingScreenAuth() {
+  return (
+    <div className="flex items-center justify-center w-full h-full">
+      <ScaleLoader />
+    </div>
+  );
+}

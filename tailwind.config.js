@@ -3,6 +3,9 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        Raleway: "Raleway",
+      },
       colors: {
         supplair: {
           primary: "#0D6EFD",

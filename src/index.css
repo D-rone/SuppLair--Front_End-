@@ -4,7 +4,7 @@
 
 @font-face {
   font-family: "Raleway";
-  src: url("./assets/fonts/Raleway-Regular.ttf") format("truetype"); /* Adjust the path and format accordingly */
+  src: url("./assets/fonts/Raleway-Regular.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
