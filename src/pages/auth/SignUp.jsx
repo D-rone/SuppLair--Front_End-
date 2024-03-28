@@ -4,7 +4,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { faBuilding } from "@fortawesome/free-solid-svg-icons";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
-import SidePage from "../Side/SidePage";
+import SidePage from "../../components/Side/SidePage";
 import { toast } from "react-toastify";
 import { NavLink } from "react-router-dom";
 library.add(faEnvelope, faLock, faBuilding);

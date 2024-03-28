@@ -1,16 +1,16 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
 
-const SignUp = lazy(() => import("../components/auth/signup/SignUp"));
-const Login = lazy(() => import("../components/auth/login/Login"));
-const ResetPwd = lazy(() => import("../components/auth/reset-pwd/ResetPwd"));
-const ConfirmPwd = lazy(() => import("../components/auth/reset-pwd/ConfirmPwd"));
+const SignUp = lazy(() => import("../pages/auth/SignUp"));
+const Login = lazy(() => import("../pages/auth/Login"));
+const ResetPwd = lazy(() => import("../pages/auth/ResetPwd"));
+const ConfirmPwd = lazy(() => import("../pages/auth/ConfirmPwd"));
 
 import NotFound from "../components/NotFound";
 import { ScaleLoader } from "react-spinners";
 
 const HomePage = lazy(() => import("../pages/HomePage"));
-const UserDetailsPage = lazy(() => import("../pages/UserDetailsPage"));
+const UserProfile = lazy(() => import("../components/profile/UserProfile"));
 
 const Dashboard = lazy(() => import("../components/home/dashboard/Dashboard"));
 const Products = lazy(() => import("../components/home/inventory/Products"));
@@ -36,6 +36,7 @@ export const router = createBrowserRouter([
       { path: "users", element: <Users /> },
       { path: "roles", element: <Roles /> },
       { path: "billing", element: <Billing /> },
+      { path: "user_profile", element: <UserProfile /> },
     ],
   },
   {
@@ -67,15 +68,6 @@ export const router = createBrowserRouter([
     element: (
       <Suspense fallback={<LoadingScreenAuth />}>
         <ConfirmPwd />
-      </Suspense>
-    ),
-  },
-
-  {
-    path: "user-details",
-    element: (
-      <Suspense fallback={<LoadingScreenAuth />}>
-        <UserDetailsPage />
       </Suspense>
     ),
   },

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useScreenContext } from "../../../App";
+import { useScreenContext } from "../../App";
 
 export default function SidePage() {
   const { authSideBar } = useScreenContext();

@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import SidePage from "../Side/SidePage";
+import SidePage from "../../components/Side/SidePage";
 import { toast } from "react-toastify";
 library.add(faEnvelope);
 
