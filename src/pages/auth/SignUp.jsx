@@ -18,7 +18,12 @@ export default function SignUp() {
   const handleSignUp = (e) => {
     e.preventDefault();
     // Perform validation
-    if (!companyName.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
+    if (
+      !companyName.trim() ||
+      !email.trim() ||
+      !password.trim() ||
+      !confirmPassword.trim()
+    ) {
       toast.error("All fields are required");
       return;
     }
@@ -40,8 +45,13 @@ export default function SignUp() {
   return (
     <>
       <div className="absolute top-0 right-0 mt-2 mr-10">
-        <span className="font-semibold font-Raleway ">Already have an account ?</span>
-        <NavLink to="/login" className="ml-2 font-bold text-supplair-primary font-Raleway">
+        <span className="font-semibold font-Raleway ">
+          Already have an account ?
+        </span>
+        <NavLink
+          to="/login"
+          className="ml-2 font-bold text-supplair-primary font-Raleway"
+        >
           Log In
         </NavLink>
       </div>
@@ -49,11 +59,16 @@ export default function SignUp() {
         <SidePage />
 
         <div className="flex flex-col items-center justify-center w-full h-screen pb-[12vh]">
-          <h1 className="mt-20 mb-6 mr-32 text-3xl text-center">Create an Account</h1>
+          <h1 className="mt-20 mb-6 mr-32 text-3xl text-center">
+            Create an Account
+          </h1>
           <form onSubmit={handleSignUp}>
             <div className="flex flex-col items-center mt-4">
               <div className="relative flex items-center mb-2">
-                <FontAwesomeIcon className="absolute ml-3.5" icon="fa-solid fa-building" />
+                <FontAwesomeIcon
+                  className="absolute ml-3.5"
+                  icon="fa-solid fa-building"
+                />
                 <input
                   className="h-10 py-2 pl-10 border border-gray-300 w-96 max-w-96 rounded-xl focus:outline-none focus:border-supplair-primary focus:border-2"
                   type="text"
@@ -63,7 +78,10 @@ export default function SignUp() {
                 />
               </div>
               <div className="relative flex items-center mb-2">
-                <FontAwesomeIcon className="absolute ml-3" icon="fa-solid fa-envelope" />
+                <FontAwesomeIcon
+                  className="absolute ml-3"
+                  icon="fa-solid fa-envelope"
+                />
                 <input
                   className="h-10 py-2 pl-10 border border-gray-300 w-96 rounded-xl focus:outline-none focus:border-supplair-primary focus:border-2"
                   type="text"
@@ -73,7 +91,10 @@ export default function SignUp() {
                 />
               </div>
               <div className="relative flex items-center mb-2">
-                <FontAwesomeIcon className="absolute ml-3.5" icon="fa-solid fa-lock" />
+                <FontAwesomeIcon
+                  className="absolute ml-3.5"
+                  icon="fa-solid fa-lock"
+                />
                 <input
                   className="h-10 py-2 pl-10 border border-gray-300 w-96 rounded-xl focus:outline-none focus:border-supplair-primary focus:border-2"
                   type="password"
@@ -83,7 +104,10 @@ export default function SignUp() {
                 />
               </div>
               <div className="relative flex items-center mb-4">
-                <FontAwesomeIcon className="absolute ml-3.5" icon="fa-solid fa-lock" />
+                <FontAwesomeIcon
+                  className="absolute ml-3.5"
+                  icon="fa-solid fa-lock"
+                />
                 <input
                   className="h-10 py-2 pl-10 border border-gray-300 w-96 rounded-xl focus:outline-none focus:border-supplair-primary focus:border-2"
                   type="password"

@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
 
 const SignUp = lazy(() => import("../pages/auth/SignUp"));
+const SignUp_2 = lazy(() => import("../pages/auth/SignUp_2"));
 const Login = lazy(() => import("../pages/auth/Login"));
 const ResetPwd = lazy(() => import("../pages/auth/ResetPwd"));
 const ConfirmPwd = lazy(() => import("../pages/auth/ConfirmPwd"));
@@ -14,10 +15,14 @@ const UserProfile = lazy(() => import("../components/profile/UserProfile"));
 
 const Dashboard = lazy(() => import("../components/home/dashboard/Dashboard"));
 const Products = lazy(() => import("../components/home/inventory/Products"));
-const GroupProducts = lazy(() => import("../components/home/inventory/GroupProducts"));
+const GroupProducts = lazy(() =>
+  import("../components/home/inventory/GroupProducts")
+);
 const Orders = lazy(() => import("../components/home/sales/Orders"));
 const Clients = lazy(() => import("../components/home/sales/Clients"));
-const Announcements = lazy(() => import("../components/home/announcements/Announcements"));
+const Announcements = lazy(() =>
+  import("../components/home/announcements/Announcements")
+);
 const Users = lazy(() => import("../components/home/users_roles/Users"));
 const Roles = lazy(() => import("../components/home/users_roles/Roles"));
 const Billing = lazy(() => import("../components/home/billing/Billing"));
@@ -55,6 +60,15 @@ export const router = createBrowserRouter([
       </Suspense>
     ),
   },
+  {
+    path: "signup2",
+    element: (
+      <Suspense fallback={<LoadingScreenAuth />}>
+        <SignUp_2 />
+      </Suspense>
+    ),
+  },
+
   {
     path: "login",
     element: (

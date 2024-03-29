@@ -27,8 +27,13 @@ export default function Login() {
   return (
     <>
       <div className="absolute top-0 right-0 mt-2 mr-10">
-        <span className="font-bold font-Raleway ">Don't have an account ?</span>
-        <NavLink to="/signup" className="ml-2 font-bold text-supplair-primary font-Raleway">
+        <span className="font-semibold font-Raleway ">
+          Don't have an account ?
+        </span>
+        <NavLink
+          to="/signup"
+          className="ml-2 font-bold text-supplair-primary font-Raleway"
+        >
           Sign up
         </NavLink>
       </div>
@@ -40,7 +45,10 @@ export default function Login() {
           <form onSubmit={handleLogin}>
             <div className="flex flex-col items-center mt-4">
               <div className="relative flex items-center mb-5">
-                <FontAwesomeIcon className="absolute ml-3" icon="fa-solid fa-envelope" />
+                <FontAwesomeIcon
+                  className="absolute ml-3"
+                  icon="fa-solid fa-envelope"
+                />
                 <input
                   className="h-10 py-2 pl-10 border border-gray-300 w-96 rounded-xl focus:outline-none focus:border-supplair-primary focus:border-2"
                   type="email"
@@ -51,7 +59,10 @@ export default function Login() {
                 />
               </div>
               <div className="relative flex items-center mb-4">
-                <FontAwesomeIcon className="absolute ml-3" icon="fa-solid fa-lock" />
+                <FontAwesomeIcon
+                  className="absolute ml-3"
+                  icon="fa-solid fa-lock"
+                />
                 <input
                   className="h-10 py-2 pl-10 border border-gray-300 w-96 rounded-xl focus:outline-none focus:border-supplair-primary focus:border-2"
                   type="password"
@@ -67,7 +78,10 @@ export default function Login() {
               >
                 Login
               </button>
-              <NavLink className="mt-2 mr-64 text-supplair-primary" to="/reset-password">
+              <NavLink
+                className="mt-2 mr-64 text-supplair-primary"
+                to="/reset-password"
+              >
                 Forgot Password?
               </NavLink>
             </div>
