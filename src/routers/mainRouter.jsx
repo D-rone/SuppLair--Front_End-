@@ -3,6 +3,7 @@ import { Suspense, lazy } from "react";
 
 const SignUp = lazy(() => import("../pages/auth/SignUp"));
 const SignUp_2 = lazy(() => import("../pages/auth/SignUp_2"));
+const SignUp_3 = lazy(() => import("../pages/auth/SignUp_3"));
 const Login = lazy(() => import("../pages/auth/Login"));
 const ResetPwd = lazy(() => import("../pages/auth/ResetPwd"));
 const ConfirmPwd = lazy(() => import("../pages/auth/ConfirmPwd"));
@@ -68,7 +69,14 @@ export const router = createBrowserRouter([
       </Suspense>
     ),
   },
-
+  {
+    path: "signup3",
+    element: (
+      <Suspense fallback={<LoadingScreenAuth />}>
+        <SignUp_3 />
+      </Suspense>
+    ),
+  },
   {
     path: "login",
     element: (

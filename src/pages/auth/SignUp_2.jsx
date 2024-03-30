@@ -81,7 +81,7 @@ export default function SignUp_2() {
                 </label>
                 <input
                   id="organizationName"
-                  className="h-10 py-2 pl-10 border border-gray-300 w-96 max-w-96 rounded-xl focus:outline-none focus:border-supplair-primary focus:border-2"
+                  className="h-10 py-2 pl-4 border border-gray-300 w-96 max-w-96 rounded-xl focus:outline-none focus:border-supplair-primary focus:border-2"
                   type="text"
                   value={organizationName}
                   onFocus={() => setOrganizationNameFocused(true)}
@@ -100,7 +100,7 @@ export default function SignUp_2() {
                 </label>
                 <input
                   id="address"
-                  className="h-10 py-2 pl-10 border border-gray-300 w-96 rounded-xl focus:outline-none focus:border-supplair-primary focus:border-2"
+                  className="h-10 py-2 pl-4 border border-gray-300 w-96 rounded-xl focus:outline-none focus:border-supplair-primary focus:border-2"
                   type="text"
                   value={address}
                   onFocus={() => setAddressFocused(true)}
