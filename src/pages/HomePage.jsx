@@ -1,22 +1,29 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 import TopBar from "../components/home/TopBar";
 import SideBar from "../components/home/SideBar";
 import HomeBody from "../components/home/HomeBody";
 
 function HomePage() {
+  const [profileDropdown, setProfileDropdown] = useState(false);
+
+  let closeProfilePopUp = () => {
+    setProfileDropdown((old) => {
+      if (old) return false;
+    });
+  };
 
   return (
-    <>
-      <TopBar />
+    <div>
+      <TopBar profileDropdown={profileDropdown} setProfileDropdown={setProfileDropdown} />
 
       {/* Top Bar Spacer */}
       <div className="h-14"></div>
 
-      <div className="relative flex">
+      <div className="relative flex font-raleway" onClick={closeProfilePopUp}>
         <SideBar />
-        <HomeBody />
+        <HomeBody closeProfilePopUp={closeProfilePopUp} />
       </div>
-    </>
+    </div>
   );
 }
 

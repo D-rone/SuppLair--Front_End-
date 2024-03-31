@@ -13,11 +13,40 @@ function SideBar() {
     return isActive ? "bg-supplair-primary text-white rounded-r-2xl font-semibold" : "";
   };
 
-  const initialMenusState = {
+  const currentPathname = useLocation().pathname;
+  let checkActivePath = (inventory, sales, us_ro, def) => {
+    switch (currentPathname) {
+      case "/products":
+      case "/group_products":
+        inventory();
+        break;
+      case "/orders":
+      case "/clients":
+        sales();
+        break;
+      case "/roles":
+      case "/users":
+        us_ro();
+        break;
+      default:
+        def();
+        break;
+    }
+  };
+
+  let initialMenusState = {
     inventory: false,
     sales: false,
     users_roles: false,
   };
+
+  checkActivePath(
+    () => (initialMenusState.inventory = true),
+    () => (initialMenusState.sales = true),
+    () => (initialMenusState.users_roles = true),
+    () => {}
+  );
+
   const [expandMenu, setExpandMenu] = useState(initialMenusState);
   const [activeMenu, setActiveMenu] = useState(initialMenusState);
 
@@ -28,6 +57,7 @@ function SideBar() {
       return temp;
     });
   };
+
   const updateMenus = (menu) => {
     let temp = initialMenusState;
     temp[menu] = true;
@@ -35,26 +65,22 @@ function SideBar() {
     setActiveMenu(temp);
   };
 
-  const currentPathname = useLocation().pathname;
   useEffect(() => {
-    switch (currentPathname) {
-      case "/products":
-      case "/group_products":
-        updateMenus("inventory");
-        break;
-      case "/orders":
-      case "/clients":
-        updateMenus("sales");
-        break;
-      case "/roles":
-      case "/users":
-        updateMenus("users_roles");
-        break;
-      default:
-        setExpandMenu(initialMenusState);
-        setActiveMenu(initialMenusState);
-        break;
-    }
+    checkActivePath(
+      () => updateMenus("inventory"),
+      () => updateMenus("sales"),
+      () => updateMenus("users_roles"),
+      () => {
+        let initMenuStr = JSON.stringify(initialMenusState);
+        if (
+          initMenuStr != JSON.stringify(activeMenu) ||
+          initMenuStr != JSON.stringify(expandMenu)
+        ) {
+          setActiveMenu(initialMenusState);
+          setExpandMenu(initialMenusState);
+        }
+      }
+    );
   }, [currentPathname]);
 
   return (
@@ -65,7 +91,7 @@ function SideBar() {
           sideBar || foldingSideBar ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex flex-col p-4 pl-0 text-lg font-semibold">
+        <div className="flex flex-col p-4 pl-0 text-[17px] font-semibold">
           <NavLink to={"/"} className={checkActive}>
             {({ isActive }) => (
               <div className="flex items-center w-11/12 m-2 mr-0">

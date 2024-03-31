@@ -11,6 +11,7 @@ export default {
           primary: "#0D6EFD",
           secondary: "#2D324A",
           sidebar: "#F7F7FE",
+          popUpOverlay: "rgba(0, 0, 0, 0.2)",
         },
       },
       fontFamily: {

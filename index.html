@@ -1,16 +1,66 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" href="./src/assets/Logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SuppLair</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   </head>
   <body>
-    <div id="root"></div>
+    <style>
+      body {
+        height: 100vh;
+        margin: 0;
+      }
+      #mainLoading {
+        height: 100%;
+        width: 100%;
+        flex-direction: column;
+      }
+      #mainLoading,
+      #mainLoading > div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 30px;
+      }
+      #LoadingLogoIcon {
+        height: 70px;
+      }
+      #LoadingLogoText {
+        height: 60px;
+        margin-top: 10px;
+      }
+      #mainLoadingProgress {
+        height: 4px;
+        width: 280px;
+        --c: no-repeat linear-gradient(rgb(0, 0, 0) 0 0);
+        background: var(--c), var(--c), rgb(206, 206, 206);
+        background-size: 60% 100%;
+        animation: l16 2s infinite;
+      }
+      @keyframes l16 {
+        0% {
+          background-position: -150% 0, -150% 0;
+        }
+        66% {
+          background-position: 250% 0, -150% 0;
+        }
+        100% {
+          background-position: 250% 0, 250% 0;
+        }
+      }
+    </style>
+    <div id="mainLoading">
+      <div>
+        <img src="/src/assets/images/LogoIcon.png" id="LoadingLogoIcon" />
+        <img src="/src/assets/images/LogoText.png" id="LoadingLogoText" />
+      </div>
+      <div id="mainLoadingProgress"></div>
+    </div>
+    <div id="root" hidden></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

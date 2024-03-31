@@ -1,12 +1,23 @@
 import { RouterProvider } from "react-router-dom";
 import { router } from "./routers/mainRouter.jsx";
-import { createContext, startTransition, useContext, useEffect, useState } from "react";
-import LoadingScreen from "./components/LoadingScreen.jsx";
+import { createContext, useContext, useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
+import defaultProfilePic from "./assets/images/noProfilePic.png";
 
 const ScreenContext = createContext();
 export const useScreenContext = () => useContext(ScreenContext);
+
+const UserContext = createContext();
+export const useUserContext = () => useContext(UserContext);
+
+let DUMMY_DATA = {
+  name: "Mohamed Ouksili",
+  profilePic: defaultProfilePic,
+  email: "medouksili@gmail.com",
+  roles: ["Home", "Inventory"],
+  passwordLength: 9,
+};
 
 function App() {
   // Page Loading State
@@ -20,6 +31,8 @@ function App() {
   // Display side bar in authentication pages
   const [authSideBar, setAuthSideBar] = useState(true);
 
+  const [userData, setUserData] = useState(DUMMY_DATA);
+
   useEffect(() => {
     // Verify width of screen
     const handleResize = () => {
@@ -31,31 +44,21 @@ function App() {
     handleResize();
     window.addEventListener("resize", handleResize);
 
-    // Check if app is loading
-    window.onload = () => {
-      startTransition(() => {
-        setLoading(false);
-      });
-    };
-
     // Listeners Cleanup
     return () => {
-      window.onload = null;
       window.removeEventListener("resize", handleResize);
     };
   }, []);
 
   return (
     <>
-      {loading ? (
-        <LoadingScreen />
-      ) : (
-        <ScreenContext.Provider
-          value={{ showLogoText, foldingSideBar, sideBar, setSideBar, authSideBar }}
-        >
+      <ScreenContext.Provider
+        value={{ showLogoText, foldingSideBar, sideBar, setSideBar, authSideBar }}
+      >
+        <UserContext.Provider value={{ userData, setUserData }}>
           <RouterProvider router={router} />
-        </ScreenContext.Provider>
-      )}
+        </UserContext.Provider>
+      </ScreenContext.Provider>
       <ToastContainer />
     </>
   );

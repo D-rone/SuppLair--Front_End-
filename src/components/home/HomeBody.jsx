@@ -11,6 +11,7 @@ function HomeBody() {
       if (old) return false;
     });
   };
+
   return (
     <div
       className={`relative h-_pageBody transition-all duration-300 ease-in-out flex items-center justify-center ${

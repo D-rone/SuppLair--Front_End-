@@ -6,15 +6,18 @@ import _dropDown from "../../assets/images/dropDown.svg";
 import _noProfilePic from "../../assets/images/noProfilePic.png";
 import _bell from "../../assets/images/bell.svg";
 import { NavLink } from "react-router-dom";
-import { useScreenContext } from "../../App";
+import { useScreenContext, useUserContext } from "../../App";
 
 let searchFormController = (event) => {
   event.preventDefault();
 };
 
-function TopBar() {
-  const [profilePic, setProfilePic] = useState(_noProfilePic);
-  const [userName, setUserName] = useState("Mohamed Ouksili");
+function TopBar({ profileDropdown, setProfileDropdown }) {
+  const { userData } = useUserContext();
+
+  let toggleProfileDropdown = () => {
+    setProfileDropdown(!profileDropdown);
+  };
 
   let { showLogoText } = useScreenContext();
 
@@ -55,7 +58,7 @@ function TopBar() {
       {/* Profile Options */}
       <div className="flex items-center justify-end h-full p-4 ml-auto w-fit">
         <div className="pr-4 m-4 text-base leading-none text-white border-r-[3px] font-raleway">
-          {userName}
+          {userData.name}
         </div>
 
         <div>
@@ -64,10 +67,29 @@ function TopBar() {
 
         <div className="p-4">
           <img
-            src={profilePic}
+            src={userData.profilePic}
+            onClick={toggleProfileDropdown}
             className="w-10 h-10 border-2 border-gray-700 rounded-full hover:cursor-pointer"
           />
         </div>
+        {profileDropdown && (
+          <div className="absolute w-48 mt-2 text-white rounded-md shadow-lg bg-supplair-secondary top-14 right-2">
+            <div className="py-1">
+              <NavLink
+                to="/user_profile/personal_profile"
+                className="flex items-center block border-[1px] border-gray-700 px-8 py-2 text-base h-14 hover:bg-gray-950"
+              >
+                Profile
+              </NavLink>
+              <a className="flex items-center block border-[1px] border-gray-700 px-8 py-2 text-base h-14 hover:bg-gray-950">
+                Settings
+              </a>
+              <a className="flex items-center block border-[1px] border-gray-700 px-8 py-2 text-base h-14 hover:bg-gray-950">
+                Sign out
+              </a>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
