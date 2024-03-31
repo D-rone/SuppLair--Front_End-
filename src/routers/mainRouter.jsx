@@ -1,14 +1,18 @@
 import { createBrowserRouter } from "react-router-dom";
+import { lazy } from "react";
 
 import SignUp from "../pages/auth/SignUp";
+
+import SignUp_2 from "../pages/auth/SignUp_2";
+import SignUp_3 from "../pages/auth/SignUp_3";
+import SignUp_Employee from "../pages/auth/SignUp_Employee";
+
 import Login from "../pages/auth/Login";
 import ResetPwd from "../pages/auth/ResetPwd";
 import ConfirmPwd from "../pages/auth/ConfirmPwd";
-
 import NotFound from "../components/NotFound";
 
 import HomePage from "../pages/HomePage";
-import { lazy } from "react";
 
 const UserProfile = lazy(() => import("../components/profile/UserProfile"));
 
@@ -56,6 +60,14 @@ export const router = createBrowserRouter([
   {
     path: "signup",
     element: <SignUp />,
+  },
+  {
+    path: "signup2",
+    element: <SignUp_2 />,
+  },
+  {
+    path: "signup_employee",
+    element: <SignUp_Employee />,
   },
   {
     path: "login",

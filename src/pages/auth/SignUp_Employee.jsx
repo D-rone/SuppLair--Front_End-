@@ -1,66 +1,80 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faLock } from "@fortawesome/free-solid-svg-icons";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { faBuilding } from "@fortawesome/free-solid-svg-icons";
+import { faLock } from "@fortawesome/free-solid-svg-icons";
 import SidePage from "../../components/Side/SidePage";
-import { NavLink } from "react-router-dom";
 import { toast } from "react-toastify";
-library.add(faLock, faEnvelope);
+import { NavLink } from "react-router-dom";
+library.add(faEnvelope, faLock, faBuilding);
 
-export default function Login() {
-  const [email, setEmail] = useState("");
+export default function SignUp_Employee({ initialEmail = "" }) {
+  const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState("");
-  const handleLogin = (e) => {
+  const [confirmPassword, setConfirmPassword] = useState("");
+  // Function to handle form submission
+  const handleSignUp = (e) => {
     e.preventDefault();
-
-    if (!email.trim() || !password.trim()) {
-      console.log("hi");
-      toast.success("SuccessFull");
+    // Perform validation
+    if (!email.trim() || !password.trim() || !confirmPassword.trim()) {
+      toast.error("All fields are required");
       return;
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
     // If validation passes, proceed with sign up process
     // Example: Send form data to server or perform any other necessary actions
-    console.log("log in successful");
+    toast.success("Sign up successful");
   };
   return (
     <>
       <div className="absolute top-0 right-0 mt-2 mr-10">
         <span className="font-semibold font-Raleway ">
-          Don't have an account ?
+          Already have an account ?
         </span>
         <NavLink
-          to="/signup"
+          to="/login"
           className="ml-2 font-bold text-supplair-primary font-Raleway"
         >
-          Sign up
+          Log In
         </NavLink>
       </div>
       <div className="flex">
         <SidePage />
 
         <div className="flex flex-col items-center justify-center w-full h-screen pb-[12vh]">
-          <h1 className="mt-20 mb-10 text-3xl text-center mr-72">Log in</h1>
-          <form onSubmit={handleLogin}>
+          <h1 className="mt-20 mb-6 mr-32 text-3xl text-center">
+            Create an Account
+          </h1>
+          <form onSubmit={handleSignUp}>
             <div className="flex flex-col items-center mt-4">
-              <div className="relative flex items-center mb-5">
+              <div className="relative flex items-center mb-6">
                 <FontAwesomeIcon
                   className="absolute ml-3"
                   icon="fa-solid fa-envelope"
                 />
                 <input
                   className="h-10 py-2 pl-10 border border-gray-300 w-96 rounded-xl focus:outline-none focus:border-supplair-primary focus:border-2"
-                  type="email"
-                  placeholder="Email Address"
+                  type="text"
+                  placeholder="Email Adress"
                   value={email}
-                  required
                   onChange={(e) => setEmail(e.target.value)}
+                  readOnly={initialEmail !== ""}
                 />
               </div>
-              <div className="relative flex items-center mb-4">
+              <div className="relative flex items-center mb-6">
                 <FontAwesomeIcon
-                  className="absolute ml-3"
+                  className="absolute ml-3.5"
                   icon="fa-solid fa-lock"
                 />
                 <input
@@ -68,22 +82,28 @@ export default function Login() {
                   type="password"
                   placeholder="Password"
                   value={password}
-                  required
                   onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+              <div className="relative flex items-center mb-2">
+                <FontAwesomeIcon
+                  className="absolute ml-3.5"
+                  icon="fa-solid fa-lock"
+                />
+                <input
+                  className="h-10 py-2 pl-10 border border-gray-300 w-96 rounded-xl focus:outline-none focus:border-supplair-primary focus:border-2"
+                  type="password"
+                  placeholder="Confirm Password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                 />
               </div>
               <button
                 className="h-10 mt-5 mb-2 text-white w-96 bg-supplair-primary rounded-xl"
                 type="submit"
               >
-                Login
+                Create Account
               </button>
-              <NavLink
-                className="mt-2 mr-64 text-supplair-primary"
-                to="/reset-password"
-              >
-                Forgot Password?
-              </NavLink>
             </div>
           </form>
         </div>
