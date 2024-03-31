@@ -4,6 +4,7 @@ import { Suspense, lazy } from "react";
 const SignUp = lazy(() => import("../pages/auth/SignUp"));
 const SignUp_2 = lazy(() => import("../pages/auth/SignUp_2"));
 const SignUp_3 = lazy(() => import("../pages/auth/SignUp_3"));
+const SignUp_Employee = lazy(() => import("../pages/auth/SignUp_Employee"));
 const Login = lazy(() => import("../pages/auth/Login"));
 const ResetPwd = lazy(() => import("../pages/auth/ResetPwd"));
 const ConfirmPwd = lazy(() => import("../pages/auth/ConfirmPwd"));
@@ -70,10 +71,10 @@ export const router = createBrowserRouter([
     ),
   },
   {
-    path: "signup3",
+    path: "signup_employee",
     element: (
       <Suspense fallback={<LoadingScreenAuth />}>
-        <SignUp_3 />
+        <SignUp_Employee />
       </Suspense>
     ),
   },
