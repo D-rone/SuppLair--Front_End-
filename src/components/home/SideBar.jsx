@@ -88,7 +88,7 @@ function SideBar() {
       <div
         id="HomeSideBar"
         className={`fixed z-10 w-[20%] bg-supplair-sidebar h-_pageBody transition-transform duration-300 ease-in-out transform ${
-          sideBar || foldingSideBar ? "translate-x-0" : "-translate-x-full"
+          sideBar || foldingSideBar ? "translate-x-0 min-w-[250px]" : "-translate-x-full"
         }`}
       >
         <div className="flex flex-col p-4 pl-0 text-[17px] font-semibold">
