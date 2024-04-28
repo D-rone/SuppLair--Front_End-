@@ -1,18 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ProductsTable from './ProductTable';
+import AddProductModal from './AddProductModal'; 
 
 function Products() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
-    <div className="container mx-auto relative">
-      <button className="absolute top-0 right-0 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded z-10">
-        Add Product
-      </button>
-      <h1 className="absolute top-0 left-0 py-2 px-4 rounded bg-white text-gray-800 font-bold shadow-lg z-10">
-        Products
-      </h1>
-      <div className="mt-14"> {/* Adjust this margin according to your needs */}
+    <div className="container mx-auto flex flex-col items-start p-3">
+      <div className="flex justify-between w-full">
+        <h1 className="py-2 px-4 rounded-lg bg-white text-gray-800 font-bold shadow-lg dark:shadow-2xl">
+          Products
+        </h1>
+        <button onClick={openModal} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg ">
+          Add Product
+        </button>
+      </div>
+      <div className="m-3 w-full"> 
         <ProductsTable />
       </div>
+      
+      <AddProductModal isOpen={isModalOpen} onClose={closeModal} />
     </div>
   );
 }
