@@ -83,7 +83,7 @@ const ProductsTable = () => {
                     aria-haspopup="true"
                     aria-expanded="true"
                   >
-                    {/* SVG code provided */}
+                    
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5"

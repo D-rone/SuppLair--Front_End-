@@ -1,9 +1,8 @@
 import React from 'react'
-
+import ClientsTable from './ClientsTable'
 function Clients() {
-  return (
-    <div>Clients</div>
-  )
+  return (<ClientsTable></ClientsTable>)
+  
 }
 
 export default Clients
