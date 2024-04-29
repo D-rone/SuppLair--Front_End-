@@ -15,9 +15,9 @@ function ParentComponent() {
 
   return (
     <div className="container mx-auto">
-      <div className="mb-4 flex justify-between w-full">
-        <h2 className="py-2 px-4 rounded-lg bg-white text-gray-800 font-bold shadow-lg dark:shadow-2xl">Group Products</h2>
-        <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg ml-2" onClick={handleOpenModal}>
+      <div className="mb-4 flex justify-between items-center w-full pb-5">
+        <h2 className="py-2 px-4 rounded-lg text-4xl m-5 bg-white text-gray-800 font-bold shadow-lg dark:shadow-2xl">Group Products</h2>
+        <button className=" h-12 bg-blue-500 text-xl  hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg" onClick={handleOpenModal}>
           Add Group Product
         </button>
       </div>

@@ -67,15 +67,15 @@ const ClientsTable = () => {
                   {client.email}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mr-2">
-                    Orders
+                  <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mr-2" onClick={() => toggleExpandedClient(client.id)}>
+                    {expandedClient === client.id ? 'Hide Orders' : 'Show Orders'}
                   </button>
                 </td>
               </tr>
               {expandedClient === client.id && (
                 <tr>
-                  <td colSpan="5">
-                    <table className="min-w-full divide-y divide-gray-200">
+                  <td colSpan="5" className="p-5">
+                    <table className=" w-full divide-y border-blue-500 border-2 rounded-xl divide-blue-500 divide-2">
                       <thead className="bg-gray-50">
                         <tr>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -89,7 +89,7 @@ const ClientsTable = () => {
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
+                      <tbody className="bg-white divide-y divide-blue-500">
                         {client.orders.map((order) => (
                           <tr key={order.id}>
                             <td className="px-6 py-4 whitespace-nowrap">
