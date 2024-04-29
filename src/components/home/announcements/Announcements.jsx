@@ -18,7 +18,7 @@ function Announcements() {
         <h1 className="py-2 px-4 rounded-lg text-4xl m-5 bg-white text-gray-800 font-bold shadow-lg dark:shadow-2x">
           Annoucements
         </h1>
-        <button onClick={openModal} className="h-12 bg-blue-500 text-xl  hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg ">
+        <button onClick={openModal} className="h-12 bg-blue-500 text-xl mr-10 w-72 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg ">
           Add Annoucement
         </button>
       </div>
