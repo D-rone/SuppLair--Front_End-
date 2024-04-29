@@ -14,7 +14,7 @@ function HomeBody() {
 
   return (
     <div
-      className={`relative h-_pageBody transition-all duration-300 ease-in-out flex items-center justify-center ${
+      className={`relative h-_pageBody transition-all duration-300 ease-in-out flex justify-center ${
         foldingSideBar ? "w-4/5 left-[20%]" : "w-full left-0"
       }`}
       onClick={closeSideBar}

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import GroupProductsTable from "./GroupProductsTable";
 import AddGroupProductModal from "./AddGroupProductModal";
 
-function ParentComponent() {
+function GroupProducts() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => {
@@ -27,4 +27,4 @@ function ParentComponent() {
   );
 }
 
-export default ParentComponent;
+export default GroupProducts;
