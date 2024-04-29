@@ -51,7 +51,7 @@ const GroupProductsTable = () => {
                   <button
                     onClick={() => toggleMenu(groupProduct.id)}
                     type="button"
-                    className="inline-flex justify-center rounded-full bg-blue-500 p-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
+                    className="inline-flex justify-center rounded-full bg-supplair-primary p-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
                     aria-haspopup="true"
                     aria-expanded="true"
                   >

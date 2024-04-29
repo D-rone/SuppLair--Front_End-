@@ -43,7 +43,7 @@ const ProductsTable = () => {
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Group
             </th>
-            <th className="px-6 py-3"></th> {/* Empty header for menu column */}
+            <th className="px-6 py-3"></th> 
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
@@ -53,13 +53,13 @@ const ProductsTable = () => {
                 <div className="flex items-center">
                   <div className="flex-shrink-0 h-12 w-12">
                     <img
-                      className="h-12 w-12 rounded-full border-2 border-blue-500"
+                      className="h-12 w-12 rounded-full border-2 border-supplair-primary"
                       src={product.image}
                       alt={product.name}
                     />
                   </div>
                   <div className="ml-4">
-                    <div className="text-sm font-medium text-blue-500">
+                    <div className="text-sm font-medium text-supplair-primary">
                       {product.name}
                     </div>
                   </div>
@@ -79,7 +79,7 @@ const ProductsTable = () => {
                   <button
                     onClick={() => toggleMenu(product.id)}
                     type="button"
-                    className="inline-flex justify-center rounded-full bg-blue-500 p-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
+                    className="inline-flex justify-center rounded-full bg-supplair-primary p-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
                     aria-haspopup="true"
                     aria-expanded="true"
                   >

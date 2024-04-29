@@ -20,7 +20,7 @@ function Dashboard() {
       </div>
       <div className=" ml-5">
         <h1 className="w-fit py-2 px-4 rounded-lg text-2xl m-5 bg-white text-gray-800 font-bold shadow-lg dark:shadow-2x mb-3">Annoucements and deals </h1>
-        <p className="w-fit py-2 px-4 rounded-lg text-xl mx-14 bg-blue-900 text-white font-medium shadow-lg dark:shadow-2x mb-3">Sagittis scelerisque suspendisse eu pellentesque feugiat pellentesque. Lacinia leo elit posuere pretium ullamcorper sagittis.
+        <p className="w-fit py-2 px-4 rounded-lg text-xl mx-14 bg-supplair-secondary text-white font-medium shadow-lg dark:shadow-2x mb-3">Sagittis scelerisque suspendisse eu pellentesque feugiat pellentesque. Lacinia leo elit posuere pretium ullamcorper sagittis.
         Sagittis scelerisque suspendisse eu pellentesque feugiat pellentesque. Lacinia leo elit posuere pretium ullamcorper sagittis.
          </p>
         

@@ -55,7 +55,7 @@ const AnnouncementsTable = () => {
               <td className="px-6 py-4 whitespace-nowrap">
                 {announcement.beginDate}
               </td>
-              <td className="px-6 py-4 text-blue-500 whitespace-nowrap">
+              <td className="px-6 py-4 text-supplair-primary whitespace-nowrap">
                 {announcement.endDate}
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
@@ -72,7 +72,7 @@ const AnnouncementsTable = () => {
                   <button
                     onClick={() => toggleMenu(announcement.id)}
                     type="button"
-                    className="inline-flex justify-center rounded-full bg-blue-500 p-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
+                    className="inline-flex justify-center rounded-full bg-supplair-primary p-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
                     aria-haspopup="true"
                     aria-expanded="true"
                   >
