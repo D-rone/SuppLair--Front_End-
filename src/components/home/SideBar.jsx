@@ -79,7 +79,10 @@ function SideBar() {
 
   return (
     <div>
-      <div id="HomeSideBar" className="fixed z-10 w-[20%] bg-supplair-sidebar h-_pageBody overflow-scroll">
+      <div
+        id="HomeSideBar"
+        className="fixed z-10 w-[20%] bg-supplair-sidebar h-_pageBody overflow-scroll"
+      >
         <div className="flex flex-col p-4 pl-0 text-[18px] font-bold">
           <NavLink to={"/"} className={checkActive}>
             {({ isActive }) => (
