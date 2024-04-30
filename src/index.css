@@ -4,10 +4,11 @@
 
 @font-face {
   font-family: "Raleway";
-  src: url("./assets/fonts/Raleway-Regular.ttf") format("truetype");
-  font-weight: normal;
+  src: url("./assets/fonts/Raleway-VariableFont_wght.ttf") format("truetype");
+  font-weight: auto;
   font-style: normal;
 }
+
 #root {
   height: 100vh;
 }
@@ -19,4 +20,21 @@
   .approveBtn {
     @apply px-4 py-2 text-white rounded-lg min-w-[130px] bg-green-500 font-semibold;
   }
+}
+
+/* Track */
+::-webkit-scrollbar {
+  width: 7px;
+  position: fixed;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

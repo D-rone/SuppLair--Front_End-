@@ -66,8 +66,12 @@ export const router = createBrowserRouter([
     element: <SignUp_2 />,
   },
   {
+    path: "signup3",
+    element: <SignUp_3 />,
+  },
+  {
     path: "signup_employee",
-    element: <SignUp_Employee />,
+    element: <SignUp_Employee initialEmail="medouksili@gmail.com" />,
   },
   {
     path: "login",

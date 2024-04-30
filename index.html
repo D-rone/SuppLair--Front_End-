@@ -29,17 +29,13 @@
       #LoadingLogoIcon {
         height: 70px;
       }
-      #LoadingLogoText {
-        height: 60px;
-        margin-top: 10px;
-      }
       #mainLoadingProgress {
         height: 4px;
         width: 280px;
-        --c: no-repeat linear-gradient(rgb(0, 0, 0) 0 0);
-        background: var(--c), var(--c), rgb(206, 206, 206);
+        --c: no-repeat linear-gradient(rgb(32, 84, 168) 0 0);
+        background: var(--c), var(--c),rgb(229, 229, 229);
         background-size: 60% 100%;
-        animation: l16 2s infinite;
+        animation: l16 20s infinite;
       }
       @keyframes l16 {
         0% {
@@ -53,10 +49,13 @@
         }
       }
     </style>
+    <div class="scrollbar-track">
+      <div class="scrollbar-thumb"></div>
+    </div>
+
     <div id="mainLoading">
       <div>
-        <img src="/src/assets/images/LogoIcon.png" id="LoadingLogoIcon" />
-        <img src="/src/assets/images/LogoText.png" id="LoadingLogoText" />
+        <img src="/src/assets/images/Logo_inline.png" id="LoadingLogoIcon" />
       </div>
       <div id="mainLoadingProgress"></div>
     </div>

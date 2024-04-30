@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useReducer, useState } from "react";
 import PopUp1 from "./PopUp1";
 import { toast } from "react-toastify";
 
 function UpdatePwdPopup({ setShow }) {
-  let closePwdUpdatePopup = (e) => {
-    if (confirm("Are you sure you want to cancel ?")) setShow(false);
+  let closePwdUpdatePopup = () => {
+    if (!updated) setShow(false);
+    else if (confirm("Are you sure you want to cancel ?")) setShow(false);
   };
   const handlePasswordUpdate = (e) => {
     e.preventDefault();
@@ -15,13 +16,21 @@ function UpdatePwdPopup({ setShow }) {
     } else if (newPwd != confirmPwd) {
       toast.error("New Password and Confirm Password do not match");
     } else {
+      setShow(false);
       toast.success("Password can be updated now");
     }
   };
 
-  const [oldPwd, setOldPwd] = useState("");
-  const [newPwd, setNewPwd] = useState("");
-  const [confirmPwd, setConfirmPwd] = useState("");
+  const [updated, setUpdated] = useState(false);
+  const updateReducer = (state, newValue) => {
+    setUpdated(true);
+    return newValue;
+  };
+
+  const [oldPwd, setOldPwd] = useReducer(updateReducer, "");
+  const [newPwd, setNewPwd] = useReducer(updateReducer, "");
+  const [confirmPwd, setConfirmPwd] = useReducer(updateReducer, "");
+
   return (
     <PopUp1 closeMe={closePwdUpdatePopup} title="Update Password">
       <div className="p-4">
@@ -63,7 +72,11 @@ function UpdatePwdPopup({ setShow }) {
             <button onClick={closePwdUpdatePopup} className="cancelBtn" type="button">
               Cancel
             </button>
-            <input type="submit" value="Update" className="hover:cursor-pointer approveBtn" />
+            <input
+              type="submit"
+              value="Update"
+              className={`${updated ? `hover:cursor-pointer approveBtn` : "cancelBtn"} `}
+            />
           </div>
         </form>
       </div>

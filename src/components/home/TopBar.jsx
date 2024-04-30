@@ -1,12 +1,13 @@
-import React, { useState } from "react";
-import _logoIcon from "../../assets/images/LogoIcon.png";
-import _logoText from "../../assets/images/LogoText.png";
+import React, { useEffect, useState } from "react";
+import _LogoInline from "../../assets/images/Logo_inline.png";
+import _logoIcon from "../../assets/images/Logo_icon.png";
 import _search from "../../assets/images/search.svg";
 import _dropDown from "../../assets/images/dropDown.svg";
 import _noProfilePic from "../../assets/images/noProfilePic.png";
 import _bell from "../../assets/images/bell.svg";
 import { NavLink } from "react-router-dom";
-import { useScreenContext, useUserContext } from "../../App";
+import { useScreenContext } from "../../App";
+import { useUserContext } from "../../pages/HomePage";
 
 let searchFormController = (event) => {
   event.preventDefault();
@@ -14,8 +15,16 @@ let searchFormController = (event) => {
 
 function TopBar({ profileDropdown, setProfileDropdown }) {
   const { userData } = useUserContext();
+  const [username, setUsername] = useState(userData.name);
+  const [profilePic, setProfilePic] = useState(userData.profilePic);
 
-  let toggleProfileDropdown = () => {
+  useEffect(() => {
+    setUsername(userData.name);
+    setProfilePic(userData.profilePic);
+  }, [userData.name, userData.profilePic]);
+
+  let toggleProfileDropdown = (e) => {
+    e.stopPropagation();
     setProfileDropdown(!profileDropdown);
   };
 
@@ -23,14 +32,18 @@ function TopBar({ profileDropdown, setProfileDropdown }) {
 
   return (
     // TOP BAR
-    <div className="fixed z-10 flex items-center w-full h-14 bg-supplair-secondary">
+    <div
+      className="fixed z-10 flex items-center w-full h-14 bg-supplair-secondary"
+      onClick={() => {
+        setProfileDropdown(false);
+      }}
+    >
       {/* LOGO */}
       <div className="w-1/4">
         {showLogoText ? (
           <div className="relative left-[10%] w-fit hover:cursor-pointer">
             <NavLink to={"/"}>
-              <img src={_logoIcon} id="topBar_logo" alt="" className="inline h-8 mr-2" />
-              <img src={_logoText} id="topBar_logo" alt="" className="inline h-6 mt-1 " />
+              <img src={_LogoInline} id="topBar_logo" alt="" className="inline h-8 mr-2" />
             </NavLink>
           </div>
         ) : (
@@ -58,7 +71,7 @@ function TopBar({ profileDropdown, setProfileDropdown }) {
       {/* Profile Options */}
       <div className="flex items-center justify-end h-full p-4 ml-auto w-fit">
         <div className="pr-4 m-4 text-base leading-none text-white border-r-[3px] font-raleway">
-          {userData.name}
+          {username}
         </div>
 
         <div>
@@ -67,7 +80,7 @@ function TopBar({ profileDropdown, setProfileDropdown }) {
 
         <div className="p-4">
           <img
-            src={userData.profilePic}
+            src={profilePic}
             onClick={toggleProfileDropdown}
             className="w-10 h-10 border-2 border-gray-700 rounded-full hover:cursor-pointer"
           />

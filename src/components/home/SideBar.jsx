@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import _openSideBar from "../../assets/images/openSideBar.svg";
-import { useScreenContext } from "../../App";
 
 function SideBar() {
-  let { foldingSideBar, sideBar, setSideBar } = useScreenContext();
-  let toggleSideBar = () => {
-    setSideBar(!sideBar);
-  };
-
   let checkActive = ({ isActive }) => {
     return isActive ? "bg-supplair-primary text-white rounded-r-2xl font-semibold" : "";
   };
@@ -85,13 +79,8 @@ function SideBar() {
 
   return (
     <div>
-      <div
-        id="HomeSideBar"
-        className={`fixed z-10 w-[20%] min-w-[250px] bg-supplair-sidebar h-_pageBody transition-transform duration-300 ease-in-out transform ${
-          sideBar || foldingSideBar ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <div className="flex flex-col p-4 pl-0 text-[17px] font-semibold">
+      <div id="HomeSideBar" className="fixed z-10 w-[20%] bg-supplair-sidebar h-_pageBody overflow-scroll">
+        <div className="flex flex-col p-4 pl-0 text-[18px] font-bold">
           <NavLink to={"/"} className={checkActive}>
             {({ isActive }) => (
               <div className="flex items-center w-11/12 m-2 mr-0">
@@ -120,7 +109,7 @@ function SideBar() {
             >
               <div
                 className={`flex items-center w-11/12 m-2 ${
-                  activeMenu.inventory ? "text-supplair-primary font-semibold" : ""
+                  activeMenu.inventory ? "text-supplair-primary font-bold" : ""
                 }`}
               >
                 <svg
@@ -153,12 +142,12 @@ function SideBar() {
               {expandMenu.inventory ? (
                 <>
                   <NavLink to={"/products"} className={checkActive}>
-                    <div className="flex items-center w-11/12 pl-10 m-2 mr-0 text-base">
+                    <div className="flex items-center w-11/12 pl-10 m-2 mr-0 text-base font-semibold">
                       <p>Products</p>
                     </div>
                   </NavLink>
                   <NavLink to={"/group_products"} className={checkActive}>
-                    <div className="flex items-center w-11/12 pl-10 m-2 mr-0 text-base">
+                    <div className="flex items-center w-11/12 pl-10 m-2 mr-0 text-base font-semibold">
                       <p>Group Products</p>
                     </div>
                   </NavLink>
@@ -178,7 +167,7 @@ function SideBar() {
             >
               <div
                 className={`flex items-center w-11/12 m-2 ${
-                  activeMenu.sales ? "text-supplair-primary font-semibold" : ""
+                  activeMenu.sales ? "text-supplair-primary font-bold" : ""
                 }`}
               >
                 <svg
@@ -222,12 +211,12 @@ function SideBar() {
               {expandMenu.sales ? (
                 <>
                   <NavLink to={"/orders"} className={checkActive}>
-                    <div className="flex items-center w-11/12 pl-10 m-2 mr-0 text-base">
+                    <div className="flex items-center w-11/12 pl-10 m-2 mr-0 text-base font-semibold">
                       <p>Orders</p>
                     </div>
                   </NavLink>
                   <NavLink to={"/clients"} className={checkActive}>
-                    <div className="flex items-center w-11/12 pl-10 m-2 mr-0 text-base">
+                    <div className="flex items-center w-11/12 pl-10 m-2 mr-0 text-base font-semibold">
                       <p>Clients</p>
                     </div>
                   </NavLink>
@@ -269,7 +258,7 @@ function SideBar() {
             >
               <div
                 className={`flex items-center w-11/12 m-2 ${
-                  activeMenu.users_roles ? "text-supplair-primary font-semibold" : ""
+                  activeMenu.users_roles ? "text-supplair-primary font-bold" : ""
                 }`}
               >
                 <svg
@@ -348,12 +337,12 @@ function SideBar() {
               {expandMenu.users_roles ? (
                 <>
                   <NavLink to={"/users"} className={checkActive}>
-                    <div className="flex items-center w-11/12 pl-10 m-2 mr-0 text-base">
+                    <div className="flex items-center w-11/12 pl-10 m-2 mr-0 text-base font-semibold">
                       <p>Users</p>
                     </div>
                   </NavLink>
                   <NavLink to={"/roles"} className={checkActive}>
-                    <div className="flex items-center w-11/12 pl-10 m-2 mr-0 text-base">
+                    <div className="flex items-center w-11/12 pl-10 m-2 mr-0 text-base font-semibold">
                       <p>Roles</p>
                     </div>
                   </NavLink>
@@ -397,19 +386,6 @@ function SideBar() {
           </NavLink>
         </div>
       </div>
-      {!foldingSideBar ? (
-        <div
-          className={`fixed z-10 transition-all duration-300 ease-in-out top-1/2 ${
-            sideBar ? "left-[250px]" : "left-0 rotate-180"
-          }`}
-        >
-          <button onClick={toggleSideBar}>
-            <img src={_openSideBar} />
-          </button>
-        </div>
-      ) : (
-        <></>
-      )}
     </div>
   );
 }
