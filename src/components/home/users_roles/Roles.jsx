@@ -56,8 +56,8 @@ function Roles() {
           </thead>
           <tbody className="text-lg">
             {roles.map((role) => (
-              <tr className={"border-b-2 border-gray-300 h-20"} key={v4()}>
-                <td className="px-[4%] px-6 font-semibold hover:cursor-pointer text-supplair-primary">
+              <tr className={"border-b-2 border-gray-300 h-20"} key={v4()}> 
+                <td className="px-[4%] font-semibold hover:cursor-pointer text-supplair-primary">
                   <h3 className="inline">{role.name}</h3>
                 </td>
                 <td className="relative font-semibold">
