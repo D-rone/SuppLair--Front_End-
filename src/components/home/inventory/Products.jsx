@@ -12,6 +12,7 @@ function Products() {
   const [deleteProduct, setDeleteProduct] = useState(null);
   const [addProduct, setAddProduct] = useState(false);
   const [showDetails, setShowDetails] = useState(null);
+  const [filterStatus, setFilterStatus] = useState("all");
 
   const showProductOptions = (product) => {
     setUpdateProduct(product);
@@ -22,10 +23,50 @@ function Products() {
     setShowDetails(null);
   };
 
+  const getProducts = () => {
+    let filteredProducts = [];
+    if (filterStatus === "all") {
+      filteredProducts = dummyData.products;
+    } else if (filterStatus === "available") {
+      filteredProducts = dummyData.products.filter((product) => product.quantity > 0);
+    } else if (filterStatus === "out_of_stock") {
+      filteredProducts = dummyData.products.filter((product) => product.quantity === 0);
+    }
+    setProducts(filteredProducts);
+  };
+
+  
+  useEffect(() => {
+    getProducts();
+  }, [filterStatus]);
+
+  useEffect(() => {
+    // Update products array whenever there's a change in products state
+    // Check if quantity is 0 and set inactive status
+    const updatedProducts = products.map((product) => ({
+      ...product,
+      status: product.quantity === 0 ? "inactive" : "active",
+    }));
+    setProducts(updatedProducts);
+  }, [products]);
+
+
+
   return (
     <div onClick={hideProductOptions}>
       <div className="flex items-center h-16 px-8 pt-4 mb-5">
-        <h1 className="py-2 px-4 rounded-lg text-2xl w-fit m-5 bg-white text-gray-800 font-bold shadow-lg dark:shadow-2x">Products</h1>
+        <label className="py-2 px-4 rounded-lg text-2xl w-fit m-5 bg-white text-gray-800 font-bold shadow-lg dark:shadow-2x">
+        <select
+          id="selectProductStatus"
+          className=" text-2xl  bg-white text-gray-800 font-bold   hover:cursor-pointer"
+          onChange={(e) => setFilterStatus(e.target.value)}
+          value={filterStatus}
+        >
+          <option value="all">All Products</option>
+          <option value="available">Available Products</option>
+          <option value="out_of_stock">Out of Stock Products</option>
+        </select>
+        </label>
         <div className="flex items-center justify-end w-full">
           <button
             className="h-12 bg-supplair-primary text-xl mr-10 w-72  hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg "
@@ -41,35 +82,29 @@ function Products() {
         <table className="w-[96%] mx-[2%]">
           <thead className="text-gray-400 border-b-2 border-gray-300">
             <tr>
-              <th className="font-normal">
-                Product Name
-              </th>
-              <th className="font-normal">
-                Price Unit
-              </th>
-              <th className="font-normal">
-                Quantity
-              </th>
-              <th className="font-normal">
-                Group
-              </th>
-              <th className="font-normal">
-                Description
-              </th>
-              <th className="font-normal">
-                Rating
-              </th>
-              <th className="font-normal">
-                Reviews
-              </th>
+              <th className="font-normal">Product Name</th>
+              <th className="font-normal">Price Unit</th>
+              <th className="font-normal">Quantity</th>
+              <th className="font-normal">Group</th>
+              <th className="font-normal">Description</th>
+              <th className="font-normal">Rating</th>
+              <th className="font-normal">Reviews</th>
               <th className="px-6 py-3"></th>
             </tr>
           </thead>
-          <tbody >
+          <tbody>
             {products.map((product) => (
-              <tr className={"border-b-2 border-gray-300 h-20"} key={product.id}>
+              <tr
+                className={`border-b-2 border-gray-300 h-20 ${
+                  product.quantity === 0 ? "bg-gray-200" : ""
+                }`}
+                key={product.id}
+              >
                 <td className="flex row p-2">
-                  <img src={product.image}  className="w-10 h-10 inline rounded-full mr-4" />
+                  <img
+                    src={product.image}
+                    className="w-10 h-10 inline rounded-full mr-4"
+                  />
                   <div className="font-regular inline text-supplair-primary">
                     <h3 className=" whitespace-no-wrap">{product.name}</h3>
                   </div>
@@ -83,7 +118,7 @@ function Products() {
                 <td className=" whitespace-no-wrap px-6 font-regular text-supplair-secondary">
                   <h3 className="inline">{product.group}</h3>
                 </td>
-                <td className=" font-regular text-sm text-supplair-secondary">
+                <td className=" font-regular text-sm text-supplair-secondary w-2/5 ">
                   <h3 className="">{product.description}</h3>
                 </td>
                 <td className=" whitespace-no-wrap px-6 font-regular text-supplair-secondary">
@@ -125,14 +160,21 @@ function Products() {
                     setShowDetails(product.id);
                   }}
                 >
-                  <img src={showMore} alt="" className="w-16" />
+                  <img src={showMore} alt="" className=" w-6" />
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
         {addProduct ? <AddProductPopup close={setAddProduct} /> : null}
-        {updateProduct ? <UpdateProductPopup product={updateProduct} close={setUpdateProduct} /> : <></>}
+        {updateProduct ? (
+          <UpdateProductPopup
+            product={updateProduct}
+            close={setUpdateProduct}
+          />
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );
