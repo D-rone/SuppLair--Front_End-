@@ -1,59 +1,114 @@
-[
+{
+  "products": [
     {
-      "id": 1,
-      "name": "Product A",
-      "image": "https://via.placeholder.com/150",
+      "id": "1",
+      "name": "Product 1",
       "price": 10,
       "quantity": 100,
-      "group": "Group 1"
+      "group": "Group A",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "rating": 4.5,
+      "reviews": 20,
+      "image": "path_to_image/product1.jpg"
     },
     {
-      "id": 2,
-      "name": "Product B",
-      "image": "https://via.placeholder.com/150",
-      "price": 20,
-      "quantity": 50,
-      "group": "Group 2"
-    },
-    {
-      "id": 3,
-      "name": "Product C",
-      "image": "https://via.placeholder.com/150",
+      "id": "2",
+      "name": "Product 2",
       "price": 15,
-      "quantity": 75,
-      "group": "Group 1"
-    },
-    {
-      "id": 1,
-      "name": "Product A",
-      "image": "https://via.placeholder.com/150",
-      "price": 10,
-      "quantity": 100,
-      "group": "Group 1"
-    },
-    {
-      "id": 2,
-      "name": "Product B",
-      "image": "https://via.placeholder.com/150",
-      "price": 20,
       "quantity": 50,
-      "group": "Group 2"
+      "group": "Group B",
+      "description": "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "rating": 3.8,
+      "reviews": 15,
+      "image": "path_to_image/product2.jpg"
     },
     {
-      "id": 3,
-      "name": "Product C",
-      "image": "https://via.placeholder.com/150",
-      "price": 15,
+      "id": "3",
+      "name": "Product 3",
+      "price": 20,
+      "quantity": 80,
+      "group": "Group A",
+      "description": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      "rating": 4.2,
+      "reviews": 25,
+      "image": "path_to_image/product3.jpg"
+    },
+    {
+      "id": "4",
+      "name": "Product 4",
+      "price": 25,
+      "quantity": 120,
+      "group": "Group C",
+      "description": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+      "rating": 4.7,
+      "reviews": 30,
+      "image": "path_to_image/product4.jpg"
+    },
+    {
+      "id": "5",
+      "name": "Product 5",
+      "price": 18,
+      "quantity": 60,
+      "group": "Group B",
+      "description": "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "rating": 4.0,
+      "reviews": 18,
+      "image": "path_to_image/product5.jpg"
+    },
+    {
+      "id": "6",
+      "name": "Product 6",
+      "price": 30,
+      "quantity": 90,
+      "group": "Group A",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "rating": 4.3,
+      "reviews": 22,
+      "image": "path_to_image/product6.jpg"
+    },
+    {
+      "id": "7",
+      "name": "Product 7",
+      "price": 22,
       "quantity": 75,
-      "group": "Group 1"
+      "group": "Group C",
+      "description": "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.",
+      "rating": 4.8,
+      "reviews": 35,
+      "image": "path_to_image/product7.jpg"
     },
     {
-      "id": 1,
-      "name": "Product A",
-      "image": "https://via.placeholder.com/150",
-      "price": 10,
-      "quantity": 100,
-      "group": "Group 1"
+      "id": "8",
+      "name": "Product 8",
+      "price": 12,
+      "quantity": 110,
+      "group": "Group B",
+      "description": "Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.",
+      "rating": 4.6,
+      "reviews": 28,
+      "image": "path_to_image/product8.jpg"
+    },
+    {
+      "id": "9",
+      "name": "Product 9",
+      "price": 28,
+      "quantity": 40,
+      "group": "Group A",
+      "description": "Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?",
+      "rating": 3.9,
+      "reviews": 16,
+      "image": "path_to_image/product9.jpg"
+    },
+    {
+      "id": "10",
+      "name": "Product 10",
+      "price": 17,
+      "quantity": 85,
+      "group": "Group C",
+      "description": "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?",
+      "rating": 4.1,
+      "reviews": 21,
+      "image": "path_to_image/product10.jpg"
     }
   ]
-  
+}

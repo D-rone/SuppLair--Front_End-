@@ -39,7 +39,7 @@ function Users() {
       <div className="flex items-center h-16 px-8 pt-4">
         <select
           id="selectUserStatus"
-          className="text-xl font-semibold hover:cursor-pointer"
+          className="py-2 px-4 rounded-lg text-2xl w-fit m-5 bg-white text-gray-800 font-bold shadow-lg dark:shadow-2x hover:cursor-pointer"
           onChange={(e) => getUsers(e.target.value)}
         >
           <option value="all">All Users</option>
@@ -48,7 +48,7 @@ function Users() {
         </select>
         <div className="flex items-center justify-end w-full">
           <button
-            className="self-end w-40 h-10 text-white rounded-lg bg-supplair-primary"
+            className="h-12 bg-supplair-primary text-xl mr-10 w-72  hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg "
             onClick={() => {
               setInviteUser(true);
             }}
