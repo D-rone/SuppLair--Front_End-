@@ -51,10 +51,15 @@ function CheckPermission({ requiredPermission, children }) {
 function CheckSuperAdmin() {
   const { userData } = useUserContext();
   const { permissions } = userData;
+  console.log(permissions);
   if (permissions.includes("SUPERADMIN")) {
     return <Navigate to={"super-admin_accounts"} />;
   } else {
-    return <Dashboard />;
+    return (
+      <CheckPermission requiredPermission={"HOME"}>
+        <Dashboard />
+      </CheckPermission>
+    );
   }
 }
 
@@ -65,11 +70,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: (
-          <CheckPermission requiredPermission={"HOME"}>
-            <CheckSuperAdmin />
-          </CheckPermission>
-        ),
+        element: <CheckSuperAdmin />,
       },
       {
         path: "super-admin_accounts",
