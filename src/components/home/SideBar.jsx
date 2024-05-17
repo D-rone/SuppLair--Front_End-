@@ -410,7 +410,7 @@ function SideBar() {
               ) : (
                 <></>
               )}
-              {permissions.includes("ANNOUCEMENT") ? (
+              {permissions.includes("ANNOUNCEMENT") ? (
                 <NavLink to={"announcements"} className={checkActive}>
                   {({ isActive }) => (
                     <div className="flex items-center w-11/12 m-2 mr-0">

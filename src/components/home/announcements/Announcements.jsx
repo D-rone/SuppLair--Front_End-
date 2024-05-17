@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AnnouncementsTable from "./AnnouncementsTable";
 import AddAnnoucementsModal from "./AddAnnoucementsModal";
-import testPermission from "../../../utils/verifyForbidden";
-import { useUserContext } from "../../../pages/HomePage";
-import { Navigate } from "react-router-dom";
 
 function Announcements() {
   const [isModalOpen, setIsModalOpen] = useState(false);
