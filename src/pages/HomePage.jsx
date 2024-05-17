@@ -12,7 +12,7 @@ let DUMMY_DATA = {
   name: "Mohamed Ouksili",
   profilePic: defaultProfilePic,
   email: "medouksili@gmail.com",
-  roles: ["Home", "Inventory"],
+  permissions: ["SUPERADMIN", "INVENTORY", "USERS"],
   passwordLength: 9,
   companyName: "Test",
   website: "www.mohamed.com",
@@ -40,7 +40,13 @@ let DUMMY_DATA = {
 
 function HomePage() {
   const [profileDropdown, setProfileDropdown] = useState(false);
-  const [userData, setUserData] = useState(DUMMY_DATA);
+  const [userData, setUserData] = useState(null);
+
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    setLoaded(true);
+    setUserData(DUMMY_DATA);
+  }, []);
 
   let closeProfilePopUp = () => {
     setProfileDropdown((old) => {
@@ -50,16 +56,20 @@ function HomePage() {
 
   return (
     <div>
-      <UserContext.Provider value={{ userData, setUserData }}>
-        <TopBar profileDropdown={profileDropdown} setProfileDropdown={setProfileDropdown} />
+      {loaded ? (
+        <UserContext.Provider value={{ userData, setUserData }}>
+          <TopBar profileDropdown={profileDropdown} setProfileDropdown={setProfileDropdown} />
 
-        {/* Top Bar Spacer */}
-        <div className="h-14"></div>
-        <div className="relative flex font-raleway" onClick={closeProfilePopUp}>
-          <SideBar />
-          <HomeBody closeProfilePopUp={closeProfilePopUp} />
-        </div>
-      </UserContext.Provider>
+          {/* Top Bar Spacer */}
+          <div className="h-14"></div>
+          <div className="relative flex font-raleway" onClick={closeProfilePopUp}>
+            <SideBar />
+            <HomeBody closeProfilePopUp={closeProfilePopUp} />
+          </div>
+        </UserContext.Provider>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

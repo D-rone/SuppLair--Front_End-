@@ -14,7 +14,6 @@ function App() {
   // Display side bar in authentication pages
   const [authSideBar, setAuthSideBar] = useState(true);
 
-
   useEffect(() => {
     // Verify width of screen
     const handleResize = () => {
