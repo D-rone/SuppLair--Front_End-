@@ -53,13 +53,13 @@ function CheckSuperAdmin() {
   const { permissions } = userData;
   console.log(permissions);
   if (permissions.includes("SUPERADMIN")) {
-    return <Navigate to={"super-admin_accounts"} />;
   } else {
-    return (
-      <CheckPermission requiredPermission={"HOME"}>
-        <Dashboard />
-      </CheckPermission>
-    );
+    if (permissions.includes("HOME")) return <Dashboard />;
+    if (permissions.includes("INVENTORY")) return <Navigate to={"products"} />;
+    if (permissions.includes("SALES")) return <Navigate to={"orders"} />;
+    if (permissions.includes("ANNOUCEMENT")) return <Navigate to={"announcements"} />;
+    if (permissions.includes("USERS")) return <Navigate to={"users"} />;
+    if (permissions.includes("BILLING")) return <Navigate to={"billing"} />;
   }
 }
 
