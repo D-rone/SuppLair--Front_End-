@@ -14,10 +14,9 @@ const ClientsTable = () => {
   };
 
   const getDotColor = (clientId) => {
+    const client = clientsData.find((client) => client.id === clientId);
     const clientOrders = ordersData.filter(
-      (order) =>
-        order.client_name ===
-        clientsData.find((client) => client.id === clientId).name
+      (order) => order.client_name === client.name
     );
 
     // Check if any order is in "PAYED" status
@@ -34,14 +33,15 @@ const ClientsTable = () => {
         order.status === "ORDERED"
     );
 
-    if (hasPayedOrder) {
-      return "bg-green-500"; // Green dot if any order is in "PAYED" status
+    if (hasPayedOrder && !hasPendingOrder) {
+      return "bg-green-500"; // Green dot if all orders are in "PAYED" status
     } else if (hasPendingOrder) {
       return "bg-red-500"; // Red dot if any order is in "PENDING", "ACCEPTED", "REFUSED", or "ORDERED" status
     }
 
-    return "bg-gray-500"; // Default color for unknown status
+    return "bg-gray-500"; // Default color for unknown status or no orders
   };
+
   return (
     <div className="container mx-auto">
       <table className="min-w-full divide-y divide-gray-200">
