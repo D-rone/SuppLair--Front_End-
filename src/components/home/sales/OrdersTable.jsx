@@ -1,136 +1,169 @@
-import React, { useState } from 'react';
-import ordersData from './orders.json';
+import React, { useState } from "react";
+import ordersData from "./orders.json";
+import OrderDetailsModal from "./OrderDetailsModal";
 
-const OrdersTable = () => {
+const OrdersTable = ({ filterOption }) => {
   const [expandedOrder, setExpandedOrder] = useState(null);
+  const [showSidebar, setShowSidebar] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [originalStatus, setOriginalStatus] = useState(null); // New state to store original status
 
-  const toggleExpandedOrder = (orderId) => {
-    if (expandedOrder === orderId) {
+  const toggleSidebar = (orderId) => {
+    if (orderId === expandedOrder) {
       setExpandedOrder(null);
+      setSelectedOrder(null);
+      setShowSidebar(false);
     } else {
       setExpandedOrder(orderId);
+      const selectedOrder = ordersData.find(
+        (order) => order.order_number === orderId
+      );
+      setSelectedOrder(selectedOrder);
+      setOriginalStatus(selectedOrder.status); // Set original status
+      setShowSidebar(true);
+    }
+  };
+
+  const filteredOrders =
+    filterOption === "ALL"
+      ? ordersData
+      : ordersData.filter((order) => order.status === filterOption);
+
+  const handleCloseSidebar = () => {
+    setExpandedOrder(null);
+    setSelectedOrder(null);
+    setShowSidebar(false);
+  };
+
+  const handleNavigateOrder = (orderId) => {
+    const selectedOrder = ordersData.find(
+      (order) => order.order_number === orderId
+    );
+    setSelectedOrder(selectedOrder);
+    setOriginalStatus(selectedOrder.status); // Set original status when navigating
+  };
+
+  const updateOrderStatus = (orderId, newStatus) => {
+    // Find the index of the order in the ordersData array
+    const index = ordersData.findIndex(
+      (order) => order.order_number === orderId
+    );
+    if (index !== -1) {
+      // Update the status of the order in the ordersData array
+      ordersData[index].status = newStatus;
     }
   };
 
   return (
-    <div className="container mx-auto">
-      <table className="w-full divide-y divide-gray-200 border border-gray-200 border-2 rounded-lg">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Delivery Date
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Order Number
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Client Name
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Status
-            </th>
-            <th className="px-6 py-3"></th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {ordersData.map((order) => (
-            <React.Fragment key={order.order_number}>
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {order.delivery_date}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {order.order_number}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {order.client_name}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {order.status}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-end items-center">
-                  <div className="relative  text-left">
-                    <button className="bg-supplair-primary hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg" onClick={() => toggleExpandedOrder(order.order_number)}>
-                      {expandedOrder === order.order_number ? 'Hide Details' : 'Show Details'}
-                    </button>
-                    <button className="ml-2 bg-supplair-primary hover:bg-blue-600 text-white font-bold py-2 px-2 rounded-full" onClick={(e) => e.stopPropagation()}>
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                      </svg>
-                    </button>
-                    {expandedOrder === order.order_number && (
-                      <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                        <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                          <button className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" role="menuitem">Update</button>
-                          <button className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" role="menuitem">Delete</button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </td>
-              </tr>
-              {expandedOrder === order.order_number && (
+    <div className="container mx-auto px-4">
+      <div className="flex">
+        <div className="flex w-full transition-all duration-300">
+          <div className={`${showSidebar ? "w-1/4" : "w-full"}`}>
+            <table className="w-full divide-y divide-gray-200 border border-gray-200 border-2 rounded-lg">
+              <thead className="bg-gray-50">
                 <tr>
-                  <td colSpan="5" className="p-5">
-                    <table className="w-full divide-y divide-supplair-primary">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Product
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Quantity
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Unit Price
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Grouped Product
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Total Product
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-supplair-primary">
-                        {order.details.map((detail, index) => (
-                          <tr key={index}>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              {detail.product}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              {detail.quantity}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              ${detail.unit_price.toFixed(2)}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              {detail.grouped_product}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              {detail.quantity * detail.unit_price}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                      <tfoot className="bg-gray-50">
-                        <tr>
-                          <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" colSpan="4">
-                            Total
-                          </td>
-                          <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            {order.details.reduce((acc, curr) => acc + (curr.quantity * curr.unit_price), 0).toFixed(2)}
-                          </td>
-                        </tr>
-                      </tfoot>
-                    </table>
-                  </td>
+                  {!showSidebar && (
+                    <>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Delivery Date
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Reference#
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Client Name
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Amount
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th className="px-6 py-3"></th>
+                    </>
+                  )}
                 </tr>
-              )}
-            </React.Fragment>
-          ))}
-        </tbody>
-      </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredOrders.map((order) => (
+                  <React.Fragment key={order.order_number}>
+                    {showSidebar ? (
+                      <tr
+                        className={`${
+                          selectedOrder?.order_number === order.order_number
+                            ? "bg-gray-200 cursor-pointer"
+                            : "cursor-pointer"
+                        }`}
+                        onClick={() => handleNavigateOrder(order.order_number)}
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap font-bold text-lg">
+                          {order.client_name}
+                          <span className="text-supplair-primary block">
+                            {" "}
+                            (#{order.order_number})
+                          </span>
+                        </td>
+                      </tr>
+                    ) : (
+                      <tr
+                        className={
+                          expandedOrder === order.order_number
+                            ? "bg-gray-100"
+                            : ""
+                        }
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {order.delivery_date}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {order.order_number}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {order.client_name}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {order.details
+                            .reduce(
+                              (acc, curr) =>
+                                acc + curr.quantity * curr.unit_price,
+                              0
+                            )
+                            .toFixed(2)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {order.status}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-end items-center">
+                          <button
+                            className="bg-supplair-primary hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg"
+                            onClick={() => toggleSidebar(order.order_number)}
+                          >
+                            Show Details
+                          </button>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div
+            className={`${
+              showSidebar ? "w-3/4" : "w-0"
+            } bg-white transition-all duration-300 overflow-hidden`}
+          >
+            {showSidebar && selectedOrder && (
+              <OrderDetailsModal
+                order={selectedOrder}
+                onClose={handleCloseSidebar}
+                originalStatus={originalStatus}
+                updateOrderStatus={updateOrderStatus} // Pass the function to update status
+              />
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

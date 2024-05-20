@@ -18,7 +18,7 @@ let DUMMY_DATA = {
   name: "Mohamed Ouksili",
   profilePic: defaultProfilePic,
   email: "medouksili@gmail.com",
-  permissions: ["ANNOUNCEMENT", "USERS", "BILLING"],
+  permissions: ["ANNOUNCEMENT", "USERS", "BILLING", "SALES"],
   passwordLength: 9,
   companyName: "Test",
   website: "www.mohamed.com",
