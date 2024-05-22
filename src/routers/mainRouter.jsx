@@ -53,6 +53,7 @@ function CheckSuperAdmin() {
   const { permissions } = userData;
   console.log(permissions);
   if (permissions.includes("SUPERADMIN")) {
+    <Navigate to={"super-admin_accounts"} />
   } else {
     if (permissions.includes("HOME")) return <Dashboard />;
     if (permissions.includes("INVENTORY")) return <Navigate to={"products"} />;
