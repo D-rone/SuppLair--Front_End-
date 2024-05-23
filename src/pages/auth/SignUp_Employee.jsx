@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
@@ -7,14 +7,28 @@ import { faLock } from "@fortawesome/free-solid-svg-icons";
 import SidePage from "../../components/Side/SidePage";
 import { toast } from "react-toastify";
 import { NavLink } from "react-router-dom";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 library.add(faEnvelope, faLock, faBuilding);
 
-export default function SignUp_Employee({ initialEmail = "" }) {
-  const [email, setEmail] = useState(initialEmail);
+export default function SignUp_Employee() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const extractEmailFromUrl = () => {
+    const url = new URL(window.location.href);
+    const segments = url.pathname.split("/");
+    const email = segments.pop();
+    setEmail(email);
+  };
+  useEffect(() => {
+    extractEmailFromUrl();
+  }, []);
+
   // Function to handle form submission
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
     // Perform validation
     if (!email.trim() || !password.trim() || !confirmPassword.trim()) {
@@ -32,8 +46,24 @@ export default function SignUp_Employee({ initialEmail = "" }) {
       toast.error("Passwords do not match");
       return;
     }
-    // If validation passes, proceed with sign up process
-    // Example: Send form data to server or perform any other necessary actions
+    try {
+      const response = await axios.put(
+        "http://localhost:8080/api/v1/auth/authenticate-as-invited",
+        {
+          email: email,
+          password: password,
+        }
+      );
+      console.log("Response:", response.data);
+      const { access_token, refresh_token } = response.data;
+      document.cookie = `access_token=${access_token}; path=/`;
+      document.cookie = `refresh_token=${refresh_token}; path=/`;
+      navigate("/", { replace: true });
+    } catch (error) {
+      toast.error("An error occurred");
+      console.error("Error:", error);
+    }
+
     toast.success("Sign up successful");
   };
   return (
@@ -69,7 +99,7 @@ export default function SignUp_Employee({ initialEmail = "" }) {
                   placeholder="Email Adress"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  readOnly={initialEmail !== ""}
+                  readOnly
                 />
               </div>
               <div className="relative flex items-center mb-6">
