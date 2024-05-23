@@ -3,22 +3,43 @@ import showMore from "../../../assets/images/more.svg";
 import _defualtPic from "../../../assets/images/noProfilePic.png";
 import { v4 } from "uuid";
 import UpdateUserPopup from "../../pupups/UpdateUserPopup";
-
-import dummyData from "./DUMMY_DATA.json";
 import InviteUserPopup from "../../pupups/InviteUserPopup";
 import { toast } from "react-toastify";
+import { useUserContext } from "../../../pages/HomePage";
+import Cookies from "universal-cookie";
+import axios from "axios";
 
 function Users() {
+  const cookies = new Cookies();
+  const storedAccessToken = cookies.get("access_token");
+  const formData = new FormData();
+  const { userData, setUserData } = useUserContext();
+  const [allUsers, setAllUsers] = useState([]);
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    getUsers("all");
+    axios
+      .get(`http://localhost:8080/api/v1/users/` + userData.companyId, {
+        headers: {
+          Authorization: "Bearer " + storedAccessToken,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setAllUsers(res.data);
+        setUsers(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   let getUsers = (state) => {
-    if (state == "all") setUsers(dummyData.users);
-    else if (state == "active") setUsers(dummyData.users.filter((u) => u.active));
-    else if (state == "inactive") setUsers(dummyData.users.filter((u) => !u.active));
+    if (state == "all") setUsers(allUsers);
+    else if (state == "active")
+      setUsers(allUsers.filter((u) => u.stateType == "ACTIVE"));
+    else if (state == "inactive")
+      setUsers(allUsers.filter((u) => u.stateType == "INACTIVE"));
   };
 
   const [updateUser, setUpdateUser] = useState(null);
@@ -71,7 +92,9 @@ function Users() {
           <tbody>
             {users.map((user) => (
               <tr
-                className={`border-b-2 border-gray-300 h-20 ${user.active ? "" : "bg-gray-200"}`}
+                className={`border-b-2 border-gray-300 h-20 ${
+                  user.stateType == "ACTIVE" ? "" : "bg-gray-200"
+                }`}
                 key={v4()}
               >
                 <td className="p-2 hover:cursor-pointer">
@@ -79,15 +102,15 @@ function Users() {
                     src={user.profilePic || _defualtPic}
                     className="inline h-12 mx-4 border-2 rounded-full border-supplair-primary"
                   />
-                  <h3 className="inline font-semibold text-supplair-primary">{user.name}</h3>
+                  <h3 className="inline font-semibold text-supplair-primary">
+                    {user.fullname}
+                  </h3>
                 </td>
-                <td className="text-center">
-                  {dummyData.roles.find((role) => role.id === user.role)?.name}
-                </td>
-                <td className="text-center">{user.active ? "Active" : "Inactive"}</td>
+                <td className="text-center">{user.roleName}</td>
+                <td className="text-center">{user.stateType}</td>
                 <td className="relative">
                   {user.email}
-                  {showDetails == user.id ? (
+                  {showDetails == user.email ? (
                     <div className="absolute right-0 z-10 flex flex-col gap-2 p-2 bg-white rounded-lg shadow-sm -top-3 shadow-black h-fit w-fit">
                       <button
                         className="w-40 h-10 px-4 text-lg font-semibold rounded-lg hover:text-white hover:bg-supplair-primary text-start"
@@ -98,15 +121,6 @@ function Users() {
                       >
                         Update
                       </button>
-                      <button
-                        className="w-40 h-10 px-4 text-lg font-semibold rounded-lg hover:text-white hover:bg-supplair-primary text-start"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toast.success("User deleted");
-                        }}
-                      >
-                        Delete
-                      </button>
                     </div>
                   ) : (
                     <></>
@@ -116,7 +130,7 @@ function Users() {
                   className="hover:cursor-pointer"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setShowDetails(user.id);
+                    setShowDetails(user.email);
                   }}
                 >
                   <img src={showMore} alt="" className="w-6" />
@@ -125,7 +139,11 @@ function Users() {
             ))}
           </tbody>
         </table>
-        {updateUser != null ? <UpdateUserPopup user={updateUser} close={setUpdateUser} /> : <></>}
+        {updateUser != null ? (
+          <UpdateUserPopup user={updateUser} close={setUpdateUser} />
+        ) : (
+          <></>
+        )}
         {inviteUser ? <InviteUserPopup close={setInviteUser} /> : <></>}
       </div>
     </div>
