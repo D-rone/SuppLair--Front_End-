@@ -1,70 +1,191 @@
-import React, { useState } from "react";
-import { Outlet } from "react-router";
-import { NavLink, useLocation } from "react-router-dom";
+import React, { useReducer, useState } from "react";
+import _editIcon from "../../assets/images/editIcon.svg";
+import _doneIcon from "../../assets/images/doneIcon.svg";
+import _changeProfilePic from "../../assets/images/plusSign.svg";
+import { toast } from "react-toastify";
+import { useUserContext } from "../../pages/HomePage";
+import defaultProfilePic from "../../assets/images/noProfilePic.png";
+import axios from "axios";
+import Cookies from "universal-cookie";
 
 function UserProfile() {
-  let checkActive = ({ isActive }) =>
-    `${isActive ? "text-supplair-primary font-bold" : "text-gray-400"}`;
+  const { userData, setUserData } = useUserContext();
+  const cookies = new Cookies();
+  const storedAccessToken = cookies.get("access_token");
+  const formData = new FormData();
+  formData.append("token", storedAccessToken);
+  const [name, setName] = useState(userData.name);
+  const [email, setEmail] = useState(userData.email);
+  const [edit, setEdit] = useState("");
 
-  const currentPathname = useLocation().pathname;
-  const [activeLink, setActiveLink] = useState(currentPathname);
+  const handleUpdate = (field) => {
+    setEdit("");
+    if (field == "name") {
+      if (name != userData.name) {
+        if (name.trim().length < 3) {
+          toast.error("Company Name length should be >= 3");
+          setName(userData.name);
+
+          return;
+        } else {
+          setUserData((old) => ({ ...old, name: name }));
+          toast.success(`Filed ${field} can be updated`);
+          fetchData({
+            fullname: name,
+          });
+        }
+      }
+    }
+  };
+  const fetchData = async (body) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:8080/api/v1/profile/` + userData.userId,
+        body,
+        {
+          headers: {
+            Authorization: "Bearer " + storedAccessToken,
+          },
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const [hovered, setHovered] = useState(false);
+  const [companyPic, setCompanyPic] = useState(defaultProfilePic);
+
+  const handleMouseEnter = () => {
+    setHovered(true);
+  };
+  const handleMouseLeave = () => {
+    setHovered(false);
+  };
+  const loadNewCompanyPic = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCompanyPic(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  const updateNewPic = () => {
+    setUserData((old) => ({ ...old, companyPic: companyPic }));
+  };
+
+  const [updated, setUpdated] = useState(false);
+  const updateReducer = (state, newValue) => {
+    setUpdated(true);
+    return newValue;
+  };
 
   return (
-    <div className="flex flex-col w-full h-full">
-      <div className="flex items-center">
-        <h1 className="flex items-center w-full h-16 mt-2 ml-10 text-xl font-bold">EDIT PROFILE</h1>
-      </div>
-      <div className="flex flex-col flex-1">
-        <div className="flex flex-col justify-center gap-2 px-40 pb-6 border-b-2 border-gray-300">
-          <NavLink to="/user_profile/personal_profile" className={checkActive}>
-            <div className="flex items-center gap-3">
-              {currentPathname == "/user_profile/personal_profile" ? (
-                <svg
-                  viewBox="0 0 11 19"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-3"
-                >
-                  <path
-                    d="M0.559733 3.26182C-0.0666251 2.70257 -0.0668041 1.72272 0.55935 1.16324C1.093 0.686414 1.89957 0.686171 2.43351 1.16267L10.2635 8.15038C11.1546 8.94563 11.1546 10.3395 10.2635 11.1348L2.43351 18.1225C1.89957 18.599 1.093 18.5987 0.55935 18.1219C-0.0668041 17.5624 -0.0666249 16.5826 0.559734 16.0233L6.03531 11.1345C6.92593 10.3393 6.92594 8.9459 6.03531 8.1507L0.559733 3.26182Z"
-                    fill="#0D6EFD"
-                  />
-                </svg>
-              ) : (
-                <div className="w-2"></div>
-              )}
-              Personal Profile
-            </div>
-          </NavLink>
-          <NavLink to="/user_profile/company_profile" className={checkActive}>
-            <div className="flex items-center gap-3">
-              {currentPathname == "/user_profile/company_profile" ? (
-                <svg
-                  viewBox="0 0 11 19"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-2"
-                >
-                  <path
-                    d="M0.559733 3.26182C-0.0666251 2.70257 -0.0668041 1.72272 0.55935 1.16324C1.093 0.686414 1.89957 0.686171 2.43351 1.16267L10.2635 8.15038C11.1546 8.94563 11.1546 10.3395 10.2635 11.1348L2.43351 18.1225C1.89957 18.599 1.093 18.5987 0.55935 18.1219C-0.0668041 17.5624 -0.0666249 16.5826 0.559734 16.0233L6.03531 11.1345C6.92593 10.3393 6.92594 8.9459 6.03531 8.1507L0.559733 3.26182Z"
-                    fill="#0D6EFD"
-                  />
-                </svg>
-              ) : (
-                <div className="w-2"></div>
-              )}
-              Company Profile
-            </div>
-          </NavLink>
+    <div className="h-full max-w-[1000px] w-full ">
+      <div className="flex justify-center">
+        <div className="flex flex-col items-center w-1/3 pt-3">
+          <div
+            className="relative inline-block rounded-full size-44"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            <img
+              src={companyPic}
+              alt="Profile Picture"
+              className="rounded-full size-44"
+            />
+            {hovered && (
+              <div className="absolute top-0 left-0 bg-black rounded-full size-full bg-opacity-30">
+                <input type="file" className="hidden" />
+                <input
+                  type="file"
+                  className="rounded-full opacity-0 size-44 hover:cursor-pointer"
+                  onChange={loadNewCompanyPic}
+                />
+                <img
+                  src={_changeProfilePic}
+                  className="absolute size-14 left-[35%] pointer-events-none top-[36%]"
+                />
+              </div>
+            )}
+          </div>
         </div>
-        <div className="h-full pr-10 break-all">
-          <Outlet />
+
+        <div className="w-2/3">
+          <div className="flex px-8 py-4 border-b-2 border-gray-300">
+            <span style={{ width: "150px", fontWeight: "700" }}>Username</span>
+
+            <div className="w-2/3">
+              {edit == "name" ? (
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="border-2 border-gray-400 rounded"
+                  onKeyDown={(e) => {
+                    if (e.key == "Enter") {
+                      handleUpdate("name");
+                    }
+                  }}
+                />
+              ) : (
+                <span className="font-medium ">{name}</span>
+              )}
+            </div>
+            <span>
+              {edit == "name" ? (
+                <img
+                  src={_doneIcon}
+                  className="h-6 hover:cursor-pointer"
+                  onClick={() => {
+                    handleUpdate("name");
+                  }}
+                />
+              ) : (
+                <img
+                  src={_editIcon}
+                  className=" hover:cursor-pointer"
+                  onClick={() => {
+                    setEdit("name");
+                  }}
+                />
+              )}
+            </span>
+          </div>
+
+          <div className="flex px-8 py-4 border-b-2 border-gray-300">
+            <span style={{ width: "150px", fontWeight: "700" }}>Email</span>
+
+            <div className="w-2/3">
+              <span className="font-medium ">{email}</span>
+            </div>
+          </div>
+
+          <div className="flex px-8 py-4 border-b-2 border-gray-300">
+            <span style={{ width: "150px", fontWeight: "700" }}>
+              Permissions
+            </span>
+            <div className="w-2/3">
+              {userData.permissions.map((permission, index) => (
+                <span
+                  key={index}
+                  className="inline-block font-medium "
+                  style={{
+                    marginRight: "10px",
+                  }}
+                >
+                  {permission + ","}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 }
-
-function multiplyBy2(x) {}
 
 export default UserProfile;
