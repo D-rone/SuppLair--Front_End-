@@ -1,23 +1,62 @@
 import React, { useEffect, useReducer, useState } from "react";
-import PopUp1 from "./PopUp1";
+import PopUp1 from "./PopUp16";
 import dummyData from "../home/users_roles/DUMMY_DATA.json";
 import { toast } from "react-toastify";
+import Cookies from "universal-cookie";
+import { useUserContext } from "../../pages/HomePage";
+import axios from "axios";
 
 function UpdateUserPopup({ user, close }) {
+  const cookies = new Cookies();
+  const storedAccessToken = cookies.get("access_token");
+  const formData = new FormData();
+  const { userData, setUserData } = useUserContext();
+  const [roles, setRoles] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8080/api/v1/roles/` + userData.userId, {
+        headers: {
+          Authorization: "Bearer " + storedAccessToken,
+        },
+      })
+      .then((res) => {
+        setRoles(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   let closePopup = (e) => {
     if (!updated) close(null);
     else if (confirm("Are you sure you want to cancel ?")) close(null);
   };
 
-  const handleUpdateUser = (e) => {
+  const handleUpdateUser = async (e) => {
     e.preventDefault();
 
     if (updated) {
-      if (name.trim().length < 3) toast.error("Invalid Name");
-      else {
-        close(null);
-        toast.success("User can be updated");
+      try {
+        const response = await axios.patch(
+          `http://localhost:8080/api/v1/users`,
+          {
+            email: user.email,
+            roleName: role,
+            stateType: active,
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + storedAccessToken,
+            },
+          }
+        );
+        console.log(response.data);
+        window.location.reload();
+      } catch (error) {
+        console.error("Error:", error);
       }
+      close(null);
     }
   };
 
@@ -27,14 +66,8 @@ function UpdateUserPopup({ user, close }) {
     return newValue;
   };
 
-  useEffect(() => {
-    setRolesList(dummyData.roles);
-  }, []);
-
-  const [rolesList, setRolesList] = useState([]);
-  const [name, setName] = useReducer(updateReducer, user.name);
-  const [role, setRole] = useReducer(updateReducer, user.role);
-  const [active, setActive] = useReducer(updateReducer, user.active);
+  const [role, setRole] = useReducer(updateReducer, user.roleName);
+  const [active, setActive] = useReducer(updateReducer, user.stateType);
 
   return (
     <PopUp1 closeMe={closePopup} title="Update User">
@@ -54,8 +87,8 @@ function UpdateUserPopup({ user, close }) {
             <input
               type="text"
               required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={user.fullname}
+              readOnly
               className="w-full h-10 px-6 border-2 border-gray-400 rounded-lg focus:outline-supplair-primary"
             />
           </div>
@@ -68,9 +101,9 @@ function UpdateUserPopup({ user, close }) {
               onChange={(e) => setRole(e.target.value)}
               className="w-full h-10 px-6 border-2 border-gray-400 rounded-lg focus:outline-supplair-primary"
             >
-              {rolesList.map((role) => (
-                <option value={role.id} key={role.id}>
-                  {role.name}
+              {roles.map((role) => (
+                <option value={role.roleName} key={role.roleName}>
+                  {role.roleName}
                 </option>
               ))}
             </select>
@@ -84,8 +117,8 @@ function UpdateUserPopup({ user, close }) {
               onChange={(e) => setActive(e.target.value)}
               className="w-full h-10 px-6 border-2 border-gray-400 rounded-lg focus:outline-supplair-primary"
             >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
+              <option value="ACTIVE">Active</option>
+              <option value="INACTIVE">Inactive</option>
             </select>
           </div>
 
@@ -96,7 +129,9 @@ function UpdateUserPopup({ user, close }) {
             <input
               type="submit"
               value="Update"
-              className={`${updated ? `hover:cursor-pointer approveBtn` : "cancelBtn"} `}
+              className={`${
+                updated ? `hover:cursor-pointer approveBtn` : "cancelBtn"
+              } `}
             />
           </div>
         </form>
