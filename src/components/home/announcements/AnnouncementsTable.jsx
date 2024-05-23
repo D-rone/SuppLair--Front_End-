@@ -9,7 +9,7 @@ const AnnouncementsTable = ({ updateGet, menuOpen, setMenuOpen, setUpdateGet }) 
 
   const [loading, setLoading] = useState(true);
 
-  const [totalPages, setTotalPages] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
   const [page, setPage] = useState(0);
 
@@ -26,7 +26,7 @@ const AnnouncementsTable = ({ updateGet, menuOpen, setMenuOpen, setUpdateGet }) 
         setLoading(false);
       })
       .catch((err) => {
-        if (Math.floor(err.response.status / 100) == 5) toast.error("Server Error");
+        if (Math.floor(err?.response?.status / 100) == 5) toast.error("Server Error");
         else toast.error(err.message);
         setLoading(false);
       });
@@ -82,16 +82,16 @@ const AnnouncementsTable = ({ updateGet, menuOpen, setMenuOpen, setUpdateGet }) 
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
-            <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
               Image
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
               Begin Date
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
               End Date
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
               Status
             </th>
             <th className="px-6 py-3"></th>
@@ -102,7 +102,7 @@ const AnnouncementsTable = ({ updateGet, menuOpen, setMenuOpen, setUpdateGet }) 
           {loading ? (
             <tr className="h-[300px]">
               <td>
-                <div className="absolute h-full top-0 w-full flex items-center justify-center">
+                <div className="absolute top-0 flex items-center justify-center w-full h-full">
                   <ScaleLoader />
                 </div>
               </td>
@@ -126,19 +126,19 @@ const AnnouncementsTable = ({ updateGet, menuOpen, setMenuOpen, setUpdateGet }) 
                     <td className="px-6 py-4 whitespace-nowrap">
                       {checkAnnouncemnetStatus(announcement.startDate, announcement.endDate)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium relative">
+                    <td className="relative px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                       <div className="inline-block text-left" ref={menuRef}>
                         <button
                           onClick={(e) => toggleMenu(e, announcement.announcementId)}
                           type="button"
-                          className="inline-flex justify-center rounded-full bg-supplair-primary p-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
+                          className="inline-flex justify-center p-2 text-white rounded-full bg-supplair-primary focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
                           aria-haspopup="true"
                           aria-expanded="true"
                         >
                           {/* SVG code provided */}
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5"
+                            className="w-5 h-5"
                             viewBox="0 0 20 20"
                             fill="currentColor"
                           >
@@ -150,9 +150,10 @@ const AnnouncementsTable = ({ updateGet, menuOpen, setMenuOpen, setUpdateGet }) 
                           </svg>
                         </button>
                         {menuOpen === announcement.announcementId && (
-                          <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                          <div className="absolute right-0 z-50 mt-2 origin-top-right bg-white rounded-md shadow-lg w-36 ring-1 ring-black ring-opacity-5">
+                            <div className="absolute border-b-8 border-l-8 border-r-8 border-l-transparent border-r-transparent border-b-red-600 top-[-6px] left-24"></div>
                             <button
-                              className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-700"
+                              className="block w-full px-4 py-2 text-sm text-white bg-red-500 rounded hover:bg-red-700 "
                               role="menuitem"
                               onClick={(e) => {
                                 deleteAnnouncement(e, announcement.announcementId);
@@ -170,7 +171,7 @@ const AnnouncementsTable = ({ updateGet, menuOpen, setMenuOpen, setUpdateGet }) 
                 <tr className="h-[300px]">
                   <td></td>
                   <td>
-                    <div className="w-full h-full flex items-center justify-center">
+                    <div className="flex items-center justify-center w-full h-full">
                       No Announcements Created, go Add new announcements
                     </div>
                   </td>
@@ -181,7 +182,7 @@ const AnnouncementsTable = ({ updateGet, menuOpen, setMenuOpen, setUpdateGet }) 
         </tbody>
       </table>
       <div className="h-16"></div>
-      <div className="fixed bottom-5 right-10 bg-white">
+      <div className="fixed bg-white bottom-5 right-10">
         <Pagination
           totalPages={totalPages}
           page={page}

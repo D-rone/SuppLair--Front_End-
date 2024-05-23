@@ -39,12 +39,14 @@ function Pagination({ totalPages, page, setPage }) {
       </button>
       <input
         type="number"
-        className="border-black border-2 rounded w-10 text-center"
+        className="w-10 text-center border-2 border-black rounded"
         value={thisPage}
         onKeyDown={changePage}
         onChange={(e) => {
           setThisPage(e.target.value);
         }}
+        min={0}
+        max={totalPages - 1}
       />
       <button
         className={`${

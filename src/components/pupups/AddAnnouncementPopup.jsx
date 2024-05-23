@@ -3,9 +3,9 @@ import PopUp1 from "./PopUp1";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { supplairAPI } from "../../utils/axios";
-import { CircleLoader, ClockLoader, DotLoader, ScaleLoader } from "react-spinners";
+import { ClockLoader } from "react-spinners";
 
-function AddProductsGroupPopup({ close, setUpdateGet }) {
+function AddAnnouncementPopup({ close, setUpdateGet }) {
   let closePopup = (e) => {
     if (!updated) close(false);
     else if (confirm("Are you sure you want to cancel ?")) close(false);
@@ -122,4 +122,4 @@ function AddProductsGroupPopup({ close, setUpdateGet }) {
   );
 }
 
-export default AddProductsGroupPopup;
+export default AddAnnouncementPopup;

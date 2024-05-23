@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AnnouncementsTable from "./AnnouncementsTable";
-import AddProductsGroupPopup from "../../pupups/AddProductsGroupPopup";
+import AddAnnouncementPopup from "../../pupups/AddAnnouncementPopup";
 
 function Announcements() {
   const [addPopup, setAddPopup] = useState(false);
@@ -34,7 +34,7 @@ function Announcements() {
         <AnnouncementsTable updateGet={updateGet} menuOpen={menuOpen} setMenuOpen={setMenuOpen} setUpdateGet={setUpdateGet} />
       </div>
 
-      {addPopup ? <AddProductsGroupPopup close={setAddPopup} setUpdateGet={setUpdateGet} /> : <></>}
+      {addPopup ? <AddAnnouncementPopup close={setAddPopup} setUpdateGet={setUpdateGet} /> : <></>}
     </div>
   );
 }
