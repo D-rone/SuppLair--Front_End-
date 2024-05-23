@@ -6,11 +6,12 @@ import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import SidePage from "../../components/Side/SidePage";
 import { toast } from "react-toastify";
 library.add(faEnvelope);
+import axios from "axios";
 
 export default function ResetPwd() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Perform validation
     if (!email.trim()) {
@@ -23,28 +24,48 @@ export default function ResetPwd() {
       toast.error("Please enter a valid email address");
       return;
     }
-    // Perform further verification logic here, such as sending a request to the server
-    // For demonstration purposes, let's assume verification is successful
-    // You can replace this with actual verification logic
-    // If verification is successful, navigate to the next step
-    navigate("/confirm-password");
+    console.log(email);
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/v1/auth/send-email",
+        {
+          email: email,
+        }
+      );
+      console.log("Response:", response.data);
+      toast.success("Check your email");
+    } catch (error) {
+      toast.error("request error ");
+      console.error("Error:", error);
+    }
   };
   return (
     <>
       <div className="absolute top-0 right-0 mt-2 mr-10">
-        <span className="font-semibold font-Raleway ">Already have an account ?</span>
-        <NavLink to="/login" className="ml-2 font-bold text-supplair-primary font-Raleway">
+        <span className="font-semibold font-Raleway ">
+          Already have an account ?
+        </span>
+        <span> </span>
+        <a
+          href="/login"
+          className="ml-2 font-bold text-supplair-primary font-Raleway"
+        >
           Log In
-        </NavLink>
+        </a>
       </div>
       <div className="flex">
         <SidePage />
         <div className="flex flex-col items-center justify-center w-full h-screen pb-[12vh]">
-          <h1 className="mt-20 mb-6 mr-40 text-3xl text-center">Forgot Password</h1>
+          <h1 className="mt-20 mb-6 mr-40 text-3xl text-center">
+            Forgot Password
+          </h1>
           <div className="flex flex-col items-center mt-4">
             <form onSubmit={handleSubmit}>
               <div className="relative flex items-center mb-2">
-                <FontAwesomeIcon className="absolute ml-3" icon="fa-solid fa-envelope" />
+                <FontAwesomeIcon
+                  className="absolute ml-3"
+                  icon="fa-solid fa-envelope"
+                />
                 <input
                   className="h-10 py-2 pl-10 border border-gray-300 w-96 rounded-xl focus:outline-none focus:border-supplair-primary focus:border-2"
                   type="text"
