@@ -10,48 +10,60 @@ import {
   faDownload,
   faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
+import Cookies from "universal-cookie";
 
 function SuperAdminAccounts() {
   const [showAccountsMenu, setShowAccountsMenu] = useState(false);
-  const [filteredData, setFilteredData] = useState([]);
   const [activeFilter, setActiveFilter] = useState("All");
   const [showSidebar, setShowSidebar] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [showTableHeaders, setShowTableHeaders] = useState(true);
+  const [updatedData, setUpdatedData] = useState([]);
+  const [data, setData] = useState([]);
+  const [companyDetails, setCompanyDetails] = useState(null);
+  const [selectedCategories, setSelectedCategories] = useState({
+    data: [],
+    showCategoryMenu: false,
+  });
 
-  const [updatedData, setUpdatedData] = useState([
-    {
-      key: "company1",
-      companyName: "Company 1",
-      contact: "company_1@gmail.com",
-      state: "Active",
-    },
-    {
-      key: "company2",
-      companyName: "Company 2",
-      contact: "company_2@gmail.com",
-      state: "Inactive",
-    },
-    {
-      key: "company3",
-      companyName: "Company 3",
-      contact: "company_3@gmail.com",
-      state: "Blocked",
-    },
-  ]);
+  const categories = [
+    "FRESH_PRODUCE",
+    "MEAT_AND_POULTRY",
+    "SEAFOOD",
+    "DAIRY_AND_EGGS",
+    "GRAINS_AND_BAKERY",
+    "CANNED_AND_PACKAGED_GOODS",
+    "BEVERAGES",
+    "FROZEN_FOODS",
+    "SNACKS_AND_CONFECTIONERY",
+    "ORGANIC_AND_SPECIALTY_FOODS",
+    "ETHNIC_FOODS",
+    "HEALTH_AND_WELLNESS",
+    "BULK_AND_WHOLESALE",
+    "GOURMET_AND_SPECIALTY",
+    "FOOD_SERVICE_EQUIPMENT_AND_SUPPLIES",
+  ];
+  const cookies = new Cookies();
+  const storedAccessToken = cookies.get("access_token");
+  const formData = new FormData();
+  formData.append("token", storedAccessToken);
+
   useEffect(() => {
-    const updateFilteredData = () => {
-      if (activeFilter === "All") {
-        setFilteredData(updatedData);
-      } else {
-        setFilteredData(
-          updatedData.filter((data) => data.state === activeFilter)
-        );
-      }
-    };
-
-    updateFilteredData();
-  }, [activeFilter, updatedData]);
+    axios
+      .get(`http://localhost:8080/api/v1/companies`, {
+        headers: {
+          Authorization: "Bearer " + storedAccessToken,
+        },
+      })
+      .then((res) => {
+        setUpdatedData(res.data);
+        setData(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   const toggleAccountsMenu = () => {
     setShowAccountsMenu(!showAccountsMenu);
@@ -60,6 +72,15 @@ function SuperAdminAccounts() {
   const handleFilterChange = (filter) => {
     setActiveFilter(filter);
     setShowAccountsMenu(false);
+    if (filter == "Active") {
+      setUpdatedData(data.filter((item) => item.state === "ACTIVE"));
+    } else if (filter == "Inactive") {
+      setUpdatedData(data.filter((item) => item.state === "INACTIVE"));
+    } else if (filter == "Blocked") {
+      setUpdatedData(data.filter((item) => item.state === "BLOCKED"));
+    } else {
+      setUpdatedData(data);
+    }
   };
 
   const handleEditClick = (company) => {
@@ -67,7 +88,25 @@ function SuperAdminAccounts() {
     setShowSidebar(true);
   };
 
-  const handleCompanyNameClick = (company) => {
+  const handleCompanyNameClick = async (company) => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/api/v1/companies/" + company.key,
+        {
+          headers: {
+            Authorization: "Bearer " + storedAccessToken,
+          },
+        }
+      );
+      console.log(response.data);
+      setCompanyDetails(response.data);
+      setSelectedCategories({
+        data: response.data.categories,
+        showCategoryMenu: false,
+      });
+    } catch (error) {
+      console.error("Error:", error);
+    }
     setSelectedCompany(company);
     setShowSidebar(true);
     setShowTableHeaders(false);
@@ -77,25 +116,12 @@ function SuperAdminAccounts() {
     const updatedDataArray = updatedData.map((company) =>
       company.key === updatedCompany.key ? updatedCompany : company
     );
-
-    setUpdatedData(updatedDataArray);
-
-    if (activeFilter === "All") {
-      setFilteredData(updatedDataArray);
-    } else {
-      setFilteredData(
-        updatedDataArray.filter((data) => data.state === activeFilter)
-      );
-    }
-
     setShowSidebar(false);
   };
 
   const Sidebar = ({ selectedCompany, onSaveChanges }) => {
     const [state, setState] = useState("");
     const [category, setCategory] = useState("");
-    const [showCategoryMenu, setShowCategoryMenu] = useState(false);
-    const [selectedCategories, setSelectedCategories] = useState([]);
     const [showStateMenu, setShowStateMenu] = useState(false);
     const [sidebarHeight, setSidebarHeight] = useState(0);
 
@@ -108,7 +134,7 @@ function SuperAdminAccounts() {
 
     useEffect(() => {
       if (selectedCompany) {
-        setState(selectedCompany.state);
+        setState(companyDetails.stateType);
       }
     }, [selectedCompany]);
 
@@ -118,14 +144,24 @@ function SuperAdminAccounts() {
     };
 
     const toggleCategoryMenu = () => {
-      setShowCategoryMenu(!showCategoryMenu);
+      setSelectedCategories({
+        data: selectedCategories.data,
+        showCategoryMenu: !selectedCategories.showCategoryMenu,
+      });
     };
 
     const handleCategorySelect = (cat) => {
-      if (selectedCategories.includes(cat)) {
-        setSelectedCategories(selectedCategories.filter((c) => c !== cat));
+      console.log(selectedCategories.data);
+      if (selectedCategories.data.includes(cat)) {
+        setSelectedCategories({
+          data: selectedCategories.data.filter((c) => c !== cat),
+          showCategoryMenu: selectedCategories.showCategoryMenu,
+        });
       } else {
-        setSelectedCategories([...selectedCategories, cat]);
+        setSelectedCategories({
+          data: [...selectedCategories.data, cat],
+          showCategoryMenu: selectedCategories.showCategoryMenu,
+        });
       }
     };
 
@@ -133,12 +169,45 @@ function SuperAdminAccounts() {
       setShowStateMenu(!showStateMenu);
     };
 
-    const handleSaveChanges = () => {
+    const handleSaveChanges = async () => {
       const updatedCompany = {
         ...selectedCompany,
         state: state,
       };
+      console.log(state);
 
+      try {
+        const response = await axios.put(
+          "http://localhost:8080/api/v1/companies",
+          {
+            email: companyDetails.email,
+            companyName: companyDetails.name,
+            stateType: state,
+            categories: selectedCategories.data,
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + storedAccessToken,
+            },
+          }
+        );
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+      axios
+        .get(`http://localhost:8080/api/v1/companies`, {
+          headers: {
+            Authorization: "Bearer " + storedAccessToken,
+          },
+        })
+        .then((res) => {
+          setUpdatedData(res.data);
+          setData(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
       onSaveChanges(updatedCompany);
     };
 
@@ -165,19 +234,19 @@ function SuperAdminAccounts() {
           <span className=" text-supplair-primary px-2 py-1 rounded-md mr-2">
             email
           </span>
-          <span>{selectedCompany?.contact}</span>
+          <span>{companyDetails.email}</span>
         </div>
         <div className="mb-4 flex items-center">
           <span className="text-supplair-primary px-2 py-1 rounded-md mr-2">
             phone
           </span>
-          <span>+213-511-732-5298</span>
+          <span>{companyDetails.number}</span>
         </div>
         <div className="mb-4 flex items-center">
           <span className="text-supplair-primary px-2 py-1 rounded-md mr-2">
             address
           </span>
-          <span>EAST REGION, Oran</span>
+          <span>{companyDetails.address}</span>
         </div>
         <div className="mb-4 flex items-center">
           <span className="text-supplair-primary px-2 py-1 rounded-md mr-2">
@@ -199,53 +268,41 @@ function SuperAdminAccounts() {
                 className="inline-flex justify-between w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-supplair-primary"
                 id="categories-menu"
                 aria-haspopup="true"
-                aria-expanded={showCategoryMenu}
+                aria-expanded={selectedCategories.showCategoryMenu}
                 onClick={toggleCategoryMenu}
               >
                 {selectedCategories.length > 0
                   ? `${selectedCategories.length} selected`
-                  : "category"}
+                  : "Select Categories"}
                 <FontAwesomeIcon
                   icon={faChevronDown}
                   className="-mr-1 ml-2 h-5 w-5"
                 />
               </button>
             </div>
-            {showCategoryMenu && (
+            {selectedCategories.showCategoryMenu && (
               <div className="absolute z-10 right-0 mt-2 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
                 <div
                   className="py-1"
                   role="menu"
                   aria-orientation="vertical"
                   aria-labelledby="categories-menu"
+                  style={{ height: "150px", overflow: "scroll" }}
                 >
-                  <label className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900">
-                    <input
-                      type="checkbox"
-                      className="mr-2 leading-tight"
-                      checked={selectedCategories.includes("category 1")}
-                      onChange={() => handleCategorySelect("category 1")}
-                    />
-                    <span className="ml-2">category 1</span>
-                  </label>
-                  <label className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900">
-                    <input
-                      type="checkbox"
-                      className="mr-2 leading-tight"
-                      checked={selectedCategories.includes("category 2")}
-                      onChange={() => handleCategorySelect("category 2")}
-                    />
-                    <span className="ml-2">category 2</span>
-                  </label>
-                  <label className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900">
-                    <input
-                      type="checkbox"
-                      className="mr-2 leading-tight"
-                      checked={selectedCategories.includes("category 3")}
-                      onChange={() => handleCategorySelect("category 3")}
-                    />
-                    <span className="ml-2">category 3</span>
-                  </label>
+                  {categories.map((category) => (
+                    <label
+                      key={category}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    >
+                      <input
+                        type="checkbox"
+                        className="mr-2 leading-tight"
+                        checked={selectedCategories.data.includes(category)}
+                        onChange={() => handleCategorySelect(category)}
+                      />
+                      <span className="ml-2">{category}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
             )}
@@ -285,8 +342,8 @@ function SuperAdminAccounts() {
                     <input
                       type="radio"
                       className="mr-2 leading-tight"
-                      checked={state === "active"}
-                      onChange={() => handleStateChange("active")}
+                      checked={state === "ACTIVE"}
+                      onChange={() => handleStateChange("ACTIVE")}
                     />
                     <span className="ml-2">active</span>
                   </label>
@@ -294,8 +351,8 @@ function SuperAdminAccounts() {
                     <input
                       type="radio"
                       className="mr-2 leading-tight"
-                      checked={state === "inactive"}
-                      onChange={() => handleStateChange("inactive")}
+                      checked={state === "INACTIVE"}
+                      onChange={() => handleStateChange("INACTIVE")}
                     />
                     <span className="ml-2">inactive</span>
                   </label>
@@ -303,8 +360,8 @@ function SuperAdminAccounts() {
                     <input
                       type="radio"
                       className="mr-2 leading-tight"
-                      checked={state === "blocked"}
-                      onChange={() => handleStateChange("blocked")}
+                      checked={state === "BLOCKER"}
+                      onChange={() => handleStateChange("BLOCKED")}
                     />
                     <span className="ml-2">blocked</span>
                   </label>
@@ -393,62 +450,64 @@ function SuperAdminAccounts() {
             </thead>
           )}
           <tbody>
-            {filteredData.map((data, index) => (
-              <tr
-                key={index}
-                className={`${
-                  selectedCompany?.key === data.key && showSidebar
-                    ? "bg-gray-200"
-                    : "bg-white"
-                }`}
-              >
-                <td
-                  className={`text-left py-2 border-b border-gray-300 text-supplair-primary font-semibold cursor-pointer ${
-                    selectedCompany?.key === data.key && showSidebar
-                      ? "bg-gray-200"
-                      : "bg-white"
-                  }`}
-                  onClick={() => handleCompanyNameClick(data)}
-                >
-                  {data.companyName}
-                </td>
-                <td
-                  className={`text-left py-2 border-b border-gray-300 ${
+            {updatedData
+              .sort((a, b) => a.key - b.key)
+              .map((data, index) => (
+                <tr
+                  key={index}
+                  className={`${
                     selectedCompany?.key === data.key && showSidebar
                       ? "bg-gray-200"
                       : "bg-white"
                   }`}
                 >
-                  {data.contact}
-                </td>
-                <td
-                  className={`text-left py-2 border-b border-gray-300 ${
-                    selectedCompany?.key === data.key && showSidebar
-                      ? "bg-gray-200"
-                      : "bg-white"
-                  }`}
-                >
-                  {data.state}
-                </td>
-                <td
-                  className={`py-2 text-center border-b border-gray-300 ${
-                    selectedCompany?.key === data.key && showSidebar
-                      ? "bg-gray-200"
-                      : "bg-white"
-                  }`}
-                >
-                  <button
-                    className="focus:outline-none"
-                    onClick={() => handleEditClick(data)}
+                  <td
+                    className={`text-left py-2 border-b border-gray-300 text-supplair-primary font-semibold cursor-pointer ${
+                      selectedCompany?.key === data.key && showSidebar
+                        ? "bg-gray-200"
+                        : "bg-white"
+                    }`}
+                    onClick={() => handleCompanyNameClick(data)}
                   >
-                    <FontAwesomeIcon
-                      icon={faPenToSquare}
-                      className="text-supplair-primary cursor-pointer"
-                    />
-                  </button>
-                </td>
-              </tr>
-            ))}
+                    {data.companyName}
+                  </td>
+                  <td
+                    className={`text-left py-2 border-b border-gray-300 ${
+                      selectedCompany?.key === data.key && showSidebar
+                        ? "bg-gray-200"
+                        : "bg-white"
+                    }`}
+                  >
+                    {data.contact}
+                  </td>
+                  <td
+                    className={`text-left py-2 border-b border-gray-300 ${
+                      selectedCompany?.key === data.key && showSidebar
+                        ? "bg-gray-200"
+                        : "bg-white"
+                    }`}
+                  >
+                    {data.state}
+                  </td>
+                  <td
+                    className={`py-2 text-center border-b border-gray-300 ${
+                      selectedCompany?.key === data.key && showSidebar
+                        ? "bg-gray-200"
+                        : "bg-white"
+                    }`}
+                  >
+                    <button
+                      className="focus:outline-none"
+                      onClick={() => handleCompanyNameClick(data)}
+                    >
+                      <FontAwesomeIcon
+                        icon={faPenToSquare}
+                        className="text-supplair-primary cursor-pointer"
+                      />
+                    </button>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
@@ -463,5 +522,4 @@ function SuperAdminAccounts() {
     </div>
   );
 }
-
 export default SuperAdminAccounts;
