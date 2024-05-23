@@ -8,50 +8,51 @@ import React, {
 import TopBar from "../components/home/TopBar";
 import SideBar from "../components/home/SideBar";
 import HomeBody from "../components/home/HomeBody";
-
-import defaultProfilePic from "../assets/images/noProfilePic.png";
+import axios from "axios";
+import Cookies from "universal-cookie";
+import { useNavigate } from "react-router-dom";
 
 const UserContext = createContext();
 export const useUserContext = () => useContext(UserContext);
 
-let DUMMY_DATA = {
-  name: "Mohamed Ouksili",
-  profilePic: defaultProfilePic,
-  email: "medouksili@gmail.com",
-  permissions: ["HOME", "INVENTORY" , "ANNOUNCEMENT", "USERS", "BILLING", "SALES"],
-  passwordLength: 9,
-  companyName: "Test",
-  website: "www.mohamed.com",
-  address: "25 Rue Baghdadi Mohamed, Oran",
-  phone: "+213-669-29-19-46",
-  companyPic: defaultProfilePic,
-  wilayas: [
-    { name: "Oran", deliveryDate: "27/04/2023" },
-    { name: "Sidi Bel Abbes", deliveryDate: "27/04/2023" },
-    { name: "Setif", deliveryDate: "27/04/2023" },
-    { name: "Relizane", deliveryDate: "27/04/2023" },
-  ],
-  regions: [
-    { name: "East", deliveryDate: "27/04/2023" },
-    { name: "Sud", deliveryDate: "27/04/2023" },
-  ],
-  sectors: [
-    { name: "Oran Centre", deliveryDate: "27/04/2023" },
-    { name: "Ain Oulemane", deliveryDate: "27/04/2023" },
-    { name: "Ain trid", deliveryDate: "27/04/2023" },
-    { name: "Braya", deliveryDate: "27/04/2023" },
-    { name: "Timimoun", deliveryDate: "27/04/2023" },
-  ],
-};
-
 function HomePage() {
+  const navigate = useNavigate();
   const [profileDropdown, setProfileDropdown] = useState(false);
   const [userData, setUserData] = useState(null);
-
   const [loaded, setLoaded] = useState(false);
+
   useEffect(() => {
-    setLoaded(true);
-    setUserData(DUMMY_DATA);
+    const cookies = new Cookies();
+    const storedAccessToken = cookies.get("access_token");
+    const formData = new FormData();
+    formData.append("token", storedAccessToken);
+    axios
+      .post(`http://localhost:8080/api/v1/auth/verify-token`, formData)
+      .then((res) => {
+        console.log(res.data.isValid);
+        if (res.data.isValid == false) {
+          navigate("/login", { replace: true });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    if (storedAccessToken) {
+      axios
+        .get(`http://localhost:8080/api/v1/user-details`, {
+          headers: {
+            Authorization: "Bearer " + storedAccessToken,
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+          setLoaded(true);
+          setUserData(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }, []);
 
   let closeProfilePopUp = () => {
