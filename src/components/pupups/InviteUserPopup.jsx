@@ -1,26 +1,74 @@
 import React, { useEffect, useReducer, useState } from "react";
-import PopUp1 from "./PopUp1";
+import PopUp1 from "./PopUp16";
 import dummyData from "../home/users_roles/DUMMY_DATA.json";
 import { toast } from "react-toastify";
+import { useUserContext } from "../../pages/HomePage";
+import Cookies from "universal-cookie";
+import axios from "axios";
 
 function InviteUserPopup({ close }) {
+  const cookies = new Cookies();
+  const storedAccessToken = cookies.get("access_token");
+  const formData = new FormData();
+  const { userData, setUserData } = useUserContext();
+
+  const [roles, setRoles] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8080/api/v1/roles/` + userData.companyId, {
+        headers: {
+          Authorization: "Bearer " + storedAccessToken,
+        },
+      })
+      .then((res) => {
+        setRoles(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   let closePopup = (e) => {
     if (!updated) close(null);
     else if (confirm("Are you sure you want to cancel ?")) close(null);
   };
 
-  const handleInviteUser = (e) => {
+  const handleInviteUser = async (e) => {
     e.preventDefault();
 
     if (updated) {
-      if (name.trim().length < 3) toast.error("Invalid Name");
-      else {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email.trim())) toast.error("Invalid Email");
-        else {
-          close(false);
-          toast.success("User can be Saved");
-        }
+      if (name.trim().length < 3) {
+        toast.error("Invalid Name");
+        return;
+      }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email.trim())) {
+        toast.error("Invalid Email");
+        return;
+      }
+
+      try {
+        const response = await axios.post(
+          `http://localhost:8080/api/v1/invite-user`,
+          {
+            email: email,
+            fullname: name,
+            roleName: role,
+            companyName: userData.companyName,
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + storedAccessToken,
+            },
+          }
+        );
+        toast.success("User can be Saved");
+        // Reload the page after successful user addition
+        window.location.reload();
+        close(null);
+      } catch (error) {
+        console.error("Error:", error);
       }
     }
   };
@@ -31,11 +79,6 @@ function InviteUserPopup({ close }) {
     return newValue;
   };
 
-  useEffect(() => {
-    setRolesList(dummyData.roles);
-  }, []);
-
-  const [rolesList, setRolesList] = useState([]);
   const [name, setName] = useReducer(updateReducer, "");
   const [email, setEmail] = useReducer(updateReducer, "");
   const [role, setRole] = useReducer(updateReducer, "");
@@ -78,9 +121,9 @@ function InviteUserPopup({ close }) {
               <option value="" disabled>
                 -- Select an option --
               </option>
-              {rolesList.map((role) => (
-                <option value={role.id} key={role.id}>
-                  {role.name}
+              {roles.map((role) => (
+                <option value={role.roleName} key={role.roleName}>
+                  {role.roleName}
                 </option>
               ))}
             </select>
@@ -93,7 +136,9 @@ function InviteUserPopup({ close }) {
             <input
               type="submit"
               value="Save"
-              className={`${updated ? `hover:cursor-pointer approveBtn` : "cancelBtn"} `}
+              className={`${
+                updated ? `hover:cursor-pointer approveBtn` : "cancelBtn"
+              } `}
             />
           </div>
         </form>
