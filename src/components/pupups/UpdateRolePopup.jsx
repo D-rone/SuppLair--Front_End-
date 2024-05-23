@@ -1,26 +1,56 @@
 import React, { useEffect, useReducer, useState } from "react";
-import PopUp1 from "./PopUp1";
+import PopUp1 from "./PopUp16";
+import dummyData from "../home/users_roles/DUMMY_DATA.json";
 import { toast } from "react-toastify";
+import Cookies from "universal-cookie";
+import { useUserContext } from "../../pages/HomePage";
+import axios from "axios";
 
 function UpdateRolePopup({ role, close }) {
+  const cookies = new Cookies();
+  const storedAccessToken = cookies.get("access_token");
+  const formData = new FormData();
+  const { userData, setUserData } = useUserContext();
   let closePopup = (e) => {
     if (!updated) close(null);
     else if (confirm("Are you sure you want to cancel ?")) close(null);
   };
 
-  const handleUpdateRole = (e) => {
+  const handleAddRole = async (e) => {
     e.preventDefault();
 
     if (updated) {
-      if (name.trim().length < 3) toast.error("Invalid Role Name");
-      else {
-        if (rights.length == 0) {
-          toast.error("A role must have at least one right!");
-        } else {
-          close(null);
-          toast.success("Role can be updated");
-        }
+      if (name.trim().length < 3) {
+        toast.error("Invalid Role Name");
+        return;
       }
+      if (rights.length == 0) {
+        toast.error("Rights must be not empty");
+        return;
+      } else {
+        toast.success("Role added");
+      }
+      try {
+        const response = await axios.put(
+          `http://localhost:8080/api/v1/roles`,
+          {
+            companyName: userData.companyName,
+            newRoleName: name,
+            oldRoleName: role.roleName,
+            permissions: rights,
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + storedAccessToken,
+            },
+          }
+        );
+        console.log(response.data);
+        window.location.reload();
+      } catch (error) {
+        console.error("Error:", error);
+      }
+      close(null);
     }
   };
 
@@ -30,13 +60,25 @@ function UpdateRolePopup({ role, close }) {
     return newValue;
   };
 
-  const [name, setName] = useReducer(updateReducer, role.name);
-  const [rights, setRights] = useReducer(updateReducer, role.rights);
+  const [name, setName] = useState(role.roleName);
+  const [rights, setRights] = useReducer(updateReducer, role.permissions);
+  const handleCheckboxChange = (e) => {
+    const right = e.target.value;
+    const isChecked = e.target.checked;
+
+    setUpdated(true);
+
+    if (isChecked) {
+      setRights([...rights, right]);
+    } else {
+      setRights(rights.filter((r) => r !== right));
+    }
+  };
 
   return (
-    <PopUp1 closeMe={closePopup} title="Update Role">
+    <PopUp1 closeMe={closePopup} title="Add Role">
       <div className="p-4">
-        <form onSubmit={handleUpdateRole}>
+        <form onSubmit={handleAddRole}>
           <div className="flex flex-col gap-1 mb-6 text-sm font-semibold">
             <span>Role Name :</span>
             <input
@@ -53,68 +95,62 @@ function UpdateRolePopup({ role, close }) {
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  value="Home"
+                  value="HOME"
                   className="mx-4 my-2 size-4 hover:cursor-pointer"
-                  onChange={() => {
-                    setUpdated(true);
-                  }}
+                  checked={rights.includes("HOME")}
+                  onChange={handleCheckboxChange}
                 />
-                <label for="Home">Home</label>
+                <label htmlFor="HOME">Home</label>
               </div>
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  value="Inventory"
+                  value="INVENTORY"
                   className="mx-4 my-2 size-4 hover:cursor-pointer"
-                  onChange={() => {
-                    setUpdated(true);
-                  }}
+                  checked={rights.includes("INVENTORY")}
+                  onChange={handleCheckboxChange}
                 />
-                <label for="Inventory">Inventory</label>
+                <label htmlFor="INVENTORY">Inventory</label>
               </div>
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  value="Sales"
+                  value="SALES"
                   className="mx-4 my-2 size-4 hover:cursor-pointer"
-                  onChange={() => {
-                    setUpdated(true);
-                  }}
+                  checked={rights.includes("SALES")}
+                  onChange={handleCheckboxChange}
                 />
-                <label for="Sales">Sales</label>
+                <label htmlFor="SALES">Sales</label>
               </div>
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  value="Announcements"
+                  value="ANNOUCEMENT"
                   className="mx-4 my-2 size-4 hover:cursor-pointer"
-                  onChange={() => {
-                    setUpdated(true);
-                  }}
+                  checked={rights.includes("ANNOUCEMENT")}
+                  onChange={handleCheckboxChange}
                 />
-                <label for="Announcements">Announcements</label>
+                <label htmlFor="ANNOUCEMENT">Announcements</label>
               </div>
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  value="Users&Roles"
+                  value="USERS"
                   className="mx-4 my-2 size-4 hover:cursor-pointer"
-                  onChange={() => {
-                    setUpdated(true);
-                  }}
+                  checked={rights.includes("USERS")}
+                  onChange={handleCheckboxChange}
                 />
-                <label for="Users&Roles">Users & Roles</label>
+                <label htmlFor="USERS">Users & Roles</label>
               </div>
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  value="Billing"
+                  value="BILLING"
                   className="mx-4 my-2 size-4 hover:cursor-pointer"
-                  onChange={() => {
-                    setUpdated(true);
-                  }}
+                  checked={rights.includes("BILLING")}
+                  onChange={handleCheckboxChange}
                 />
-                <label for="Billing">Billing</label>
+                <label htmlFor="BILLING">Billing</label>
               </div>
             </div>
           </div>
@@ -124,8 +160,10 @@ function UpdateRolePopup({ role, close }) {
             </button>
             <input
               type="submit"
-              value="Update"
-              className={`${updated ? `hover:cursor-pointer approveBtn` : "cancelBtn"} `}
+              value="Save"
+              className={`${
+                updated ? `hover:cursor-pointer approveBtn` : "cancelBtn"
+              } `}
             />
           </div>
         </form>
