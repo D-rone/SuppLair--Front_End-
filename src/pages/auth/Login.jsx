@@ -6,23 +6,39 @@ import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import SidePage from "../../components/Side/SidePage";
 import { NavLink } from "react-router-dom";
 import { toast } from "react-toastify";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 library.add(faLock, faEnvelope);
 
 export default function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-
-    if (!email.trim() || !password.trim()) {
-      console.log("hi");
-      toast.success("SuccessFull");
-      return;
-    }
 
     // If validation passes, proceed with sign up process
     // Example: Send form data to server or perform any other necessary actions
     console.log("log in successful");
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/v1/auth/authenticate",
+        {
+          email: email,
+          password: password,
+        }
+      );
+      console.log("Response:", response.data);
+      const { access_token, refresh_token } = response.data;
+
+      document.cookie = `access_token=${access_token}; path=/`;
+      document.cookie = `refresh_token=${refresh_token}; path=/`;
+      navigate("/", { replace: true });
+    } catch (error) {
+      toast.error("An error occurred while Logining ");
+      console.error("Error:", error);
+    }
   };
   return (
     <>
@@ -30,12 +46,13 @@ export default function Login() {
         <span className="font-semibold font-Raleway ">
           Don't have an account ?
         </span>
-        <NavLink
-          to="/signup"
+        <span></span>
+        <a
+          href="/signup"
           className="ml-2 font-bold text-supplair-primary font-Raleway"
         >
           Sign up
-        </NavLink>
+        </a>
       </div>
       <div className="flex">
         <SidePage />
@@ -78,12 +95,12 @@ export default function Login() {
               >
                 Login
               </button>
-              <NavLink
+              <a
+                href="/reset-password"
                 className="mt-2 mr-64 text-supplair-primary"
-                to="/reset-password"
               >
                 Forgot Password?
-              </NavLink>
+              </a>
             </div>
           </form>
         </div>
