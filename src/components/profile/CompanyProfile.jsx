@@ -1,22 +1,95 @@
-import React, { useReducer, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import _editIcon from "../../assets/images/editIcon.svg";
 import _doneIcon from "../../assets/images/doneIcon.svg";
 import _changeProfilePic from "../../assets/images/plusSign.svg";
 import { toast } from "react-toastify";
 import { useUserContext } from "../../pages/HomePage";
+import defaultProfilePic from "../../assets/images/noProfilePic.png";
+import axios from "axios";
+import Cookies from "universal-cookie";
 
 function CompanyProfile() {
+  const cookies = new Cookies();
+  const storedAccessToken = cookies.get("access_token");
+  const formData = new FormData();
+  formData.append("token", storedAccessToken);
   const { userData, setUserData } = useUserContext();
-
   const [companyName, setCompanyName] = useState(userData.companyName);
-  const [website, setWebsite] = useState(userData.website);
   const [address, setAddress] = useState(userData.address);
-  const [phone, setPhone] = useState(userData.phone);
-
+  const [phone, setPhone] = useState(userData.number);
+  const [hasDeliveryDates, setHasDeliveryDates] = useState(
+    userData.hasDeliveryDate
+  );
+  const [email, setEmail] = useState(userData.companyEmail);
+  const [description, setDescription] = useState(userData.description);
   const [edit, setEdit] = useState("");
+  const [selectedWilayas, setSelectedWilayas] = useState(
+    userData.wilayas || []
+  );
+  const wilayas = [
+    { value: "01", label: "Adrar" },
+    { value: "02", label: "Chlef" },
+    { value: "03", label: "Laghouat" },
+    { value: "04", label: "Oum El Bouaghi" },
+    { value: "05", label: "Batna" },
+    { value: "06", label: "Béjaïa" },
+    { value: "07", label: "Biskra" },
+    { value: "08", label: "Béchar" },
+    { value: "09", label: "Blida" },
+    { value: "10", label: "Bouira" },
+    { value: "11", label: "Tamanrasset" },
+    { value: "12", label: "Tébessa" },
+    { value: "13", label: "Tlemcen" },
+    { value: "14", label: "Tiaret" },
+    { value: "15", label: "Tizi Ouzou" },
+    { value: "16", label: "Algiers" },
+    { value: "17", label: "Djelfa" },
+    { value: "18", label: "Jijel" },
+    { value: "19", label: "Sétif" },
+    { value: "20", label: "Saïda" },
+    { value: "21", label: "Skikda" },
+    { value: "22", label: "Sidi Bel Abbès" },
+    { value: "23", label: "Annaba" },
+    { value: "24", label: "Guelma" },
+    { value: "25", label: "Constantine" },
+    { value: "26", label: "Médéa" },
+    { value: "27", label: "Mostaganem" },
+    { value: "28", label: "M'Sila" },
+    { value: "29", label: "Mascara" },
+    { value: "30", label: "Ouargla" },
+    { value: "31", label: "Oran" },
+    { value: "32", label: "El Bayadh" },
+    { value: "33", label: "Illizi" },
+    { value: "34", label: "Bordj Bou Arréridj" },
+    { value: "35", label: "Boumerdès" },
+    { value: "36", label: "El Tarf" },
+    { value: "37", label: "Tindouf" },
+    { value: "38", label: "Tissemsilt" },
+    { value: "39", label: "El Oued" },
+    { value: "40", label: "Khenchela" },
+    { value: "41", label: "Souk Ahras" },
+    { value: "42", label: "Tipaza" },
+    { value: "43", label: "Mila" },
+    { value: "44", label: "Aïn Defla" },
+    { value: "45", label: "Naâma" },
+    { value: "46", label: "Aïn Témouchent" },
+    { value: "47", label: "Ghardaïa" },
+    { value: "48", label: "Relizane" },
+  ];
+
+  const handleWilayaChange = (wilaya) => {
+    setSelectedWilayas((prevSelectedWilayas) => {
+      if (prevSelectedWilayas.includes(wilaya)) {
+        return prevSelectedWilayas.filter((item) => item !== wilaya);
+      } else {
+        return [...prevSelectedWilayas, wilaya];
+      }
+    });
+  };
 
   const handleUpdate = (field) => {
     setEdit("");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (field == "companyName") {
       if (companyName != userData.companyName) {
         if (companyName.trim().length < 3) {
@@ -25,17 +98,36 @@ function CompanyProfile() {
         } else {
           setUserData((old) => ({ ...old, companyName: companyName }));
           toast.success(`Filed ${field} can be updated`);
+          fetchData({
+            companyName: companyName,
+          });
         }
       }
-    } else if (field == "website") {
-      if (website != userData.website) {
-        const websiteRegex = /\b(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b/;
-        if (!websiteRegex.test(website.trim())) {
-          toast.error("Invalid Website !");
-          setWebsite(userData.website);
+    } else if (field == "description") {
+      if (description != userData.description) {
+        if (description == "") {
+          toast.error("Description is empty !!");
+          setDescription(userData.description);
         } else {
-          setUserData((old) => ({ ...old, website: website }));
+          setUserData((old) => ({ ...old, description: description }));
           toast.success(`Filed ${field} can be updated`);
+          fetchData({
+            description: description,
+          });
+        }
+      }
+    } else if (field == "email") {
+      if (email != userData.companyEmail) {
+        if (!emailRegex.test(email.trim())) {
+          toast.error("Please enter a valid email address");
+          setEmail(userData.companyEmail);
+          return;
+        } else {
+          setUserData((old) => ({ ...old, CompanyEmail: email }));
+          toast.success(`Filed ${field} can be updated`);
+          fetchData({
+            companyEmail: email,
+          });
         }
       }
     } else if (field == "address") {
@@ -46,6 +138,9 @@ function CompanyProfile() {
         } else {
           setUserData((old) => ({ ...old, address: address }));
           toast.success(`Filed ${field} can be updated`);
+          fetchData({
+            adress: address,
+          });
         }
       }
     } else if (field == "phone") {
@@ -53,17 +148,47 @@ function CompanyProfile() {
         const phoneRegex = /^^[0-9+\-_]{10,}$/;
         if (!phoneRegex.test(phone.trim())) {
           toast.error("Invalid phone !");
-          setPhone(userData.phone);
+          setPhone(userData.number);
         } else {
           setUserData((old) => ({ ...old, phone: phone }));
           toast.success(`Filed ${field} can be updated`);
+          fetchData({
+            number: phone,
+          });
         }
       }
+    } else if (field == "hasDeliveryDates") {
+      setHasDeliveryDates(!hasDeliveryDates);
+      fetchData({
+        hasDeliveryDates: !hasDeliveryDates,
+      });
+    } else if ((field = "wilayas")) {
+      console.log(selectedWilayas);
+      fetchData({
+        wilayas: selectedWilayas,
+      });
+      toast.success(`Filed ${field} updated`);
+    }
+  };
+  const fetchData = async (body) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:8080/api/v1/profile/` + userData.userId,
+        body,
+        {
+          headers: {
+            Authorization: "Bearer " + storedAccessToken,
+          },
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error:", error);
     }
   };
 
   const [hovered, setHovered] = useState(false);
-  const [companyPic, setCompanyPic] = useState(userData.companyPic);
+  const [companyPic, setCompanyPic] = useState(defaultProfilePic);
 
   const handleMouseEnter = () => {
     setHovered(true);
@@ -91,79 +216,8 @@ function CompanyProfile() {
     return newValue;
   };
 
-  const [newWilaya, setNewWilaya] = useReducer(updateReducer, { name: "", deliveryDate: "" });
-  const [addedWilayas, setAddedWilayas] = useReducer(updateReducer, userData.wilayas);
-  const [newRegion, setNewRegion] = useReducer(updateReducer, { name: "", deliveryDate: "" });
-  const [addedRegions, setAddedRegions] = useReducer(updateReducer, userData.regions);
-  const [newSector, setNewSector] = useReducer(updateReducer, { name: "", deliveryDate: "" });
-  const [addedSectors, setAddedSectors] = useReducer(updateReducer, userData.sectors);
-
-  //  add a new Wilaya
-  const handleAddWilaya = () => {
-    if (newWilaya.name.trim() && newWilaya.deliveryDate.trim()) {
-      setAddedWilayas([...addedWilayas, newWilaya]);
-      setNewWilaya({ name: "", deliveryDate: "" });
-    } else {
-      toast.error("Please enter both name and delivery date");
-    }
-  };
-
-  //  remove a Wilaya
-  const handleRemoveWilaya = (index) => {
-    const updatedWilayas = [...addedWilayas];
-    updatedWilayas.splice(index, 1);
-    setAddedWilayas(updatedWilayas);
-  };
-
-  //  add a new Region
-  const handleAddRegion = () => {
-    if (newRegion.name.trim() && newRegion.deliveryDate.trim()) {
-      setAddedRegions([...addedRegions, newRegion]);
-      setNewRegion({ name: "", deliveryDate: "" });
-    } else {
-      toast.error("Please enter both name and delivery date");
-    }
-  };
-
-  //  remove a Region
-  const handleRemoveRegion = (index) => {
-    const updatedRegions = [...addedRegions];
-    updatedRegions.splice(index, 1);
-    setAddedRegions(updatedRegions);
-  };
-
-  //  add a new Sector
-  const handleAddSector = () => {
-    if (newSector.name.trim() && newSector.deliveryDate.trim()) {
-      setAddedSectors([...addedSectors, newSector]);
-      setNewSector({ name: "", deliveryDate: "" });
-    } else {
-      toast.error("Please enter both name and delivery date");
-    }
-  };
-
-  //  remove a Sector
-  const handleRemoveSector = (index) => {
-    const updatedSectors = [...addedSectors];
-    updatedSectors.splice(index, 1);
-    setAddedSectors(updatedSectors);
-  };
-
-  const saveUpdates = () => {
-    if (updated) {
-      setUserData((old) => ({
-        ...old,
-        wilayas: addedWilayas,
-        regions: addedRegions,
-        sectors: addedSectors,
-      }));
-      toast.success("Updates Saved Succesfully");
-      setUpdated(false);
-    }
-  };
-
   return (
-    <div className="h-full max-w-[1000px] w-full mt-14">
+    <div className="h-full max-w-[1000px] w-full ">
       <div className="flex justify-center">
         <div className="flex flex-col items-center w-1/3 pt-3">
           <div
@@ -171,7 +225,11 @@ function CompanyProfile() {
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
-            <img src={companyPic} alt="Profile Picture" className="rounded-full size-44" />
+            <img
+              src={companyPic}
+              alt="Profile Picture"
+              className="rounded-full size-44"
+            />
             {hovered && (
               <div className="absolute top-0 left-0 bg-black rounded-full size-full bg-opacity-30">
                 <input type="file" className="hidden" />
@@ -186,31 +244,14 @@ function CompanyProfile() {
                 />
               </div>
             )}
-            <div>
-              {companyPic != userData.companyPic ? (
-                <div className="relative flex gap-4 mt-5 right-2">
-                  <button
-                    className="cancelBtn min-w-[90px]"
-                    onClick={() => {
-                      setCompanyPic(userData.companyPic);
-                    }}
-                  >
-                    Cancel
-                  </button>
-                  <button className="approveBtn min-w-[90px]" onClick={updateNewPic}>
-                    Update
-                  </button>
-                </div>
-              ) : (
-                <></>
-              )}
-            </div>
           </div>
         </div>
 
         <div className="w-2/3">
           <div className="flex px-8 py-4 border-b-2 border-gray-300">
-            <span className="w-1/3">Company Name</span>
+            <span className="w-1/3" style={{ fontWeight: "700" }}>
+              Company Name
+            </span>
 
             <div className="w-2/3">
               {edit == "companyName" ? (
@@ -226,7 +267,7 @@ function CompanyProfile() {
                   }}
                 />
               ) : (
-                <span className="font-semibold ">{companyName}</span>
+                <span className="font-medium ">{companyName}</span>
               )}
             </div>
             <span>
@@ -251,47 +292,9 @@ function CompanyProfile() {
           </div>
 
           <div className="flex px-8 py-4 border-b-2 border-gray-300">
-            <span className="w-1/3">Website</span>
-            <div className="w-2/3">
-              {edit == "website" ? (
-                <input
-                  type="text"
-                  value={website}
-                  onChange={(e) => setWebsite(e.target.value)}
-                  className="border-2 border-gray-400 rounded"
-                  onKeyDown={(e) => {
-                    if (e.key == "Enter") {
-                      handleUpdate("website");
-                    }
-                  }}
-                />
-              ) : (
-                <span className="font-semibold "> {website}</span>
-              )}
-            </div>
-            <span>
-              {edit == "website" ? (
-                <img
-                  src={_doneIcon}
-                  className="h-6 hover:cursor-pointer"
-                  onClick={() => {
-                    handleUpdate("website");
-                  }}
-                />
-              ) : (
-                <img
-                  src={_editIcon}
-                  className=" hover:cursor-pointer"
-                  onClick={() => {
-                    setEdit("website");
-                  }}
-                />
-              )}
+            <span className="w-1/3" style={{ fontWeight: "700" }}>
+              Address
             </span>
-          </div>
-
-          <div className="flex px-8 py-4 border-b-2 border-gray-300">
-            <span className="w-1/3">Address</span>
 
             <div className="w-2/3">
               {edit == "address" ? (
@@ -307,7 +310,7 @@ function CompanyProfile() {
                   }}
                 />
               ) : (
-                <span className="font-semibold ">{address}</span>
+                <span className="font-medium ">{address}</span>
               )}
             </div>
             <span>
@@ -332,7 +335,9 @@ function CompanyProfile() {
           </div>
 
           <div className="flex px-8 py-4 border-b-2 border-gray-300">
-            <span className="w-1/3">Phone</span>
+            <span className="w-1/3" style={{ fontWeight: "700" }}>
+              Phone
+            </span>
             <div className="w-2/3">
               {edit == "phone" ? (
                 <input
@@ -347,7 +352,7 @@ function CompanyProfile() {
                   }}
                 />
               ) : (
-                <span className="font-semibold "> {phone}</span>
+                <span className="font-medium "> {phone}</span>
               )}
             </div>
             <span>
@@ -370,205 +375,190 @@ function CompanyProfile() {
               )}
             </span>
           </div>
-        </div>
-      </div>
-      <div className="pt-16">
-        <div className="flex flex-col w-full overflow-y-auto">
-          <div className="flex flex-col items-center justify-center flex-grow pb-[12vh]">
-            <div className="flex flex-col items-center mt-0">
-              <div className="mb-6">
-                <h2 className="mb-3 font-medium ">Add new Wilaya</h2>
-                <div className="">
-                  <input
-                    placeholder="Name"
-                    className="w-40 h-10 py-2 pl-4 mr-0 border-[1px] border-supplair-primary rounded-xl focus:outline-none focus:border-2"
-                    type="text"
-                    value={newWilaya.name}
-                    onChange={(e) => setNewWilaya({ ...newWilaya, name: e.target.value })}
-                  />
-                  <input
-                    placeholder="Delivery Date"
-                    className="w-40 pr-2 h-10 py-2 pl-4 ml-3 border-[1px] border-supplair-primary mr-7 rounded-xl focus:outline-none focus:border-2"
-                    type="text"
-                    value={newWilaya.deliveryDate}
-                    onFocus={(e) => e.target.setAttribute("type", "date")}
-                    onBlur={(e) => e.target.setAttribute("type", "text")}
-                    onChange={(e) =>
-                      setNewWilaya({
-                        ...newWilaya,
-                        deliveryDate: e.target.value,
-                      })
+          {/* New Radio Buttons for Delivery Dates */}
+          <div
+            className="flex px-8 py-4 border-b-2 border-gray-300"
+            style={{ alignItems: "flex-start", marginBottom: "1rem" }}
+          >
+            <span className="w-4/6" style={{ fontWeight: "700" }}>
+              Does the company have delivery dates?
+            </span>
+            <div className="w-2/6">
+              <input
+                id="deliveryDatesYes"
+                name="deliveryDates"
+                type="radio"
+                className="h-4 w-4 text-supplair-primary border-gray-300 focus:ring-supplair-primary mr-1"
+                checked={hasDeliveryDates === true}
+                onChange={() => {
+                  handleUpdate("hasDeliveryDates");
+                }}
+              />
+              <label htmlFor="deliveryDatesYes" className="text-gray-500 mr-4">
+                Yes
+              </label>
+              <input
+                id="deliveryDatesNo"
+                name="deliveryDates"
+                type="radio"
+                className="h-4 w-4 text-supplair-primary border-gray-300 focus:ring-supplair-primary mr-1"
+                checked={hasDeliveryDates === false}
+                onChange={() => {
+                  handleUpdate("hasDeliveryDates");
+                }}
+              />
+              <label htmlFor="deliveryDatesNo" className="text-gray-500">
+                No
+              </label>
+            </div>
+          </div>
+          <div className="flex px-8 py-4 border-b-2 border-gray-300">
+            <span className="w-1/3" style={{ fontWeight: "700" }}>
+              Company email
+            </span>
+
+            <div className="w-2/3">
+              {edit == "email" ? (
+                <input
+                  type="text"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="border-2 border-gray-400 rounded"
+                  onKeyDown={(e) => {
+                    if (e.key == "Enter") {
+                      handleUpdate("email");
                     }
-                  />
-                  <button
-                    className="mr-0 font-bold text-supplair-primary font-raleway hover:underline focus:outline-none"
-                    onClick={handleAddWilaya}
-                  >
-                    Add
-                  </button>
-                </div>
-              </div>
-              {addedWilayas.length > 0 && (
-                <div className="mb-6">
-                  <h2 className="mb-3 font-medium">Wilaya(s)</h2>
-                  {addedWilayas.map((wilaya, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center mb-2 border-b-2 border-supplair-primary"
-                    >
-                      <input
-                        className="w-40 h-10 py-2 pl-4 mr-0"
-                        type="text"
-                        value={wilaya.name}
-                        readOnly
-                      />
-                      <input
-                        className="w-40 h-10 py-2 pl-4 pr-2 ml-3 mr-7"
-                        type="text"
-                        value={wilaya.deliveryDate}
-                        readOnly
-                      />
-                      <button
-                        className="mr-0 font-bold text-red-600 font-raleway hover:underline focus:outline-none"
-                        onClick={() => handleRemoveWilaya(index)}
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-              <div className="mb-6">
-                <h2 className="mb-3 font-medium ">Add new Region</h2>
-                <div className="">
-                  <input
-                    placeholder="Name"
-                    className="w-40 h-10 py-2 pl-4 mr-0 border-[1px] border-supplair-primary rounded-xl focus:outline-none focus:border-2"
-                    type="text"
-                    value={newRegion.name}
-                    onChange={(e) => setNewRegion({ ...newRegion, name: e.target.value })}
-                  />
-                  <input
-                    placeholder="Delivery Date"
-                    className="w-40 pr-2 h-10 py-2 pl-4 ml-3 border-[1px] border-supplair-primary mr-7 rounded-xl focus:outline-none focus:border-2"
-                    type="text"
-                    value={newRegion.deliveryDate}
-                    onFocus={(e) => e.target.setAttribute("type", "date")}
-                    onBlur={(e) => e.target.setAttribute("type", "text")}
-                    onChange={(e) =>
-                      setNewRegion({
-                        ...newRegion,
-                        deliveryDate: e.target.value,
-                      })
-                    }
-                  />
-                  <button
-                    className="mr-0 font-bold text-supplair-primary font-raleway hover:underline focus:outline-none"
-                    onClick={handleAddRegion}
-                  >
-                    Add
-                  </button>
-                </div>
-              </div>
-              {addedRegions.length > 0 && (
-                <div className="mb-6">
-                  <h2 className="mb-3 font-medium ">Region(s)</h2>
-                  {addedRegions.map((region, index) => (
-                    <div key={index} className="flex items-center mb-2">
-                      <input
-                        className="w-40 h-10 py-2 pl-4 mr-0 border-[1px] border-supplair-primary rounded-xl focus:outline-none focus:border-2"
-                        type="text"
-                        value={region.name}
-                        readOnly
-                      />
-                      <input
-                        className="w-40 pr-2 h-10 py-2 pl-4 ml-3 border-[1px] border-supplair-primary mr-7 rounded-xl focus:outline-none focus:border-2"
-                        type="text"
-                        value={region.deliveryDate}
-                        readOnly
-                      />
-                      <button
-                        className="mr-0 font-bold text-red-600 font-raleway hover:underline focus:outline-none"
-                        onClick={() => handleRemoveRegion(index)}
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-              <div className="mb-6">
-                <h2 className="mb-3 font-medium ">Add new Sector</h2>
-                <div className="">
-                  <input
-                    placeholder="Name"
-                    className="w-40 h-10 py-2 pl-4 mr-0 border-[1px] border-supplair-primary rounded-xl focus:outline-none focus:border-2"
-                    type="text"
-                    value={newSector.name}
-                    onChange={(e) => setNewSector({ ...newSector, name: e.target.value })}
-                  />
-                  <input
-                    placeholder="Delivery Date"
-                    className="w-40 pr-2 h-10 py-2 pl-4 ml-3 border-[1px] border-supplair-primary mr-7 rounded-xl focus:outline-none focus:border-2"
-                    type="text"
-                    value={newSector.deliveryDate}
-                    onFocus={(e) => e.target.setAttribute("type", "date")}
-                    onBlur={(e) => e.target.setAttribute("type", "text")}
-                    onChange={(e) =>
-                      setNewSector({
-                        ...newSector,
-                        deliveryDate: e.target.value,
-                      })
-                    }
-                  />
-                  <button
-                    className="mr-0 font-bold text-supplair-primary font-raleway hover:underline focus:outline-none"
-                    onClick={handleAddSector}
-                  >
-                    Add
-                  </button>
-                </div>
-              </div>
-              {addedSectors.length > 0 && (
-                <div className="mb-6">
-                  <h2 className="mb-3 font-medium ">Sector(s)</h2>
-                  {addedSectors.map((sector, index) => (
-                    <div key={index} className="flex items-center mb-2">
-                      <input
-                        className="w-40 h-10 py-2 pl-4 mr-0 border-[1px] border-supplair-primary rounded-xl focus:outline-none focus:border-2"
-                        type="text"
-                        value={sector.name}
-                        readOnly
-                      />
-                      <input
-                        className="w-40 pr-2 h-10 py-2 pl-4 ml-3 border-[1px] border-supplair-primary mr-7 rounded-xl focus:outline-none focus:border-2"
-                        type="text"
-                        value={sector.deliveryDate}
-                        readOnly
-                      />
-                      <button
-                        className="mr-0 font-bold text-red-600 font-raleway hover:underline focus:outline-none"
-                        onClick={() => handleRemoveSector(index)}
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  ))}
-                </div>
+                  }}
+                />
+              ) : (
+                <span className="font-medium ">{email}</span>
               )}
             </div>
-            <div className="flex justify-center w-full">
-              <button
-                onClick={saveUpdates}
-                className="w-full h-12 text-white bg-supplair-primary rounded-xl max-w-[400px] disabled:bg-gray-500"
-                disabled={!updated}
+            <span>
+              {edit == "email" ? (
+                <img
+                  src={_doneIcon}
+                  className="h-6 hover:cursor-pointer"
+                  onClick={() => {
+                    handleUpdate("email");
+                  }}
+                />
+              ) : (
+                <img
+                  src={_editIcon}
+                  className=" hover:cursor-pointer"
+                  onClick={() => {
+                    setEdit("email");
+                  }}
+                />
+              )}
+            </span>
+          </div>
+          {/* */}
+          <div className="flex px-8 py-4 border-b-2 border-gray-300">
+            <span className="w-1/3" style={{ fontWeight: "700" }}>
+              Description
+            </span>
+
+            <div className="w-2/3">
+              {edit === "description" ? (
+                <textarea
+                  type="text"
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="border-2 border-gray-400 rounded"
+                  style={{ width: "90%" }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleUpdate("description");
+                    }
+                  }}
+                  value={description}
+                />
+              ) : (
+                <textarea
+                  disabled
+                  className="font-medium"
+                  style={{ width: "90%", height: "100px" }}
+                  value={description}
+                />
+              )}
+            </div>
+
+            <span>
+              {edit == "description" ? (
+                <img
+                  src={_doneIcon}
+                  className="h-6 hover:cursor-pointer"
+                  onClick={() => {
+                    handleUpdate("description");
+                  }}
+                />
+              ) : (
+                <img
+                  src={_editIcon}
+                  className=" hover:cursor-pointer"
+                  onClick={() => {
+                    setEdit("description");
+                  }}
+                />
+              )}
+            </span>
+          </div>
+          {/* New Checkboxes for Wilayas */}
+          <div className="flex px-8 py-4 border-b-2 border-gray-300 ">
+            <label style={{ fontWeight: "700" }} className="w-5/12">
+              Select Wilayas for Delivery:
+            </label>
+            <div className="grid grid-cols-1 gap-2 max-h-40 overflow-y-scroll w-7/12">
+              <div
+                className="overflow-y-scroll border border-gray-300 rounded-xl p-2"
+                style={{ height: "100px", width: "95%" }}
               >
-                Save
-              </button>
+                {wilayas.map((wilaya) => (
+                  <div key={wilaya.value} className="flex items-center w-12/12">
+                    <input
+                      id={`wilaya-${wilaya.value}`}
+                      type="checkbox"
+                      disabled={edit != "wilayas"}
+                      className="h-4 w-4 text-supplair-primary border-gray-300 focus:ring-supplair-primary mr-2"
+                      checked={selectedWilayas.includes(wilaya.label)}
+                      onChange={() => {
+                        handleWilayaChange(wilaya.label);
+                      }}
+                    />
+                    <label
+                      htmlFor={`wilaya-${wilaya.value}`}
+                      className="text-gray-500"
+                    >
+                      {wilaya.label}
+                    </label>
+                  </div>
+                ))}
+              </div>
             </div>
+            <span>
+              {edit == "wilayas" ? (
+                <img
+                  src={_doneIcon}
+                  className="h-6 hover:cursor-pointer"
+                  onClick={() => {
+                    handleUpdate("wilayas");
+                  }}
+                />
+              ) : (
+                <img
+                  src={_editIcon}
+                  className=" hover:cursor-pointer"
+                  onClick={() => {
+                    setEdit("wilayas");
+                  }}
+                />
+              )}
+            </span>
           </div>
         </div>
       </div>
+      <div style={{ paddingBottom: "100px" }}></div>
     </div>
   );
 }
