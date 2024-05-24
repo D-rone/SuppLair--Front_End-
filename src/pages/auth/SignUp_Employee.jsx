@@ -72,12 +72,12 @@ export default function SignUp_Employee() {
         <span className="font-semibold font-Raleway ">
           Already have an account ?
         </span>
-        <NavLink
-          to="/login"
+        <a
+          href="/login"
           className="ml-2 font-bold text-supplair-primary font-Raleway"
         >
           Log In
-        </NavLink>
+        </a>
       </div>
       <div className="flex">
         <SidePage />
