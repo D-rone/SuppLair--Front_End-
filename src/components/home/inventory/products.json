@@ -26,7 +26,7 @@
     "discount": null,
     "description": "High-end smartphone with advanced features.",
     "reference": "REF-SMARTPHONE-001",
-    "quantity": 100,
+    "quantity": 9,
     "minimumQuantity": 10,
     "imagePaths": ["path/to/smartphone-image1.jpg", "path/to/smartphone-image2.jpg"],
     "numberOfRates": 25,

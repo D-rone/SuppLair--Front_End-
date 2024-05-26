@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import PopUp1 from "./PopUp1";
 import { toast } from "react-toastify";
-import { FaDownload } from "react-icons/fa6";
 import productsData from "../home/inventory/groupProducts.json";
+import { FaDownload } from "react-icons/fa";
 
 function AddProductPopup({ close, product }) {
   const [formData, setFormData] = useState({
@@ -11,7 +11,13 @@ function AddProductPopup({ close, product }) {
     image: "",
     price: "",
     quantity: "",
-    description: "", 
+    description: "",
+    reference: "",
+    discount: {
+      value: 0,
+      startDate: "",
+      endDate: "",
+    },
   });
 
   useEffect(() => {
@@ -41,7 +47,19 @@ function AddProductPopup({ close, product }) {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name.startsWith("discount.")) {
+      const discountField = name.split(".")[1];
+      setFormData({
+        ...formData,
+        discount: {
+          ...formData.discount,
+          [discountField]: value,
+        },
+      });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleImageChange = (e) => {
@@ -57,104 +75,168 @@ function AddProductPopup({ close, product }) {
 
   return (
     <PopUp1 closeMe={closePopup} title="Add Product">
-      <div className="p-4">
-        <form onSubmit={handleAddProduct}>
-          <div className="flex flex-col gap-1 mb-6 text-sm font-semibold">
-            <span>Product Name :</span>
-            <input
-              type="text"
-              required
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full h-10 px-6 border-2 border-gray-400 rounded-lg focus:outline-supplair-primary"
-            />
-          </div>
-          <div className="flex flex-col gap-1 mb-6 text-sm font-semibold">
-            <span>Price :</span>
-            <input
-              type="number"
-              required
-              name="price"
-              value={formData.price}
-              onChange={handleChange}
-              className="w-full h-10 px-6 border-2 border-gray-400 rounded-lg focus:outline-supplair-primary"
-              min="0"
-            />
-          </div>
-          <div className="flex flex-col gap-1 mb-6 text-sm font-semibold">
-            <span>Quantity :</span>
-            <input
-              type="number"
-              required
-              name="quantity"
-              value={formData.quantity}
-              onChange={handleChange}
-              className="w-full h-10 px-6 border-2 border-gray-400 rounded-lg focus:outline-supplair-primary"
-              min="0"
-            />
-          </div>
-          <div className="flex flex-col gap-1 mb-6 text-sm font-semibold">
-            <span>Group :</span>
-            <select
-              name="group"
-              value={formData.group}
-              onChange={handleChange}
-              className="w-full h-10 px-6 border-2 border-gray-400 rounded-lg focus:outline-supplair-primary"
-            >
-              <option value="">Select Group</option>
-              {productsData.map((product) => (
-                <option key={product.id} value={product.name}>
-                  {product.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex flex-row gap-1 mb-6 text-sm font-semibold">
-            <label htmlFor="image" className="flex items-center gap-2">
-              <span>Image :</span>
+      <form onSubmit={handleAddProduct} className="p-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* First Column */}
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col">
+              <span>Product Name :</span>
               <input
+                type="text"
+                required
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full h-10 px-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span>Price :</span>
+              <input
+                type="number"
+                required
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                className="w-full h-10 px-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                min="0"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span>Quantity :</span>
+              <input
+                type="number"
+                required
+                name="quantity"
+                value={formData.quantity}
+                onChange={handleChange}
+                className="w-full h-10 px-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                min="0"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span>Group :</span>
+              <select
+                name="group"
+                value={formData.group}
+                onChange={handleChange}
+                className="w-full h-10 px-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              >
+                <option value="">Select Group</option>
+                {productsData.map((product) => (
+                  <option key={product.id} value={product.name}>
+                    {product.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col">
+              <span>Reference :</span>
+              <input
+                type="text"
+                name="reference"
+                value={formData.reference}
+                onChange={handleChange}
+                className="w-full h-10 px-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              />
+            </div>
+          </div>
+
+          {/* Second Column */}
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col">
+              <span>Discount Value :</span>
+              <input
+                type="number"
+                name="discount.value"
+                value={formData.discount.value}
+                onChange={handleChange}
+                className="w-full h-10 px-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                min="0"
+                max="100"
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex flex-col">
+                <span>Discount Start Date :</span>
+                <input
+                  type="date"
+                  name="discount.startDate"
+                  value={formData.discount.startDate}
+                  onChange={handleChange}
+                  className="w-full h-10 px-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              <div className="flex flex-col">
+                <span>Discount End Date :</span>
+                <input
+                  type="date"
+                  name="discount.endDate"
+                  value={formData.discount.endDate}
+                  onChange={handleChange}
+                  className="w-full h-10 px-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                />
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span>image :</span>
+              <label
+                htmlFor="image-upload"
+                className="w-1/5 h-10 px-4 border-2 border-gray-300 rounded-lg flex items-center justify-center cursor-pointer focus:outline-none focus:border-blue-500"
+              >
+                <FaDownload />
+              </label>
+              <input
+                id="image-upload"
                 type="file"
-                id="image"
-                name="image"
                 accept="image/*"
                 onChange={handleImageChange}
                 className="hidden"
               />
-              <span className="w-fit h-10 px-6 border-2 border-gray-400 rounded-lg flex items-center justify-center cursor-pointer bg-white hover:bg-gray-100">
-                <FaDownload style={{ fontSize: "1rem" }} className="w-24 " />
-              </span>
-            </label>
-            {formData.image && (
-              <img
-                src={formData.image}
-                alt="Selected Image"
-                className="mt-2 w-16 h-16 object-cover rounded-xl"
-              />
-            )}
-          </div>
-          <div className="flex flex-col gap-1 mb-6 text-sm font-semibold">
-            <span>Description :</span>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              className="w-full h-24 px-6 py-3 border-2 border-gray-400 rounded-lg focus:outline-supplair-primary"
-            />
-          </div>
+              {formData.image && (
+                <div className="relative">
+                  <img
+                    src={formData.image}
+                    alt="Product Preview"
+                    className="w-20 h-20 object-cover rounded-lg"
+                  />
+                  <a
+                    href={formData.image}
+                    download
+                    className="absolute bottom-0 right-0 p-1 bg-gray-800 rounded-full text-white"
+                  >
+                  </a>
+                </div>
+              )}
+            </div>
 
-          <div className="flex justify-end gap-5">
-            <button
-              onClick={closePopup}
-              className="cancelBtn"
-              type="button"
-            >
-              Cancel
-            </button>
-            <input type="submit" value="Save" className="approveBtn" />
+            <div className="flex flex-col">
+              <span>Description :</span>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                className="w-full h-24 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              />
+            </div>
           </div>
-        </form>
-      </div>
+        </div>
+
+        <div className="flex justify-end gap-5 mt-4">
+          <button
+            onClick={closePopup}
+            className="px-4 py-2 bg-gray-400 text-gray-800 rounded-lg hover:bg-gray-300 focus:outline-none"
+            type="button"
+          >
+            Cancel
+          </button>
+          <input
+            type="submit"
+            value="Save"
+            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none"
+          />
+        </div>
+      </form>
     </PopUp1>
   );
 }

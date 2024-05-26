@@ -6,11 +6,11 @@ function PopUp1({ closeMe, title, children }) {
   };
   return (
     <div
-      className="fixed top-0 left-0 z-50 flex items-center justify-center w-screen h-screen bg-supplair-popUpOverlay"
+      className="fixed top-0 left-0 z-50 flex items-center justify-center w-screen  h-screen bg-supplair-popUpOverlay"
       onClick={closeMe}
     >
       <div
-        className="h-fit min-h-[300px] max-w-[600px] w-[30%] bg-white min-w-[400px] rounded-xl"
+        className="h-fit min-h-[300px] w-1/2 w-[30%] bg-white min-w-[400px] rounded-xl"
         onClick={stop_propagation}
       >
         <div className="flex items-center text-lg font-semibold text-white rounded-t-xl h-14 bg-supplair-primary">

@@ -33,9 +33,9 @@ function Products() {
     if (filterStatus === "all") {
       filteredProducts = dummyData;
     } else if (filterStatus === "available") {
-      filteredProducts = dummyData.filter((product) => product.quantity > 0);
+      filteredProducts = dummyData.filter((product) => product.quantity > product.minimumQuantity);
     } else if (filterStatus === "out_of_stock") {
-      filteredProducts = dummyData.filter((product) => product.quantity === 0);
+      filteredProducts = dummyData.filter((product) => product.quantity < product.minimumQuantity);
     }
     setProducts(filteredProducts);
   };
@@ -49,7 +49,7 @@ function Products() {
     // Check if quantity is 0 and set inactive status
     const updatedProducts = products.map((product) => ({
       ...product,
-      status: product.quantity === 0 ? "inactive" : "active",
+      status: product.quantity < product.minimumQuantity ? "inactive" : "active",
     }));
     setProducts(updatedProducts);
   }, [products]);
@@ -102,7 +102,7 @@ function Products() {
               <React.Fragment key={product.productId}>
                 <tr
                   className={`border-b-2 border-gray-300 h-20 ${
-                    product.quantity === 0 ? "bg-gray-200" : ""
+                    product.quantity < product.minimumQuantity ? "bg-gray-200" : ""
                   }`}
                 >
                   <td
@@ -193,6 +193,19 @@ function Products() {
                         </div>
                         <div>
                           <strong>Reviews:</strong> {product.numberOfRates}
+                        </div>
+                        <div>
+                          <strong>Reference:</strong> {product.reference}
+                        </div>
+                        <div>
+                          <strong>Discount:</strong>{" "}
+                          {product.discount
+                            ? `${product.discount.value}% (Valid from ${new Date(
+                                product.discount.startDate
+                              ).toLocaleDateString()} to ${new Date(
+                                product.discount.endDate
+                              ).toLocaleDateString()})`
+                            : "No Discount"}
                         </div>
                       </div>
                     </td>
