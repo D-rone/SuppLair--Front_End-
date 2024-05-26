@@ -116,7 +116,7 @@ function Products() {
                           : _defaultPic
                       }
                       className="w-10 h-10 inline rounded-full mr-4"
-                      alt={product.name}
+                      
                     />
                     <div className="font-regular inline text-supplair-primary">
                       <h3 className="whitespace-no-wrap">{product.name}</h3>
