@@ -1,27 +1,23 @@
 [
   {
-    "id": 1,
-    "name": "Group Product 1",
-    "category": "Electronics"
+    "productsGroupId": "group-1",
+    "name": "Electronics Group",
+    "productsIds": ["1", "2"],
+    "categoryId": "category-1",
+    "companyId": 123
   },
   {
-    "id": 2,
-    "name": "Group Product 2",
-    "category": "Home & Kitchen"
+    "productsGroupId": "group-2",
+    "name": "Fashion Group",
+    "productsIds": ["3", "4"],
+    "categoryId": "category-2",
+    "companyId": 456
   },
   {
-    "id": 3,
-    "name": "Group Product 3",
-    "category": "Clothing & Accessories"
-  },
-  {
-    "id": 5,
-    "name": "Group Product 1",
-    "category": "Electronics"
-  },
-  {
-    "id": 6,
-    "name": "Group Product 2",
-    "category": "Home & Kitchen"
+    "productsGroupId": "group-3",
+    "name": "Footwear Group",
+    "productsIds": ["5"],
+    "categoryId": "category-3",
+    "companyId": 789
   }
 ]
