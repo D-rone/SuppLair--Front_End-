@@ -13,9 +13,11 @@ export default function SignUp_3() {
   const [organizationNameFocused, setOrganizationNameFocused] = useState(false);
   const [newWilaya, setNewWilaya] = useState({ name: "", deliveryDate: "" });
   const [addedWilayas, setAddedWilayas] = useState([]);
-  const [newRegion, setNewRegion] = useState({ name: "", deliveryDate: "" });
-  const [addedRegions, setAddedRegions] = useState([]);
-  const [newSector, setNewSector] = useState({ name: "", deliveryDate: "" });
+  const [newSector, setNewSector] = useState({
+    wilaya: "",
+    name: "",
+    deliveryDate: "",
+  });
   const [addedSectors, setAddedSectors] = useState([]);
 
   // Function to handle form submission
@@ -47,30 +49,17 @@ export default function SignUp_3() {
     setAddedWilayas(updatedWilayas);
   };
 
-  //  add a new Region
-  const handleAddRegion = () => {
-    if (newRegion.name.trim() && newRegion.deliveryDate.trim()) {
-      setAddedRegions([...addedRegions, newRegion]);
-      setNewRegion({ name: "", deliveryDate: "" });
-    } else {
-      toast.error("Please enter both name and delivery date");
-    }
-  };
-
-  //  remove a Region
-  const handleRemoveRegion = (index) => {
-    const updatedRegions = [...addedRegions];
-    updatedRegions.splice(index, 1);
-    setAddedRegions(updatedRegions);
-  };
-
   //  add a new Sector
   const handleAddSector = () => {
-    if (newSector.name.trim() && newSector.deliveryDate.trim()) {
+    if (
+      newSector.wilaya.trim() &&
+      newSector.name.trim() &&
+      newSector.deliveryDate.trim()
+    ) {
       setAddedSectors([...addedSectors, newSector]);
-      setNewSector({ name: "", deliveryDate: "" });
+      setNewSector({ wilaya: "", name: "", deliveryDate: "" });
     } else {
-      toast.error("Please enter both name and delivery date");
+      toast.error("Please enter all fields");
     }
   };
 
@@ -109,10 +98,10 @@ export default function SignUp_3() {
                 <div className="mb-6">
                   <label
                     htmlFor="organizationName"
-                    className={`block text-base font-normal mb-1 ${
+                    className={`block text-base font-semibold mb-1 ${
                       organizationNameFocused
                         ? "text-supplair-primary"
-                        : "text-gray-500"
+                        : " font-bold"
                     }`}
                   >
                     {" "}
@@ -126,18 +115,83 @@ export default function SignUp_3() {
                     onChange={(e) => setOrganizationName(e.target.value)}
                   />
                 </div>
-                <div className="mb-6">
+                <div className="mb-6 mr-22">
+                  <h2 className="font-bold mb-3">Delivery per Wilaya(s)</h2>
                   <h2 className=" font-medium mb-3">Add new Wilaya</h2>
                   <div className=" ">
-                    <input
-                      placeholder="Name"
+                    <select
                       className="h-10 py-2 pl-4 border-2 border-supplair-primary mr-0 w-40 rounded-xl focus:outline-none focus:border-2"
-                      type="text"
                       value={newWilaya.name}
                       onChange={(e) =>
                         setNewWilaya({ ...newWilaya, name: e.target.value })
                       }
-                    />
+                    >
+                      <option value="">Select Wilaya</option>
+                      {[
+                        "Adrar",
+                        "Chlef",
+                        "Laghouat",
+                        "Oum El Bouaghi",
+                        "Batna",
+                        "Bejaia",
+                        "Biskra",
+                        "Bechar",
+                        "Blida",
+                        "Bouira",
+                        "Tamanrasset",
+                        "Tebessa",
+                        "Tlemcen",
+                        "Tiaret",
+                        "Tizi Ouzou",
+                        "Algiers",
+                        "Djelfa",
+                        "Jijel",
+                        "Setif",
+                        "Saïda",
+                        "Skikda",
+                        "Sidi Bel Abbes",
+                        "Annaba",
+                        "Guelma",
+                        "Constantine",
+                        "Medea",
+                        "Mostaganem",
+                        "Msila",
+                        "Mascara",
+                        "Ouargla",
+                        "Oran",
+                        "El Bayadh",
+                        "Illizi",
+                        "Bordj Bou Arreridj",
+                        "Boumerdes",
+                        "El Tarf",
+                        "Tindouf",
+                        "Tissemsilt",
+                        "El Oued",
+                        "Khenchela",
+                        "Souk Ahras",
+                        "Tipaza",
+                        "Mila",
+                        "Aïn Defla",
+                        "Naama",
+                        "Aïn Temouchent",
+                        "Ghardaia",
+                        "Relizane",
+                        "Timimoun",
+                        "Bordj Badji Mokhtar",
+                        "Ouled Djellal",
+                        "Béni Abbès",
+                        "In Salah",
+                        "In Guezzam",
+                        "Touggourt",
+                        "Djanet",
+                        "El M'Ghaier",
+                        "El Meniaa",
+                      ].map((wilaya, index) => (
+                        <option key={index} value={wilaya}>
+                          {index + 1}- {wilaya}
+                        </option>
+                      ))}
+                    </select>
                     <input
                       placeholder="Delivery Date"
                       className="h-10 py-2 pl-4 border-2 border-supplair-primary mr-7 ml-3 w-40 rounded-xl focus:outline-none focus:border-2"
@@ -161,7 +215,7 @@ export default function SignUp_3() {
                   </div>
                 </div>
                 {addedWilayas.length > 0 && (
-                  <div className="mb-6">
+                  <div className="mb-6 ml-9">
                     <h2 className=" font-medium mb-3">Wilaya(s)</h2>
                     {addedWilayas.map((wilaya, index) => (
                       <div key={index} className="flex items-center mb-2">
@@ -187,73 +241,87 @@ export default function SignUp_3() {
                     ))}
                   </div>
                 )}
-                <div className="mb-6">
-                  <h2 className=" font-medium mb-3">Add new Region</h2>
-                  <div className=" ">
-                    <input
-                      placeholder="Name"
-                      className="h-10 py-2 pl-4 border-2 border-supplair-primary mr-0 w-40 rounded-xl focus:outline-none focus:border-2"
-                      type="text"
-                      value={newRegion.name}
-                      onChange={(e) =>
-                        setNewRegion({ ...newRegion, name: e.target.value })
-                      }
-                    />
-                    <input
-                      placeholder="Delivery Date"
-                      className="h-10 py-2 pl-4 border-2 border-supplair-primary mr-7 ml-3 w-40 rounded-xl focus:outline-none focus:border-2"
-                      type="text"
-                      value={newRegion.deliveryDate}
-                      onFocus={(e) => e.target.setAttribute("type", "date")}
-                      onBlur={(e) => e.target.setAttribute("type", "text")}
-                      onChange={(e) =>
-                        setNewRegion({
-                          ...newRegion,
-                          deliveryDate: e.target.value,
-                        })
-                      }
-                    />
-                    <button
-                      className="text-supplair-primary font-raleway font-bold hover:underline focus:outline-none mr-0"
-                      onClick={handleAddRegion}
-                    >
-                      Add
-                    </button>
-                  </div>
-                </div>
-                {addedRegions.length > 0 && (
-                  <div className="mb-6">
-                    <h2 className=" font-medium mb-3">Region(s)</h2>
-                    {addedRegions.map((region, index) => (
-                      <div key={index} className="flex items-center mb-2">
-                        <input
-                          className="h-10 py-2 pl-4 border-2 border-supplair-primary mr-0 w-40 rounded-xl focus:outline-none focus:border-2"
-                          type="text"
-                          value={region.name}
-                          readOnly
-                        />
-                        <input
-                          className="h-10 py-2 pl-4 border-2 border-supplair-primary mr-7 ml-3 w-40 rounded-xl focus:outline-none focus:border-2"
-                          type="text"
-                          value={region.deliveryDate}
-                          readOnly
-                        />
-                        <button
-                          className="text-red-600 font-raleway font-bold hover:underline focus:outline-none mr-0"
-                          onClick={() => handleRemoveRegion(index)}
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <div className="mb-6">
+
+                <div className="mb-6 ml-44">
+                  <h2 className="font-bold mb-3">Delivery per Sector(s)</h2>
                   <h2 className=" font-medium mb-3">Add new Sector</h2>
                   <div className=" ">
+                    <select
+                      className="h-10 py-2 pl-4  border-2 border-supplair-primary mr-5 w-40 rounded-xl focus:outline-none focus:border-2"
+                      value={newSector.wilaya}
+                      onChange={(e) =>
+                        setNewSector({ ...newSector, wilaya: e.target.value })
+                      }
+                    >
+                      <option value="">Select Wilaya</option>
+                      {[
+                        "Adrar",
+                        "Chlef",
+                        "Laghouat",
+                        "Oum El Bouaghi",
+                        "Batna",
+                        "Bejaia",
+                        "Biskra",
+                        "Bechar",
+                        "Blida",
+                        "Bouira",
+                        "Tamanrasset",
+                        "Tebessa",
+                        "Tlemcen",
+                        "Tiaret",
+                        "Tizi Ouzou",
+                        "Algiers",
+                        "Djelfa",
+                        "Jijel",
+                        "Setif",
+                        "Saïda",
+                        "Skikda",
+                        "Sidi Bel Abbes",
+                        "Annaba",
+                        "Guelma",
+                        "Constantine",
+                        "Medea",
+                        "Mostaganem",
+                        "Msila",
+                        "Mascara",
+                        "Ouargla",
+                        "Oran",
+                        "El Bayadh",
+                        "Illizi",
+                        "Bordj Bou Arreridj",
+                        "Boumerdes",
+                        "El Tarf",
+                        "Tindouf",
+                        "Tissemsilt",
+                        "El Oued",
+                        "Khenchela",
+                        "Souk Ahras",
+                        "Tipaza",
+                        "Mila",
+                        "Aïn Defla",
+                        "Naama",
+                        "Aïn Temouchent",
+                        "Ghardaia",
+                        "Relizane",
+                        "Timimoun",
+                        "Bordj Badji Mokhtar",
+                        "Ouled Djellal",
+                        "Béni Abbès",
+                        "In Salah",
+                        "In Guezzam",
+                        "Touggourt",
+                        "Djanet",
+                        "El M'Ghaier",
+                        "El Meniaa",
+                      ].map((wilaya, index) => (
+                        <option key={index} value={wilaya}>
+                          {index + 1}- {wilaya}
+                        </option>
+                      ))}
+                    </select>
                     <input
                       placeholder="Name"
-                      className="h-10 py-2 pl-4 border-2 border-supplair-primary mr-0 w-40 rounded-xl focus:outline-none focus:border-2"
+                      className="h-10 py-2 pl-4 border-2 border-supplair-primary mr-3 w-40 rounded-xl focus:outline-none focus:border-2"
                       type="text"
                       value={newSector.name}
                       onChange={(e) =>
@@ -283,12 +351,18 @@ export default function SignUp_3() {
                   </div>
                 </div>
                 {addedSectors.length > 0 && (
-                  <div className="mb-6">
+                  <div className="mb-6 ml-52">
                     <h2 className=" font-medium mb-3">Sector(s)</h2>
                     {addedSectors.map((sector, index) => (
                       <div key={index} className="flex items-center mb-2">
                         <input
-                          className="h-10 py-2 pl-4 border-2 border-supplair-primary mr-0 w-40 rounded-xl focus:outline-none focus:border-2"
+                          className="h-10 py-2 pl-4 border-2 border-supplair-primary mr-3 w-40 rounded-xl focus:outline-none focus:border-2"
+                          type="text"
+                          value={sector.wilaya}
+                          readOnly
+                        />
+                        <input
+                          className="h-10 py-2 pl-4 border-2 border-supplair-primary mr-3 w-40 rounded-xl focus:outline-none focus:border-2"
                           type="text"
                           value={sector.name}
                           readOnly
@@ -310,7 +384,7 @@ export default function SignUp_3() {
                   </div>
                 )}
                 <button
-                  className="h-10 mt-5 mb-2 text-white w-96 bg-supplair-primary rounded-xl"
+                  className="h-10 mt-5 mb-2 ml-32 text-white w-96 bg-supplair-primary rounded-xl"
                   type="submit"
                 >
                   {" "}

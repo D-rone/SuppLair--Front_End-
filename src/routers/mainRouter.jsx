@@ -1,18 +1,24 @@
-import { createBrowserRouter } from "react-router-dom";
-import { lazy } from "react";
+import { Navigate, createBrowserRouter, useNavigate } from "react-router-dom";
+import { lazy, useEffect } from "react";
 
-import SignUp from "../pages/auth/SignUp";
+const SignUp = lazy(() => import("../pages/auth/SignUp"));
 
-import SignUp_2 from "../pages/auth/SignUp_2";
-import SignUp_3 from "../pages/auth/SignUp_3";
-import SignUp_Employee from "../pages/auth/SignUp_Employee";
+const SignUp_2 = lazy(() => import("../pages/auth/SignUp_2"));
 
-import Login from "../pages/auth/Login";
-import ResetPwd from "../pages/auth/ResetPwd";
-import ConfirmPwd from "../pages/auth/ConfirmPwd";
+const SignUp_3 = lazy(() => import("../pages/auth/SignUp_3"));
+
+const SignUp_Employee = lazy(() => import("../pages/auth/SignUp_Employee"));
+
+const Login = lazy(() => import("../pages/auth/Login"));
+const ResetPwd = lazy(() => import("../pages/auth/ResetPwd"));
+const ConfirmPwd = lazy(() => import("../pages/auth/ConfirmPwd"));
+
 import NotFound from "../components/NotFound";
 
-import HomePage from "../pages/HomePage";
+import HomePage, { useUserContext } from "../pages/HomePage";
+import Forbidden from "../components/Forbidden";
+
+const SuperAdmin = lazy(() => import("../components/super-admin/SuperAdmin"));
 
 const UserProfile = lazy(() => import("../components/profile/UserProfile"));
 
@@ -29,20 +35,134 @@ const Users = lazy(() => import("../components/home/users_roles/Users"));
 const Roles = lazy(() => import("../components/home/users_roles/Roles"));
 const Billing = lazy(() => import("../components/home/billing/Billing"));
 
+const SuperAdminAccounts = lazy(() => import("../components/super-admin/accounts/Accounts"));
+const SuperAdminUsers = lazy(() => import("../components/super-admin/users/Users"));
+const SuperAdminBilling = lazy(() => import("../components/super-admin/billing/Billing"));
+
+function CheckPermission({ requiredPermission, children }) {
+  const { userData } = useUserContext();
+  const { permissions } = userData;
+  if (permissions.includes(requiredPermission)) return children;
+  else {
+    return <Navigate to={"/forbidden"} replace />;
+  }
+}
+
+function CheckSuperAdmin() {
+  const { userData } = useUserContext();
+  const { permissions } = userData;
+  console.log(permissions);
+  if (permissions.includes("SUPERADMIN")) {
+    <Navigate to={"super-admin_accounts"} />
+  } else {
+    if (permissions.includes("HOME")) return <Dashboard />;
+    if (permissions.includes("INVENTORY")) return <Navigate to={"products"} />;
+    if (permissions.includes("SALES")) return <Navigate to={"orders"} />;
+    if (permissions.includes("ANNOUNCEMENT")) return <Navigate to={"announcements"} />;
+    if (permissions.includes("USERS")) return <Navigate to={"users"} />;
+    if (permissions.includes("BILLING")) return <Navigate to={"billing"} />;
+  }
+}
+
 export const router = createBrowserRouter([
   {
-    path: "",
+    path: "/",
     element: <HomePage />,
     children: [
-      { path: "", element: <Dashboard /> },
-      { path: "products", element: <Products /> },
-      { path: "group_products", element: <GroupProducts /> },
-      { path: "orders", element: <Orders /> },
-      { path: "clients", element: <Clients /> },
-      { path: "announcements", element: <Announcements /> },
-      { path: "users", element: <Users /> },
-      { path: "roles", element: <Roles /> },
-      { path: "billing", element: <Billing /> },
+      {
+        path: "",
+        element: <CheckSuperAdmin />,
+      },
+      {
+        path: "super-admin_accounts",
+        element: (
+          <CheckPermission requiredPermission={"SUPERADMIN"}>
+            <SuperAdminAccounts />
+          </CheckPermission>
+        ),
+      },
+      {
+        path: "super-admin_users",
+        element: (
+          <CheckPermission requiredPermission={"SUPERADMIN"}>
+            <SuperAdminUsers />
+          </CheckPermission>
+        ),
+      },
+      {
+        path: "super-admin_billing",
+        element: (
+          <CheckPermission requiredPermission={"SUPERADMIN"}>
+            <SuperAdminBilling />
+          </CheckPermission>
+        ),
+      },
+
+      {
+        path: "products",
+        element: (
+          <CheckPermission requiredPermission={"INVENTORY"}>
+            <Products />
+          </CheckPermission>
+        ),
+      },
+      {
+        path: "group_products",
+        element: (
+          <CheckPermission requiredPermission={"INVENTORY"}>
+            <GroupProducts />
+          </CheckPermission>
+        ),
+      },
+      {
+        path: "orders",
+        element: (
+          <CheckPermission requiredPermission={"SALES"}>
+            <Orders />
+          </CheckPermission>
+        ),
+      },
+      {
+        path: "clients",
+        element: (
+          <CheckPermission requiredPermission={"SALES"}>
+            <Clients />
+          </CheckPermission>
+        ),
+      },
+      {
+        path: "announcements",
+        element: (
+          <CheckPermission requiredPermission={"ANNOUNCEMENT"}>
+            <Announcements />
+          </CheckPermission>
+        ),
+      },
+      {
+        path: "users",
+        element: (
+          <CheckPermission requiredPermission={"USERS"}>
+            <Users />
+          </CheckPermission>
+        ),
+      },
+      {
+        path: "roles",
+        element: (
+          <CheckPermission requiredPermission={"USERS"}>
+            <Roles />
+          </CheckPermission>
+        ),
+      },
+      {
+        path: "billing",
+        element: (
+          <CheckPermission requiredPermission={"BILLING"}>
+            <Billing />
+          </CheckPermission>
+        ),
+      },
+
       {
         path: "user_profile",
         element: <UserProfile />,
@@ -81,6 +201,8 @@ export const router = createBrowserRouter([
     path: "confirm-password",
     element: <ConfirmPwd />,
   },
+
+  { path: "forbidden", element: <Forbidden /> },
 
   { path: "*", element: <NotFound /> },
 ]);

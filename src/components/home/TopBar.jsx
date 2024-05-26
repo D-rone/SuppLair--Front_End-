@@ -30,6 +30,8 @@ function TopBar({ profileDropdown, setProfileDropdown }) {
 
   let { showLogoText } = useScreenContext();
 
+  const { permissions } = userData;
+
   return (
     // TOP BAR
     <div

@@ -1,69 +1,90 @@
-import React, { useState, useEffect } from "react";
+import React, { useReducer, useRef, useState } from "react";
 import PopUp1 from "./PopUp1";
 import { toast } from "react-toastify";
+import axios from "axios";
+import { supplairAPI } from "../../utils/axios";
+import { ClockLoader } from "react-spinners";
 
-function AddAnnouncementPopup({ close, announcement }) {
-  const [formData, setFormData] = useState({
-    beginDate: "",
-    endDate: "",
-    type: "",
-    description: "",
-    status: "",
-  });
-
-  useEffect(() => {
-    if (announcement) {
-      setFormData(announcement);
-    }
-  }, [announcement]);
-
-  const closePopup = () => {
-    if (
-      !formData.beginDate &&
-      !formData.endDate &&
-      !formData.type &&
-      !formData.description &&
-      !formData.status
-    ) {
-      close(null);
-    } else if (window.confirm("Are you sure you want to cancel?")) {
-      close(null);
-    }
+function AddAnnouncementPopup({ close, setUpdateGet }) {
+  let closePopup = (e) => {
+    if (!updated) close(false);
+    else if (confirm("Are you sure you want to cancel ?")) close(false);
   };
+
+  const [loading, setLoading] = useState(false);
 
   const handleAddAnnouncement = (e) => {
     e.preventDefault();
-
-    const beginDate = new Date(formData.beginDate);
-    const endDate = new Date(formData.endDate);
-    const now = new Date();
-
-    if (beginDate >= endDate) {
-      toast.error("End Date should be ahead of Begin Date.");
-    } else if (endDate <= now) {
-      toast.error("End Date should be in the future.");
-    } else {
-      close(formData);
-      toast.success(announcement ? "Announcement updated" : "Announcement added");
+    if (updated) {
+      let sDate = new Date(begin);
+      let eDate = new Date(end);
+      if (sDate > eDate) {
+        toast.error("End Date can't be before Start Date");
+      } else {
+        const formData = new FormData();
+        formData.append("files", imageRef.current.files[0]);
+        setUpdated(false);
+        setLoading(true);
+        axios
+          .post("http://localhost:8099/api/upload/announcements", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((response) => {
+            const imagePath = response.data[0];
+            supplairAPI
+              .post("/announcement-srv/private/create", {
+                imagePath: imagePath,
+                startDate: sDate.toISOString(),
+                endDate: eDate.toISOString(),
+              })
+              .then((response) => {
+                toast.success(response.data);
+                setUpdateGet((prev) => !prev);
+                close(false);
+              })
+              .catch((err) => {
+                toast.error(err.message);
+                setUpdated(true);
+              });
+          })
+          .catch((err) => {
+            toast.error(err.message);
+            setUpdated(true);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      }
     }
   };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const [updated, setUpdated] = useState(false);
+  const updateReducer = (state, newValue) => {
+    setUpdated(true);
+    return newValue;
   };
+
+  const [begin, setBegin] = useReducer(updateReducer, "");
+  const [end, setEnd] = useReducer(updateReducer, "");
+  const imageRef = useRef();
 
   return (
     <PopUp1 closeMe={closePopup} title="Add Announcement">
       <div className="p-4">
         <form onSubmit={handleAddAnnouncement}>
           <div className="flex flex-col gap-1 mb-6 text-sm font-semibold">
+            <span>Announcement Image :</span>
+            <input type="file" placeholder="New User Name" required ref={imageRef} />
+          </div>
+          <div className="flex flex-col gap-1 mb-6 text-sm font-semibold">
             <span>Begin Date :</span>
             <input
               type="date"
               required
-              name="beginDate"
-              value={formData.beginDate}
-              onChange={handleChange}
+              value={begin}
+              onChange={(e) => setBegin(e.target.value)}
               className="w-full h-10 px-6 border-2 border-gray-400 rounded-lg focus:outline-supplair-primary"
             />
           </div>
@@ -72,53 +93,28 @@ function AddAnnouncementPopup({ close, announcement }) {
             <input
               type="date"
               required
-              name="endDate"
-              value={formData.endDate}
-              onChange={handleChange}
+              value={end}
+              onChange={(e) => setEnd(e.target.value)}
               className="w-full h-10 px-6 border-2 border-gray-400 rounded-lg focus:outline-supplair-primary"
             />
-          </div>
-          <div className="flex flex-col gap-1 mb-6 text-sm font-semibold">
-            <span>Type :</span>
-            <input
-              type="text"
-              required
-              name="type"
-              value={formData.type}
-              onChange={handleChange}
-              className="w-full h-10 px-6 border-2 border-gray-400 rounded-lg focus:outline-supplair-primary"
-            />
-          </div>
-          <div className="flex flex-col gap-1 mb-6 text-sm font-semibold">
-            <span>Description :</span>
-            <textarea
-              name="description"
-              required
-              value={formData.description}
-              onChange={handleChange}
-              className="w-full h-24 px-6 py-3 border-2 border-gray-400 rounded-lg focus:outline-supplair-primary"
-            />
-          </div>
-          <div className="flex flex-col gap-1 mb-6 text-sm font-semibold">
-            <span>Status :</span>
-            <select
-              name="status"
-              required
-              value={formData.status}
-              onChange={handleChange}
-              className="w-full h-10 px-6 border-2 border-gray-400 rounded-lg focus:outline-supplair-primary"
-            >
-              <option value="">Select Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
           </div>
 
           <div className="flex justify-end gap-5">
             <button onClick={closePopup} className="cancelBtn" type="button">
               Cancel
             </button>
-            <input type="submit" value="Save" className="approveBtn" />
+            <input
+              type="submit"
+              value="Save"
+              className={`${updated ? `hover:cursor-pointer approveBtn` : "cancelBtn"} `}
+            />
+            {loading ? (
+              <div className="pt-[6px]">
+                <ClockLoader size={"30px"} />
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
         </form>
       </div>

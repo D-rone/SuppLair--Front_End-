@@ -3,7 +3,7 @@
       "order_number": "ORD001",
       "client_name": "John Doe",
       "delivery_date": "2024-05-10",
-      "status": "Processing",
+      "status": "PAYED",
       "details": [
         {
           "product": "Product A",
@@ -23,7 +23,7 @@
       "order_number": "ORD002",
       "client_name": "Jane Smith",
       "delivery_date": "2024-05-15",
-      "status": "Shipped",
+      "status": "ORDERED",
       "details": [
         {
           "product": "Product C",
@@ -43,7 +43,7 @@
         "order_number": "ORD003",
         "client_name": "John Doe",
         "delivery_date": "2024-05-10",
-        "status": "Processing",
+        "status": "PAYED",
         "details": [
           {
             "product": "Product A",
@@ -63,7 +63,48 @@
         "order_number": "ORD004",
         "client_name": "Jane Smith",
         "delivery_date": "2024-05-15",
-        "status": "Shipped",
+        "status": "REFUSED",
+        "details": [
+          {
+            "product": "Product C",
+            "quantity": 1,
+            "unit_price": 20.00,
+            "grouped_product": "Group C"
+          },
+          {
+            "product": "Product D",
+            "quantity": 4,
+            "unit_price": 35.00,
+            "grouped_product": "Group D"
+          }
+        ]
+      },
+
+      {
+        "order_number": "ORD005",
+        "client_name": "Elmestari Abdelmonim",
+        "delivery_date": "2024-05-15",
+        "status": "PAYED",
+        "details": [
+          {
+            "product": "Product C",
+            "quantity": 1,
+            "unit_price": 20.00,
+            "grouped_product": "Group C"
+          },
+          {
+            "product": "Product D",
+            "quantity": 4,
+            "unit_price": 35.00,
+            "grouped_product": "Group D"
+          }
+        ]
+      }, 
+      {
+        "order_number": "ORD006",
+        "client_name": "Elmestari Abdelmonim",
+        "delivery_date": "2024-05-15",
+        "status": "PAYED",
         "details": [
           {
             "product": "Product C",

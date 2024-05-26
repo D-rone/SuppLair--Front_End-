@@ -48,14 +48,14 @@ function GroupProducts() {
   const renderProducts = (productsIds) => {
     return (
       <table className="w-full mt-2 border-collapse border border-gray-300">
-        <thead className="bg-gray-100">
+        <thead className="bg-gray-50">
           <tr className="text-left">
-            <th className="px-4 py-2">Name</th>
-            <th className="px-4 py-2">Quantity</th>
-            <th className="px-4 py-2">Price</th>
+            <th className="px-4 py-2 text-gray-500 uppercase">Name</th>
+            <th className="px-4 py-2 text-gray-500 uppercase">Quantity</th>
+            <th className="px-4 py-2 text-gray-500 uppercase">Price</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="bg-white divide-y divide-supplair-primary">
           {productsIds.map((productId) => {
             const product = findProductById(productId);
             if (!product) return null;
