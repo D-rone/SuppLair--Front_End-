@@ -2,16 +2,12 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPenToSquare,
-  faAddressBook,
-  faEnvelope,
-  faPhone,
-  faTrademark,
   faTimes,
   faDownload,
   faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
-import axios from "axios";
 import Cookies from "universal-cookie";
+import { supplairAPI } from "../../../utils/axios";
 
 function SuperAdminAccounts() {
   const [showAccountsMenu, setShowAccountsMenu] = useState(false);
@@ -50,8 +46,8 @@ function SuperAdminAccounts() {
   formData.append("token", storedAccessToken);
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:8080/api/v1/companies`, {
+    supplairAPI
+      .get(`auth-srv/api/v1/companies`, {
         headers: {
           Authorization: "Bearer " + storedAccessToken,
         },
@@ -90,14 +86,11 @@ function SuperAdminAccounts() {
 
   const handleCompanyNameClick = async (company) => {
     try {
-      const response = await axios.get(
-        "http://localhost:8080/api/v1/companies/" + company.key,
-        {
-          headers: {
-            Authorization: "Bearer " + storedAccessToken,
-          },
-        }
-      );
+      const response = await supplairAPI.get("auth-srv/api/v1/companies/" + company.key, {
+        headers: {
+          Authorization: "Bearer " + storedAccessToken,
+        },
+      });
       console.log(response.data);
       setCompanyDetails(response.data);
       setSelectedCategories({
@@ -177,8 +170,8 @@ function SuperAdminAccounts() {
       console.log(state);
 
       try {
-        const response = await axios.put(
-          "http://localhost:8080/api/v1/companies",
+        const response = await supplairAPI.put(
+          "auth-srv/api/v1/companies",
           {
             email: companyDetails.email,
             companyName: companyDetails.name,
@@ -195,8 +188,8 @@ function SuperAdminAccounts() {
       } catch (error) {
         console.error("Error:", error);
       }
-      axios
-        .get(`http://localhost:8080/api/v1/companies`, {
+      supplairAPI
+        .get(`auth-srv/api/v1/companies`, {
           headers: {
             Authorization: "Bearer " + storedAccessToken,
           },
@@ -214,58 +207,48 @@ function SuperAdminAccounts() {
     return (
       <div
         id="sidebar"
-        className="fixed top-0 right-0 h-full w-2/3 bg-white shadow-lg p-6 flex flex-col overflow-auto "
+        className="fixed top-0 right-0 flex flex-col w-2/3 h-full p-6 overflow-auto bg-white shadow-lg "
         style={{
-          maxHeight: `calc(100vh - ${
-            sidebarHeight > window.innerHeight ? 0 : 48
-          }px)`,
+          maxHeight: `calc(100vh - ${sidebarHeight > window.innerHeight ? 0 : 48}px)`,
         }}
       >
-        <div className="flex justify-between items-center mt-10 mb-4">
+        <div className="flex items-center justify-between mt-10 mb-4">
           <p className="text-xl font-bold ">{selectedCompany?.companyName}</p>
           <button
             className="text-supplair-primary hover:text-supplair-primary-darker"
             onClick={() => setShowSidebar(false)}
           >
-            <FontAwesomeIcon icon={faTimes} className="h-6 w-6" />
+            <FontAwesomeIcon icon={faTimes} className="w-6 h-6" />
           </button>
         </div>
-        <div className="mb-4 flex items-center">
-          <span className=" text-supplair-primary px-2 py-1 rounded-md mr-2">
-            email
-          </span>
+        <div className="flex items-center mb-4">
+          <span className="px-2 py-1 mr-2 rounded-md text-supplair-primary">email</span>
           <span>{companyDetails.email}</span>
         </div>
-        <div className="mb-4 flex items-center">
-          <span className="text-supplair-primary px-2 py-1 rounded-md mr-2">
-            phone
-          </span>
+        <div className="flex items-center mb-4">
+          <span className="px-2 py-1 mr-2 rounded-md text-supplair-primary">phone</span>
           <span>{companyDetails.number}</span>
         </div>
-        <div className="mb-4 flex items-center">
-          <span className="text-supplair-primary px-2 py-1 rounded-md mr-2">
-            address
-          </span>
+        <div className="flex items-center mb-4">
+          <span className="px-2 py-1 mr-2 rounded-md text-supplair-primary">address</span>
           <span>{companyDetails.address}</span>
         </div>
-        <div className="mb-4 flex items-center">
-          <span className="text-supplair-primary px-2 py-1 rounded-md mr-2">
-            trade registry
-          </span>
+        <div className="flex items-center mb-4">
+          <span className="px-2 py-1 mr-2 rounded-md text-supplair-primary">trade registry</span>
           <FontAwesomeIcon
             icon={faDownload}
-            className="text-supplair-primary ml-2 cursor-pointer"
+            className="ml-2 cursor-pointer text-supplair-primary"
           />
         </div>
-        <div className="mb-8 flex flex-col relative">
+        <div className="relative flex flex-col mb-8">
           <div className="mb-1">
             <span className="text-supplair-primary">Select Categories</span>
           </div>
-          <div className="relative inline-block text-left w-full">
+          <div className="relative inline-block w-full text-left">
             <div>
               <button
                 type="button"
-                className="inline-flex justify-between w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-supplair-primary"
+                className="inline-flex justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-supplair-primary"
                 id="categories-menu"
                 aria-haspopup="true"
                 aria-expanded={selectedCategories.showCategoryMenu}
@@ -274,14 +257,11 @@ function SuperAdminAccounts() {
                 {selectedCategories.length > 0
                   ? `${selectedCategories.length} selected`
                   : "Select Categories"}
-                <FontAwesomeIcon
-                  icon={faChevronDown}
-                  className="-mr-1 ml-2 h-5 w-5"
-                />
+                <FontAwesomeIcon icon={faChevronDown} className="w-5 h-5 ml-2 -mr-1" />
               </button>
             </div>
             {selectedCategories.showCategoryMenu && (
-              <div className="absolute z-10 right-0 mt-2 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+              <div className="absolute right-0 z-10 w-full mt-2 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5">
                 <div
                   className="py-1"
                   role="menu"
@@ -312,25 +292,22 @@ function SuperAdminAccounts() {
           <div className="mb-1">
             <span className="text-supplair-primary">Select state</span>
           </div>
-          <div className="relative inline-block text-left w-full">
+          <div className="relative inline-block w-full text-left">
             <div>
               <button
                 type="button"
-                className="inline-flex justify-between w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-supplair-primary"
+                className="inline-flex justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-supplair-primary"
                 id="state-menu"
                 aria-haspopup="true"
                 aria-expanded={showStateMenu}
                 onClick={toggleStateMenu}
               >
                 {state || "inactive"}
-                <FontAwesomeIcon
-                  icon={faChevronDown}
-                  className="-mr-1 ml-2 h-5 w-5"
-                />
+                <FontAwesomeIcon icon={faChevronDown} className="w-5 h-5 ml-2 -mr-1" />
               </button>
             </div>
             {showStateMenu && (
-              <div className="origin-top-right absolute right-0 mt-2 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+              <div className="absolute right-0 w-full mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5">
                 <div
                   className="py-1"
                   role="menu"
@@ -372,7 +349,7 @@ function SuperAdminAccounts() {
         </div>
 
         <button
-          className="bg-supplair-primary text-white px-4 py-2 rounded"
+          className="px-4 py-2 text-white rounded bg-supplair-primary"
           onClick={handleSaveChanges}
         >
           Save
@@ -384,13 +361,10 @@ function SuperAdminAccounts() {
   return (
     <div className="absolute top-8 left-0 right-0 mx-auto w-[95%]">
       <div className="flex items-center justify-between">
-        <div className="flex items-center relative">
-          <h2 className="text-2xl font-bold mr-2">All Accounts</h2>
-          <button
-            className="p-2 rounded-md text-supplair-primary"
-            onClick={toggleAccountsMenu}
-          >
-            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <div className="relative flex items-center">
+          <h2 className="mr-2 text-2xl font-bold">All Accounts</h2>
+          <button className="p-2 rounded-md text-supplair-primary" onClick={toggleAccountsMenu}>
+            <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
               <path
                 fillRule="evenodd"
                 d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
@@ -399,27 +373,27 @@ function SuperAdminAccounts() {
             </svg>
           </button>
           {showAccountsMenu && (
-            <div className="absolute top-10 left-0 bg-white shadow-lg rounded-md p-2 w-48">
+            <div className="absolute left-0 w-48 p-2 bg-white rounded-md shadow-lg top-10">
               <div
-                className="px-4 py-2 hover:bg-supplair-primary hover:text-white rounded-md cursor-pointer"
+                className="px-4 py-2 rounded-md cursor-pointer hover:bg-supplair-primary hover:text-white"
                 onClick={() => handleFilterChange("All")}
               >
                 All
               </div>
               <div
-                className="px-4 py-2 hover:bg-supplair-primary hover:text-white rounded-md cursor-pointer"
+                className="px-4 py-2 rounded-md cursor-pointer hover:bg-supplair-primary hover:text-white"
                 onClick={() => handleFilterChange("Active")}
               >
                 Active
               </div>
               <div
-                className="px-4 py-2 hover:bg-supplair-primary hover:text-white rounded-md cursor-pointer"
+                className="px-4 py-2 rounded-md cursor-pointer hover:bg-supplair-primary hover:text-white"
                 onClick={() => handleFilterChange("Inactive")}
               >
                 Inactive
               </div>
               <div
-                className="px-4 py-2 hover:bg-supplair-primary hover:text-white rounded-md cursor-pointer"
+                className="px-4 py-2 rounded-md cursor-pointer hover:bg-supplair-primary hover:text-white"
                 onClick={() => handleFilterChange("Blocked")}
               >
                 Blocked
@@ -434,18 +408,12 @@ function SuperAdminAccounts() {
           {!showSidebar && (
             <thead>
               <tr>
-                <th className="text-left text-gray-500 py-2 border-b-2 border-gray-300">
+                <th className="py-2 text-left text-gray-500 border-b-2 border-gray-300">
                   Company Name
                 </th>
-                <th className="text-left text-gray-500 py-2 border-b-2 border-gray-300">
-                  Contact
-                </th>
-                <th className="text-left text-gray-500 py-2 border-b-2 border-gray-300">
-                  State
-                </th>
-                <th className="text-center text-gray-500 py-2 border-b-2 border-gray-300">
-                  Edit
-                </th>
+                <th className="py-2 text-left text-gray-500 border-b-2 border-gray-300">Contact</th>
+                <th className="py-2 text-left text-gray-500 border-b-2 border-gray-300">State</th>
+                <th className="py-2 text-center text-gray-500 border-b-2 border-gray-300">Edit</th>
               </tr>
             </thead>
           )}
@@ -456,16 +424,12 @@ function SuperAdminAccounts() {
                 <tr
                   key={index}
                   className={`${
-                    selectedCompany?.key === data.key && showSidebar
-                      ? "bg-gray-200"
-                      : "bg-white"
+                    selectedCompany?.key === data.key && showSidebar ? "bg-gray-200" : "bg-white"
                   }`}
                 >
                   <td
                     className={`text-left py-2 border-b border-gray-300 text-supplair-primary font-semibold cursor-pointer ${
-                      selectedCompany?.key === data.key && showSidebar
-                        ? "bg-gray-200"
-                        : "bg-white"
+                      selectedCompany?.key === data.key && showSidebar ? "bg-gray-200" : "bg-white"
                     }`}
                     onClick={() => handleCompanyNameClick(data)}
                   >
@@ -473,27 +437,21 @@ function SuperAdminAccounts() {
                   </td>
                   <td
                     className={`text-left py-2 border-b border-gray-300 ${
-                      selectedCompany?.key === data.key && showSidebar
-                        ? "bg-gray-200"
-                        : "bg-white"
+                      selectedCompany?.key === data.key && showSidebar ? "bg-gray-200" : "bg-white"
                     }`}
                   >
                     {data.contact}
                   </td>
                   <td
                     className={`text-left py-2 border-b border-gray-300 ${
-                      selectedCompany?.key === data.key && showSidebar
-                        ? "bg-gray-200"
-                        : "bg-white"
+                      selectedCompany?.key === data.key && showSidebar ? "bg-gray-200" : "bg-white"
                     }`}
                   >
                     {data.state}
                   </td>
                   <td
                     className={`py-2 text-center border-b border-gray-300 ${
-                      selectedCompany?.key === data.key && showSidebar
-                        ? "bg-gray-200"
-                        : "bg-white"
+                      selectedCompany?.key === data.key && showSidebar ? "bg-gray-200" : "bg-white"
                     }`}
                   >
                     <button
@@ -502,7 +460,7 @@ function SuperAdminAccounts() {
                     >
                       <FontAwesomeIcon
                         icon={faPenToSquare}
-                        className="text-supplair-primary cursor-pointer"
+                        className="cursor-pointer text-supplair-primary"
                       />
                     </button>
                   </td>
@@ -512,11 +470,8 @@ function SuperAdminAccounts() {
         </table>
       </div>
       {showSidebar && (
-        <div className="fixed top-0 right-0 h-screen bg-white shadow-lg flex flex-col">
-          <Sidebar
-            selectedCompany={selectedCompany}
-            onSaveChanges={handleSaveChanges}
-          />
+        <div className="fixed top-0 right-0 flex flex-col h-screen bg-white shadow-lg">
+          <Sidebar selectedCompany={selectedCompany} onSaveChanges={handleSaveChanges} />
         </div>
       )}
     </div>

@@ -1,16 +1,11 @@
-import React, {
-  createContext,
-  useContext,
-  useDebugValue,
-  useEffect,
-  useState,
-} from "react";
+import React, { createContext, useContext, useDebugValue, useEffect, useState } from "react";
 import TopBar from "../components/home/TopBar";
 import SideBar from "../components/home/SideBar";
 import HomeBody from "../components/home/HomeBody";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import { useNavigate } from "react-router-dom";
+import { serviceAuth, supplairAPI } from "../utils/axios";
 
 const UserContext = createContext();
 export const useUserContext = () => useContext(UserContext);
@@ -26,8 +21,8 @@ function HomePage() {
     const storedAccessToken = cookies.get("access_token");
     const formData = new FormData();
     formData.append("token", storedAccessToken);
-    axios
-      .post(`http://localhost:8080/api/v1/auth/verify-token`, formData)
+    serviceAuth
+      .post(`api/v1/auth/verify-token`, formData)
       .then((res) => {
         console.log(res.data.isValid);
         if (res.data.isValid == false) {
@@ -38,10 +33,10 @@ function HomePage() {
         console.log(err);
       });
     if (storedAccessToken) {
-      axios
-        .get(`http://localhost:8080/api/v1/user-details`, {
+      supplairAPI
+        .get(`auth-srv/api/v1/user-details`, {
           headers: {
-            Authorization: "Bearer " + storedAccessToken,
+            Authorization: `Bearer ${storedAccessToken}`,
           },
         })
         .then((res) => {
@@ -65,17 +60,11 @@ function HomePage() {
     <div>
       {loaded ? (
         <UserContext.Provider value={{ userData, setUserData }}>
-          <TopBar
-            profileDropdown={profileDropdown}
-            setProfileDropdown={setProfileDropdown}
-          />
+          <TopBar profileDropdown={profileDropdown} setProfileDropdown={setProfileDropdown} />
 
           {/* Top Bar Spacer */}
           <div className="h-14"></div>
-          <div
-            className="relative flex font-raleway"
-            onClick={closeProfilePopUp}
-          >
+          <div className="relative flex font-raleway" onClick={closeProfilePopUp}>
             <SideBar />
             <HomeBody closeProfilePopUp={closeProfilePopUp} />
           </div>

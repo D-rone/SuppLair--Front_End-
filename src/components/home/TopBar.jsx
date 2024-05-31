@@ -10,8 +10,8 @@ import { NavLink } from "react-router-dom";
 import { useScreenContext } from "../../App";
 import { useUserContext } from "../../pages/HomePage";
 import Cookies from "universal-cookie";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { supplairAPI } from "../../utils/axios";
 
 let searchFormController = (event) => {
   event.preventDefault();
@@ -35,14 +35,7 @@ function TopBar({ profileDropdown, setProfileDropdown }) {
   const { permissions } = userData;
   let logout = async () => {
     try {
-      const response = await axios.post(
-        `http://localhost:8080/api/v1/logout/` + storedAccessToken,
-        {
-          headers: {
-            Authorization: "Bearer " + storedAccessToken,
-          },
-        }
-      );
+      const response = await supplairAPI.post(`auth-srv/api/v1/logout/` + storedAccessToken);
       cookies.remove("access_token", { path: "/" });
       cookies.remove("refresh_token", { path: "/" });
       window.location.reload();
@@ -64,23 +57,13 @@ function TopBar({ profileDropdown, setProfileDropdown }) {
         {showLogoText ? (
           <div className="relative left-[10%] w-fit hover:cursor-pointer">
             <NavLink to={"/"}>
-              <img
-                src={_LogoInline}
-                id="topBar_logo"
-                alt=""
-                className="inline h-8 mr-2"
-              />
+              <img src={_LogoInline} id="topBar_logo" alt="" className="inline h-8 mr-2" />
             </NavLink>
           </div>
         ) : (
           <div className="flex justify-center w-full hover:cursor-pointer">
             <NavLink to={"/"}>
-              <img
-                src={_logoIcon}
-                id="topBar_logo"
-                alt=""
-                className="inline h-8 mr-2"
-              />
+              <img src={_logoIcon} id="topBar_logo" alt="" className="inline h-8 mr-2" />
             </NavLink>
           </div>
         )}
@@ -90,11 +73,7 @@ function TopBar({ profileDropdown, setProfileDropdown }) {
         <form onSubmit={searchFormController}>
           <div className="flex items-center w-full h-10 p-2 bg-white border-2 rounded-xl">
             <img src={_search} alt="" className="h-7 hover:cursor-pointer" />
-            <img
-              src={_dropDown}
-              alt=""
-              className="h-1.5 hover:cursor-pointer"
-            />
+            <img src={_dropDown} alt="" className="h-1.5 hover:cursor-pointer" />
             <input
               type="text"
               placeholder="Search ..."
@@ -110,10 +89,7 @@ function TopBar({ profileDropdown, setProfileDropdown }) {
         </div>
 
         <div>
-          <img
-            src={_bell}
-            className="h-6 m-3 hover:cursor-pointer opacity-80"
-          />
+          <img src={_bell} className="h-6 m-3 hover:cursor-pointer opacity-80" />
         </div>
 
         <div className="p-4">
