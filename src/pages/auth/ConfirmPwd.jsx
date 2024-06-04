@@ -5,7 +5,7 @@ import { faLock } from "@fortawesome/free-solid-svg-icons";
 import SidePage from "../../components/Side/SidePage";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import { supplairAPI } from "../../utils/axios";
 
 library.add(faLock);
 
@@ -24,8 +24,8 @@ export default function ConfirmPwd() {
   const token = match[1]; // Extracted token
 
   useEffect(() => {
-    axios
-      .post(`http://localhost:8080/api/v1/auth/is-password-forgetten/${token}`)
+    supplairAPI
+      .post(`auth-srv/api/v1/auth/is-password-forgetten/${token}`)
       .then((res) => {
         const isPasswordForgotten = res.data;
         setIsPasswordForgotten(isPasswordForgotten);
@@ -47,8 +47,8 @@ export default function ConfirmPwd() {
       return;
     }
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/v1/auth/reset-password",
+      const response = await supplairAPI.post(
+        "auth-srv/api/v1/auth/reset-password",
         {
           token: token,
           password: password,

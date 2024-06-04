@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import showMore from "../../../assets/images/more.svg";
 import { v4 } from "uuid";
-import dummyData from "./DUMMY_DATA.json";
 import { toast } from "react-toastify";
 import UpdateRolePopup from "../../pupups/UpdateRolePopup";
 import AddRolePopup from "../../pupups/AddRolePopup";
 import Cookies from "universal-cookie";
-import axios from "axios";
 import { useUserContext } from "../../../pages/HomePage";
+import { supplairAPI } from "../../../utils/axios";
 
 function Roles() {
   const cookies = new Cookies();
@@ -18,8 +17,8 @@ function Roles() {
   const [role, setRole] = useState("");
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:8080/api/v1/roles/` + userData.companyId, {
+    supplairAPI
+      .get(`auth-srv/api/v1/roles/` + userData.companyId, {
         headers: {
           Authorization: "Bearer " + storedAccessToken,
         },

@@ -7,7 +7,7 @@ import InviteUserPopup from "../../pupups/InviteUserPopup";
 import { toast } from "react-toastify";
 import { useUserContext } from "../../../pages/HomePage";
 import Cookies from "universal-cookie";
-import axios from "axios";
+import { supplairAPI } from "../../../utils/axios";
 
 function Users() {
   const cookies = new Cookies();
@@ -18,8 +18,8 @@ function Users() {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:8080/api/v1/users/` + userData.companyId, {
+    supplairAPI
+      .get(`auth-srv/api/v1/users/` + userData.companyId, {
         headers: {
           Authorization: "Bearer " + storedAccessToken,
         },

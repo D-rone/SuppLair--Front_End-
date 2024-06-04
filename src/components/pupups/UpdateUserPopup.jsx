@@ -4,7 +4,7 @@ import dummyData from "../home/users_roles/DUMMY_DATA.json";
 import { toast } from "react-toastify";
 import Cookies from "universal-cookie";
 import { useUserContext } from "../../pages/HomePage";
-import axios from "axios";
+import { supplairAPI } from "../../utils/axios";
 
 function UpdateUserPopup({ user, close }) {
   const cookies = new Cookies();
@@ -14,8 +14,8 @@ function UpdateUserPopup({ user, close }) {
   const [roles, setRoles] = useState([]);
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:8080/api/v1/roles/` + userData.userId, {
+    supplairAPI
+      .get(`auth-srv/api/v1/roles/` + userData.userId, {
         headers: {
           Authorization: "Bearer " + storedAccessToken,
         },
@@ -38,8 +38,8 @@ function UpdateUserPopup({ user, close }) {
 
     if (updated) {
       try {
-        const response = await axios.patch(
-          `http://localhost:8080/api/v1/users`,
+        const response = await supplairAPI.patch(
+          `auth-srv/api/v1/users`,
           {
             email: user.email,
             roleName: role,

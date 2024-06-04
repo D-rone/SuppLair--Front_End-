@@ -8,7 +8,7 @@ import { faLock } from "@fortawesome/free-solid-svg-icons";
 import SidePage from "../../components/Side/SidePage";
 import { toast } from "react-toastify";
 import { NavLink } from "react-router-dom";
-import axios from "axios";
+import { supplairAPI } from "../../utils/axios";
 library.add(faEnvelope, faLock, faBuilding);
 
 export default function SignUp() {
@@ -50,8 +50,8 @@ export default function SignUp() {
     // If validation passes, proceed with sign up process
     // Example: Send form data to server or perform any other necessary actions
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/v1/auth/register/user-infos",
+      const response = await supplairAPI.post(
+        "auth-srv/api/v1/auth/register/user-infos",
         {
           fullname: extractUsername(email),
           email: email,

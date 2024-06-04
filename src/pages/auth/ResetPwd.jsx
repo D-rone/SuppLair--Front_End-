@@ -5,8 +5,8 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import SidePage from "../../components/Side/SidePage";
 import { toast } from "react-toastify";
+import { supplairAPI } from "../../utils/axios";
 library.add(faEnvelope);
-import axios from "axios";
 
 export default function ResetPwd() {
   const navigate = useNavigate();
@@ -26,8 +26,8 @@ export default function ResetPwd() {
     }
     console.log(email);
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/v1/auth/send-email",
+      const response = await supplairAPI.post(
+        "auth-srv/api/v1/auth/send-email",
         {
           email: email,
         }

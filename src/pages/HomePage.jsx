@@ -2,10 +2,9 @@ import React, { createContext, useContext, useDebugValue, useEffect, useState } 
 import TopBar from "../components/home/TopBar";
 import SideBar from "../components/home/SideBar";
 import HomeBody from "../components/home/HomeBody";
-import axios from "axios";
 import Cookies from "universal-cookie";
 import { useNavigate } from "react-router-dom";
-import { serviceAuth, supplairAPI } from "../utils/axios";
+import { supplairAPI } from "../utils/axios";
 
 const UserContext = createContext();
 export const useUserContext = () => useContext(UserContext);
@@ -21,8 +20,8 @@ function HomePage() {
     const storedAccessToken = cookies.get("access_token");
     const formData = new FormData();
     formData.append("token", storedAccessToken);
-    serviceAuth
-      .post(`api/v1/auth/verify-token`, formData)
+    supplairAPI
+      .post(`auth-srv/api/v1/auth/verify-token`, formData)
       .then((res) => {
         console.log(res.data.isValid);
         if (res.data.isValid == false) {

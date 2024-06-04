@@ -1,9 +1,9 @@
 import React, { useReducer, useRef, useState } from "react";
 import PopUp1 from "./PopUp1";
 import { toast } from "react-toastify";
-import axios from "axios";
-import { supplairAPI } from "../../utils/axios";
+import { fileUpload, supplairAPI } from "../../utils/axios";
 import { ClockLoader } from "react-spinners";
+import Cookies from "universal-cookie";
 
 function AddAnnouncementPopup({ close, setUpdateGet }) {
   let closePopup = (e) => {
@@ -25,20 +25,30 @@ function AddAnnouncementPopup({ close, setUpdateGet }) {
         formData.append("files", imageRef.current.files[0]);
         setUpdated(false);
         setLoading(true);
-        axios
-          .post("http://localhost:8099/api/upload/announcements", formData, {
+        fileUpload
+          .post("/api/upload/announcements", formData, {
             headers: {
               "Content-Type": "multipart/form-data",
             },
           })
           .then((response) => {
             const imagePath = response.data[0];
+            const cookies = new Cookies();
+            const storedAccessToken = cookies.get("access_token");
             supplairAPI
-              .post("/announcement-srv/private/create", {
-                imagePath: imagePath,
-                startDate: sDate.toISOString(),
-                endDate: eDate.toISOString(),
-              })
+              .post(
+                "/announcement-srv/private/create",
+                {
+                  imagePath: imagePath,
+                  startDate: sDate.toISOString(),
+                  endDate: eDate.toISOString(),
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${storedAccessToken}`,
+                  },
+                }
+              )
               .then((response) => {
                 toast.success(response.data);
                 setUpdateGet((prev) => !prev);

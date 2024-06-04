@@ -6,8 +6,8 @@ import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import SidePage from "../../components/Side/SidePage";
 import { NavLink } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { supplairAPI } from "../../utils/axios";
 
 library.add(faLock, faEnvelope);
 
@@ -22,8 +22,8 @@ export default function Login() {
     // Example: Send form data to server or perform any other necessary actions
     console.log("log in successful");
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/v1/auth/authenticate",
+      const response = await supplairAPI.post(
+        "auth-srv/api/v1/auth/authenticate",
         {
           email: email,
           password: password,

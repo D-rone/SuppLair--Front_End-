@@ -5,8 +5,8 @@ import _changeProfilePic from "../../assets/images/plusSign.svg";
 import { toast } from "react-toastify";
 import { useUserContext } from "../../pages/HomePage";
 import defaultProfilePic from "../../assets/images/noProfilePic.png";
-import axios from "axios";
 import Cookies from "universal-cookie";
+import { supplairAPI } from "../../utils/axios";
 
 function CompanyProfile() {
   const cookies = new Cookies();
@@ -172,8 +172,8 @@ function CompanyProfile() {
   };
   const fetchData = async (body) => {
     try {
-      const response = await axios.put(
-        `http://localhost:8080/api/v1/profile/` + userData.userId,
+      const response = await supplairAPI.put(
+        `auth-srv/api/v1/profile/` + userData.userId,
         body,
         {
           headers: {
@@ -388,20 +388,20 @@ function CompanyProfile() {
                 id="deliveryDatesYes"
                 name="deliveryDates"
                 type="radio"
-                className="h-4 w-4 text-supplair-primary border-gray-300 focus:ring-supplair-primary mr-1"
+                className="w-4 h-4 mr-1 border-gray-300 text-supplair-primary focus:ring-supplair-primary"
                 checked={hasDeliveryDates === true}
                 onChange={() => {
                   handleUpdate("hasDeliveryDates");
                 }}
               />
-              <label htmlFor="deliveryDatesYes" className="text-gray-500 mr-4">
+              <label htmlFor="deliveryDatesYes" className="mr-4 text-gray-500">
                 Yes
               </label>
               <input
                 id="deliveryDatesNo"
                 name="deliveryDates"
                 type="radio"
-                className="h-4 w-4 text-supplair-primary border-gray-300 focus:ring-supplair-primary mr-1"
+                className="w-4 h-4 mr-1 border-gray-300 text-supplair-primary focus:ring-supplair-primary"
                 checked={hasDeliveryDates === false}
                 onChange={() => {
                   handleUpdate("hasDeliveryDates");
@@ -509,9 +509,9 @@ function CompanyProfile() {
             <label style={{ fontWeight: "700" }} className="w-5/12">
               Select Wilayas for Delivery:
             </label>
-            <div className="grid grid-cols-1 gap-2 max-h-40 overflow-y-scroll w-7/12">
+            <div className="grid w-7/12 grid-cols-1 gap-2 overflow-y-scroll max-h-40">
               <div
-                className="overflow-y-scroll border border-gray-300 rounded-xl p-2"
+                className="p-2 overflow-y-scroll border border-gray-300 rounded-xl"
                 style={{ height: "100px", width: "95%" }}
               >
                 {wilayas.map((wilaya) => (
@@ -520,7 +520,7 @@ function CompanyProfile() {
                       id={`wilaya-${wilaya.value}`}
                       type="checkbox"
                       disabled={edit != "wilayas"}
-                      className="h-4 w-4 text-supplair-primary border-gray-300 focus:ring-supplair-primary mr-2"
+                      className="w-4 h-4 mr-2 border-gray-300 text-supplair-primary focus:ring-supplair-primary"
                       checked={selectedWilayas.includes(wilaya.label)}
                       onChange={() => {
                         handleWilayaChange(wilaya.label);

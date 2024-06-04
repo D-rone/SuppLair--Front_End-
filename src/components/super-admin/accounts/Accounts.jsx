@@ -40,6 +40,7 @@ function SuperAdminAccounts() {
     "GOURMET_AND_SPECIALTY",
     "FOOD_SERVICE_EQUIPMENT_AND_SUPPLIES",
   ];
+  
   const cookies = new Cookies();
   const storedAccessToken = cookies.get("access_token");
   const formData = new FormData();

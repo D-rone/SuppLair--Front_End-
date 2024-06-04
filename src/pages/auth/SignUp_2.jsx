@@ -5,8 +5,8 @@ import { faUpload } from "@fortawesome/free-solid-svg-icons";
 import SidePage from "../../components/Side/SidePage";
 import { toast } from "react-toastify";
 import { NavLink, useLocation } from "react-router-dom";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { supplairAPI } from "../../utils/axios";
 
 library.add(faUpload);
 
@@ -96,8 +96,8 @@ export default function SignUp_2() {
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/v1/auth/register/company-infos",
+      const response = await supplairAPI.post(
+        "auth-srv/api/v1/auth/register/company-infos",
         {
           name: companyName,
           address: address,
@@ -153,7 +153,7 @@ export default function SignUp_2() {
                   htmlFor="organizationName"
                   className={`block text-base font-normal mb-1 ${"text-gray-500"}`}
                 >
-                  Organization Name <span className=" text-red-600">*</span>
+                  Organization Name <span className="text-red-600 ">*</span>
                 </label>
                 <input
                   id="organizationName"
@@ -187,7 +187,7 @@ export default function SignUp_2() {
               <div className=" mr-[255px]">
                 <label
                   htmlFor="fileInput"
-                  className="block text-base font-normal mb-1 text-gray-500"
+                  className="block mb-1 text-base font-normal text-gray-500"
                 >
                   Trade Registry(s) <span className="text-red-600">*</span>
                 </label>
@@ -203,18 +203,18 @@ export default function SignUp_2() {
                   onChange={handleFileChange}
                 />
                 <div
-                  className="h-auto py-2 pl-10 pr-4 border border-gray-300 w-96 rounded-xl cursor-pointer flex items-center justify-between focus:outline-none focus:border-supplair-primary focus:border-2"
+                  className="flex items-center justify-between h-auto py-2 pl-10 pr-4 border border-gray-300 cursor-pointer w-96 rounded-xl focus:outline-none focus:border-supplair-primary focus:border-2"
                   style={{ height: inputHeight }}
                   onClick={() => document.getElementById("fileInput").click()}
                 >
                   {selectedFiles.length > 0 ? (
-                    <ul className="list-disc pl-5">
+                    <ul className="pl-5 list-disc">
                       {selectedFiles.map((file, index) => (
                         <li key={index}>{file.name}</li>
                       ))}
                     </ul>
                   ) : (
-                    <span className=" text-gray-500">
+                    <span className="text-gray-500 ">
                       Upload Trade Registry
                     </span>
                   )}
@@ -224,12 +224,12 @@ export default function SignUp_2() {
 
               {/* New Radio Buttons for Delivery Dates */}
               <div
-                className="mb-6 flex items-center"
+                className="flex items-center mb-6"
                 style={{ alignItems: "flex-start", marginBottom: "1rem" }}
               >
                 <label
                   htmlFor="deliveryDates"
-                  className="block text-base font-normal mb-1 text-gray-500 mr-4"
+                  className="block mb-1 mr-4 text-base font-normal text-gray-500"
                 >
                   Does the company have delivery dates?
                 </label>
@@ -238,13 +238,13 @@ export default function SignUp_2() {
                     id="deliveryDatesYes"
                     name="deliveryDates"
                     type="radio"
-                    className="h-4 w-4 text-supplair-primary border-gray-300 focus:ring-supplair-primary mr-1"
+                    className="w-4 h-4 mr-1 border-gray-300 text-supplair-primary focus:ring-supplair-primary"
                     checked={hasDeliveryDates === true}
                     onChange={() => setHasDeliveryDates(true)}
                   />
                   <label
                     htmlFor="deliveryDatesYes"
-                    className="text-gray-500 mr-4"
+                    className="mr-4 text-gray-500"
                   >
                     Yes
                   </label>
@@ -252,7 +252,7 @@ export default function SignUp_2() {
                     id="deliveryDatesNo"
                     name="deliveryDates"
                     type="radio"
-                    className="h-4 w-4 text-supplair-primary border-gray-300 focus:ring-supplair-primary mr-1"
+                    className="w-4 h-4 mr-1 border-gray-300 text-supplair-primary focus:ring-supplair-primary"
                     checked={hasDeliveryDates === false}
                     onChange={() => setHasDeliveryDates(false)}
                   />
@@ -263,11 +263,11 @@ export default function SignUp_2() {
               </div>
               {/* New Checkboxes for Wilayas */}
               <div className="mb-6">
-                <label className="block text-base font-normal mb-1 text-gray-500">
+                <label className="block mb-1 text-base font-normal text-gray-500">
                   Select Wilayas for Delivery:
                 </label>
                 <div
-                  className="grid grid-cols-1 gap-2 max-h-40 overflow-y-scroll w-96 border border-gray-300 rounded-xl p-2"
+                  className="grid grid-cols-1 gap-2 p-2 overflow-y-scroll border border-gray-300 max-h-40 w-96 rounded-xl"
                   style={{ height: "100px" }}
                 >
                   {wilayas.map((wilaya) => (
@@ -275,7 +275,7 @@ export default function SignUp_2() {
                       <input
                         id={`wilaya-${wilaya.value}`}
                         type="checkbox"
-                        className="h-4 w-4 text-supplair-primary border-gray-300 focus:ring-supplair-primary mr-2"
+                        className="w-4 h-4 mr-2 border-gray-300 text-supplair-primary focus:ring-supplair-primary"
                         checked={selectedWilayas.includes(wilaya.value)}
                         onChange={() => handleWilayaChange(wilaya.value)}
                       />

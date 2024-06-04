@@ -4,7 +4,7 @@ import dummyData from "../home/users_roles/DUMMY_DATA.json";
 import { toast } from "react-toastify";
 import Cookies from "universal-cookie";
 import { useUserContext } from "../../pages/HomePage";
-import axios from "axios";
+import { supplairAPI } from "../../utils/axios";
 
 function UpdateRolePopup({ role, close }) {
   const cookies = new Cookies();
@@ -31,8 +31,8 @@ function UpdateRolePopup({ role, close }) {
         toast.success("Role added");
       }
       try {
-        const response = await axios.put(
-          `http://localhost:8080/api/v1/roles`,
+        const response = await supplairAPI.put(
+          `auth-srv/api/v1/roles`,
           {
             companyName: userData.companyName,
             newRoleName: name,

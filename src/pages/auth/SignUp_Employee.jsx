@@ -7,8 +7,8 @@ import { faLock } from "@fortawesome/free-solid-svg-icons";
 import SidePage from "../../components/Side/SidePage";
 import { toast } from "react-toastify";
 import { NavLink } from "react-router-dom";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { supplairAPI } from "../../utils/axios";
 
 library.add(faEnvelope, faLock, faBuilding);
 
@@ -47,8 +47,8 @@ export default function SignUp_Employee() {
       return;
     }
     try {
-      const response = await axios.put(
-        "http://localhost:8080/api/v1/auth/authenticate-as-invited",
+      const response = await supplairAPI.put(
+        "auth-srv/api/v1/auth/authenticate-as-invited",
         {
           email: email,
           password: password,

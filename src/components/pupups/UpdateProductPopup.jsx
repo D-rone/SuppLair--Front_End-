@@ -11,7 +11,7 @@ function UpdateProductPopup({ close, product }) {
     image: "",
     price: "",
     quantity: "",
-    description: "", 
+    description: "",
   });
 
   useEffect(() => {
@@ -117,15 +117,15 @@ function UpdateProductPopup({ close, product }) {
                 onChange={handleImageChange}
                 className="hidden"
               />
-              <span className="w-fit h-10 px-6 border-2 border-gray-400 rounded-lg flex items-center justify-center cursor-pointer bg-white hover:bg-gray-100">
-                <FaDownload style={{ fontSize: '1rem' }} className="w-24 " />
+              <span className="flex items-center justify-center h-10 px-6 bg-white border-2 border-gray-400 rounded-lg cursor-pointer w-fit hover:bg-gray-100">
+                <FaDownload style={{ fontSize: "1rem" }} className="w-24 " />
               </span>
             </label>
             {formData.image && (
               <img
                 src={formData.image}
                 alt="Selected an Image"
-                className="mt-2 w-16 h-16 object-cover rounded-xl"
+                className="object-cover w-16 h-16 mt-2 rounded-xl"
               />
             )}
           </div>

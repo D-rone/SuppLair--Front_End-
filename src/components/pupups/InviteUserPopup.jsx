@@ -4,7 +4,7 @@ import dummyData from "../home/users_roles/DUMMY_DATA.json";
 import { toast } from "react-toastify";
 import { useUserContext } from "../../pages/HomePage";
 import Cookies from "universal-cookie";
-import axios from "axios";
+import { supplairAPI } from "../../utils/axios";
 
 function InviteUserPopup({ close }) {
   const cookies = new Cookies();
@@ -15,8 +15,8 @@ function InviteUserPopup({ close }) {
   const [roles, setRoles] = useState([]);
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:8080/api/v1/roles/` + userData.companyId, {
+    supplairAPI
+      .get(`auth-srv/api/v1/roles/` + userData.companyId, {
         headers: {
           Authorization: "Bearer " + storedAccessToken,
         },
@@ -49,8 +49,8 @@ function InviteUserPopup({ close }) {
       }
 
       try {
-        const response = await axios.post(
-          `http://localhost:8080/api/v1/invite-user`,
+        const response = await supplairAPI.post(
+          `auth-srv/api/v1/invite-user`,
           {
             email: email,
             fullname: name,

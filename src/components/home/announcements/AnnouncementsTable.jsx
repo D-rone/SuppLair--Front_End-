@@ -3,6 +3,7 @@ import { supplairAPI } from "../../../utils/axios";
 import { ScaleLoader } from "react-spinners";
 import Pagination from "../../utils/Pagination";
 import { toast } from "react-toastify";
+import Cookies from "universal-cookie";
 
 const AnnouncementsTable = ({ updateGet, menuOpen, setMenuOpen, setUpdateGet }) => {
   const menuRef = useRef();
@@ -17,8 +18,15 @@ const AnnouncementsTable = ({ updateGet, menuOpen, setMenuOpen, setUpdateGet }) 
 
   let makeRequest = (page) => {
     setLoading(true);
+    const cookies = new Cookies();
+    const storedAccessToken = cookies.get("access_token");
+
     supplairAPI
-      .get("announcement-srv/private/announcements?page=" + page + "&size=6")
+      .get("announcement-srv/private/announcements?page=" + page + "&size=6", {
+        headers: {
+          Authorization: `Bearer ${storedAccessToken}`,
+        },
+      })
       .then((data) => {
         setAnnouncemenetsData(data.data?.content);
         setTotalPages(data.data?.totalPages);
@@ -65,8 +73,14 @@ const AnnouncementsTable = ({ updateGet, menuOpen, setMenuOpen, setUpdateGet }) 
   let deleteAnnouncement = (e, id) => {
     e.stopPropagation();
     if (confirm("Are you sure you want to delete the announcement ?")) {
+      const cookies = new Cookies();
+      const storedAccessToken = cookies.get("access_token");  
       supplairAPI
-        .delete("announcement-srv/private/" + id)
+        .delete("announcement-srv/private/" + id , {
+          headers : {
+            Authorization : `Bearer ${storedAccessToken}`
+          }
+        })
         .then((response) => {
           setUpdateGet((prev) => !prev);
           toast.success(response.data);

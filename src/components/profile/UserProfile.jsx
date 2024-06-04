@@ -5,8 +5,8 @@ import _changeProfilePic from "../../assets/images/plusSign.svg";
 import { toast } from "react-toastify";
 import { useUserContext } from "../../pages/HomePage";
 import defaultProfilePic from "../../assets/images/noProfilePic.png";
-import axios from "axios";
 import Cookies from "universal-cookie";
+import { supplairAPI } from "../../utils/axios";
 
 function UserProfile() {
   const { userData, setUserData } = useUserContext();
@@ -39,8 +39,8 @@ function UserProfile() {
   };
   const fetchData = async (body) => {
     try {
-      const response = await axios.put(
-        `http://localhost:8080/api/v1/profile/` + userData.userId,
+      const response = await supplairAPI.put(
+        `auth-srv/api/v1/profile/` + userData.userId,
         body,
         {
           headers: {
