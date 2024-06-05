@@ -121,7 +121,7 @@ function AddRolePopup({ close }) {
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  value="ANNOUCEMENT"
+                  value="ANNOUNCEMENT"
                   className="mx-4 my-2 size-4 hover:cursor-pointer"
                   onChange={handleCheckboxChange}
                 />
@@ -155,7 +155,7 @@ function AddRolePopup({ close }) {
               type="submit"
               value="Save"
               className={`${
-                updated ? `hover:cursor-pointer approveBtn` : "cancelBtn"
+                updated  ? `hover:cursor-pointer approveBtn` : "cancelBtn"
               } `}
             />
           </div>

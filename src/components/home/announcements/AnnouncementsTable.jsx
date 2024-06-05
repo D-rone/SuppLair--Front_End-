@@ -4,6 +4,7 @@ import { ScaleLoader } from "react-spinners";
 import Pagination from "../../utils/Pagination";
 import { toast } from "react-toastify";
 import Cookies from "universal-cookie";
+import _deleteIcon from "../../../assets/images/delete.svg";
 
 const AnnouncementsTable = ({ updateGet, menuOpen, setMenuOpen, setUpdateGet }) => {
   const menuRef = useRef();
@@ -31,11 +32,12 @@ const AnnouncementsTable = ({ updateGet, menuOpen, setMenuOpen, setUpdateGet }) 
         setAnnouncemenetsData(data.data?.content);
         setTotalPages(data.data?.totalPages);
         // console.log(data.data.map(d=>d.companyId))
-        setLoading(false);
       })
       .catch((err) => {
         if (Math.floor(err?.response?.status / 100) == 5) toast.error("Server Error");
         else toast.error(err.message);
+      })
+      .finally(() => {
         setLoading(false);
       });
   };
@@ -43,15 +45,6 @@ const AnnouncementsTable = ({ updateGet, menuOpen, setMenuOpen, setUpdateGet }) 
   useEffect(() => {
     makeRequest(page);
   }, [page, updateGet]);
-
-  const toggleMenu = (e, announcementId) => {
-    e.stopPropagation();
-    if (menuOpen === announcementId) {
-      setMenuOpen(null);
-    } else {
-      setMenuOpen(announcementId);
-    }
-  };
 
   let checkAnnouncemnetStatus = (startDate, endDate) => {
     let now = new Date();
@@ -74,12 +67,12 @@ const AnnouncementsTable = ({ updateGet, menuOpen, setMenuOpen, setUpdateGet }) 
     e.stopPropagation();
     if (confirm("Are you sure you want to delete the announcement ?")) {
       const cookies = new Cookies();
-      const storedAccessToken = cookies.get("access_token");  
+      const storedAccessToken = cookies.get("access_token");
       supplairAPI
-        .delete("announcement-srv/private/" + id , {
-          headers : {
-            Authorization : `Bearer ${storedAccessToken}`
-          }
+        .delete("announcement-srv/private/" + id, {
+          headers: {
+            Authorization: `Bearer ${storedAccessToken}`,
+          },
         })
         .then((response) => {
           setUpdateGet((prev) => !prev);
@@ -140,43 +133,15 @@ const AnnouncementsTable = ({ updateGet, menuOpen, setMenuOpen, setUpdateGet }) 
                     <td className="px-6 py-4 whitespace-nowrap">
                       {checkAnnouncemnetStatus(announcement.startDate, announcement.endDate)}
                     </td>
-                    <td className="relative px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                    <td className="relative py-4 pr-10 text-sm font-medium text-right whitespace-nowrap">
                       <div className="inline-block text-left" ref={menuRef}>
                         <button
-                          onClick={(e) => toggleMenu(e, announcement.announcementId)}
-                          type="button"
-                          className="inline-flex justify-center p-2 text-white rounded-full bg-supplair-primary focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
-                          aria-haspopup="true"
-                          aria-expanded="true"
+                          onClick={(e) => {
+                            deleteAnnouncement(e, announcement.announcementId);
+                          }}
                         >
-                          {/* SVG code provided */}
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="w-5 h-5"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
+                          <img src={_deleteIcon} className="h-6" />
                         </button>
-                        {menuOpen === announcement.announcementId && (
-                          <div className="absolute right-0 z-50 mt-2 origin-top-right bg-white rounded-md shadow-lg w-36 ring-1 ring-black ring-opacity-5">
-                            <div className="absolute border-b-8 border-l-8 border-r-8 border-l-transparent border-r-transparent border-b-red-600 top-[-6px] left-24"></div>
-                            <button
-                              className="block w-full px-4 py-2 text-sm text-white bg-red-500 rounded hover:bg-red-700 "
-                              role="menuitem"
-                              onClick={(e) => {
-                                deleteAnnouncement(e, announcement.announcementId);
-                              }}
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        )}
                       </div>
                     </td>
                   </tr>

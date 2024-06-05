@@ -27,7 +27,8 @@ function SideBar() {
         us_ro();
         break;
       default:
-        def();
+        if (currentPathname.includes("/group_products")) inventory();
+        else def();
         break;
     }
   };
@@ -85,7 +86,7 @@ function SideBar() {
     <div>
       <div
         id="HomeSideBar"
-        className="fixed z-10 w-1/5 bg-supplair-sidebar h-_pageBody overflow-scroll"
+        className="fixed z-10 w-1/5 overflow-scroll bg-supplair-sidebar h-_pageBody"
       >
         <div className="flex flex-col p-4 pl-0 text-[18px] font-bold">
           {permissions.includes("SUPERADMIN") ? (

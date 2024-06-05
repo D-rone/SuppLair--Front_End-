@@ -32,7 +32,6 @@ function TopBar({ profileDropdown, setProfileDropdown }) {
 
   let { showLogoText } = useScreenContext();
 
-  const { permissions } = userData;
   let logout = async () => {
     try {
       const response = await supplairAPI.post(`auth-srv/api/v1/logout/` + storedAccessToken);

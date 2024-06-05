@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import PopUp1 from "./PopUp1";
 import { toast } from "react-toastify";
-import productsData from "../home/inventory/groupProducts.json";
 import { FaDownload } from "react-icons/fa6";
+import { useUserContext } from "../../pages/HomePage";
 
 function UpdateProductPopup({ close, product }) {
   const [formData, setFormData] = useState({
@@ -50,6 +50,8 @@ function UpdateProductPopup({ close, product }) {
       reader.readAsDataURL(file);
     }
   };
+
+  const { userData } = useUserContext();
 
   return (
     <PopUp1 closeMe={closePopup} title="Update Product">
@@ -99,7 +101,7 @@ function UpdateProductPopup({ close, product }) {
               className="w-full h-10 px-6 border-2 border-gray-400 rounded-lg focus:outline-supplair-primary"
             >
               <option value="">Select Group</option>
-              {productsData.map((product) => (
+              {userData?.categories.map((product) => (
                 <option key={product.group} value={product.group}>
                   {product.name}
                 </option>

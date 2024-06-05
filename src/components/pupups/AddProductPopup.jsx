@@ -1,160 +1,197 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import PopUp1 from "./PopUp1";
 import { toast } from "react-toastify";
 import { FaDownload } from "react-icons/fa6";
-import productsData from "../home/inventory/groupProducts.json";
+import productsData from "./../home/inventory/products.json";
 
 function AddProductPopup({ close, product }) {
-  const [formData, setFormData] = useState({
+  const [updated, setUpdated] = useState(false);
+  const updateReducer = (state, newValue) => {
+    setUpdated(true);
+    return newValue;
+  };
+
+  const [formData, setFormData] = useReducer(updateReducer, {
     name: "",
-    group: "",
-    image: "",
-    price: "",
-    quantity: "",
-    description: "", 
+    reference: "",
+    price: 0,
+    description: "",
+    quantity: 0,
+    minimumQuantity: 0,
+    imagePaths: [],
   });
+
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (product) {
       setFormData(product);
+      setUpdated(false);
     }
   }, [product]);
 
   const closePopup = () => {
-    if (!formData.name && !formData.price && !formData.quantity) {
-      close(null);
-    } else if (window.confirm("Are you sure you want to cancel?")) {
-      close(null);
-    }
+    updated
+      ? window.confirm("Are you sure you want to cancel?")
+        ? close(null)
+        : () => {}
+      : close(null);
   };
 
   const handleAddProduct = (e) => {
     e.preventDefault();
-
-    // Validation logic
-    if (formData.name.trim().length < 3) {
-      toast.error("Invalid Product Name");
-    } else {
-      close(formData);
-      toast.success(product ? "Product updated" : "Product added");
-    }
+    console.log(product);
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, image: reader.result });
-      };
-      reader.readAsDataURL(file);
-    }
+  
+  // we need to handle multiple images
+  
+  const [images, setImages] = useState([]);
+
+  let handleImageChange = (e) => {
+
   };
+
 
   return (
     <PopUp1 closeMe={closePopup} title="Add Product">
-      <div className="p-4">
-        <form onSubmit={handleAddProduct}>
-          <div className="flex flex-col gap-1 mb-6 text-sm font-semibold">
-            <span>Product Name :</span>
-            <input
-              type="text"
-              required
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full h-10 px-6 border-2 border-gray-400 rounded-lg focus:outline-supplair-primary"
-            />
-          </div>
-          <div className="flex flex-col gap-1 mb-6 text-sm font-semibold">
-            <span>Price :</span>
-            <input
-              type="number"
-              required
-              name="price"
-              value={formData.price}
-              onChange={handleChange}
-              className="w-full h-10 px-6 border-2 border-gray-400 rounded-lg focus:outline-supplair-primary"
-              min="0"
-            />
-          </div>
-          <div className="flex flex-col gap-1 mb-6 text-sm font-semibold">
-            <span>Quantity :</span>
-            <input
-              type="number"
-              required
-              name="quantity"
-              value={formData.quantity}
-              onChange={handleChange}
-              className="w-full h-10 px-6 border-2 border-gray-400 rounded-lg focus:outline-supplair-primary"
-              min="0"
-            />
-          </div>
-          <div className="flex flex-col gap-1 mb-6 text-sm font-semibold">
-            <span>Group :</span>
-            <select
-              name="group"
-              value={formData.group}
-              onChange={handleChange}
-              className="w-full h-10 px-6 border-2 border-gray-400 rounded-lg focus:outline-supplair-primary"
-            >
-              <option value="">Select Group</option>
-              {productsData.map((product) => (
-                <option key={product.id} value={product.name}>
-                  {product.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex flex-row gap-1 mb-6 text-sm font-semibold">
-            <label htmlFor="image" className="flex items-center gap-2">
-              <span>Image :</span>
+      <form onSubmit={handleAddProduct} className="p-4">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          {/* First Column */}
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col">
+              <span>Product Name :</span>
               <input
+                type="text"
+                required
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full h-10 px-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span>Price :</span>
+              <input
+                type="number"
+                required
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                className="w-full h-10 px-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                min="0"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span>Available Quantity :</span>
+
+              <input
+                type="number"
+                required
+                name="quantity"
+                value={formData.quantity}
+                onChange={handleChange}
+                className="w-full h-10 px-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                min="0"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span>Minimum Sell Quantity :</span>
+              <input
+                type="number"
+                required
+                name="quantity"
+                value={formData.quantity}
+                onChange={handleChange}
+                className="w-full h-10 px-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                min="0"
+              />
+            </div>
+          </div>
+
+          {/* Second Column */}
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col">
+              <span>Group :</span>
+              <select
+                name="group"
+                value={formData.group}
+                onChange={handleChange}
+                className="w-full h-10 px-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              >
+                <option value="">Select Group</option>
+                {[].map((product) => (
+                  <option key={product.id} value={product.name}>
+                    {product.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col">
+              <span>Reference :</span>
+              <input
+                type="text"
+                name="reference"
+                value={formData.reference}
+                onChange={handleChange}
+                className="w-full h-10 px-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <span>image :</span>
+              <label
+                htmlFor="image-upload"
+                className="flex items-center justify-center w-1/5 h-10 px-4 border-2 border-gray-300 rounded-lg cursor-pointer focus:outline-none focus:border-blue-500"
+              >
+                <div className="absolute">
+                  <FaDownload />
+                </div>
+              </label>
+              <input
+                id="image-upload"
                 type="file"
-                id="image"
-                name="image"
                 accept="image/*"
+                name="image"
                 onChange={handleImageChange}
                 className="hidden"
               />
-              <span className="flex items-center justify-center h-10 px-6 bg-white border-2 border-gray-400 rounded-lg cursor-pointer w-fit hover:bg-gray-100">
-                <FaDownload style={{ fontSize: "1rem" }} className="w-24 " />
-              </span>
-            </label>
-            {formData.image && (
-              <img
-                src={formData.image}
-                alt="Selected Image"
-                className="object-cover w-16 h-16 mt-2 rounded-xl"
-              />
-            )}
-          </div>
-          <div className="flex flex-col gap-1 mb-6 text-sm font-semibold">
-            <span>Description :</span>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              className="w-full h-24 px-6 py-3 border-2 border-gray-400 rounded-lg focus:outline-supplair-primary"
-            />
-          </div>
+            </div>
 
-          <div className="flex justify-end gap-5">
-            <button
-              onClick={closePopup}
-              className="cancelBtn"
-              type="button"
-            >
-              Cancel
-            </button>
-            <input type="submit" value="Save" className="approveBtn" />
+            <div className="flex flex-col">
+              <span>Description :</span>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                className="w-full h-24 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              />
+            </div>
           </div>
-        </form>
-      </div>
+        </div>
+
+        <div className="flex justify-end gap-5 mt-6">
+          <button onClick={closePopup} className="cancelBtn" type="button">
+            Cancel
+          </button>
+          <input
+            type="submit"
+            value="Save"
+            className={`${updated || loading ? `hover:cursor-pointer approveBtn` : "cancelBtn"} `}
+          />
+          {loading ? (
+            <div className="pt-[6px]">
+              <ClockLoader size={"30px"} />
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
+      </form>
     </PopUp1>
   );
 }

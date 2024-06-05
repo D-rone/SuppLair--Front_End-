@@ -16,33 +16,25 @@ import NotFound from "../components/NotFound";
 import HomePage, { useUserContext } from "../pages/HomePage";
 import Forbidden from "../components/Forbidden";
 
+const ProductsByGroup = lazy(() => import("../components/home/inventory/ProductsByGroup"));
+
 const SuperAdmin = lazy(() => import("../components/super-admin/SuperAdmin"));
 
 const Profile = lazy(() => import("../components/profile/Profile"));
 
 const Dashboard = lazy(() => import("../components/home/dashboard/Dashboard"));
 const Products = lazy(() => import("../components/home/inventory/Products"));
-const GroupProducts = lazy(() =>
-  import("../components/home/inventory/GroupProducts")
-);
+const GroupProducts = lazy(() => import("../components/home/inventory/GroupProducts"));
 const Orders = lazy(() => import("../components/home/sales/Orders"));
 const Clients = lazy(() => import("../components/home/sales/Clients"));
-const Announcements = lazy(() =>
-  import("../components/home/announcements/Announcements")
-);
+const Announcements = lazy(() => import("../components/home/announcements/Announcements"));
 const Users = lazy(() => import("../components/home/users_roles/Users"));
 const Roles = lazy(() => import("../components/home/users_roles/Roles"));
 const Billing = lazy(() => import("../components/home/billing/Billing"));
 
-const SuperAdminAccounts = lazy(() =>
-  import("../components/super-admin/accounts/Accounts")
-);
-const SuperAdminUsers = lazy(() =>
-  import("../components/super-admin/users/Users")
-);
-const SuperAdminBilling = lazy(() =>
-  import("../components/super-admin/billing/Billing")
-);
+const SuperAdminAccounts = lazy(() => import("../components/super-admin/accounts/Accounts"));
+const SuperAdminUsers = lazy(() => import("../components/super-admin/users/Users"));
+const SuperAdminBilling = lazy(() => import("../components/super-admin/billing/Billing"));
 
 function CheckPermission({ requiredPermission, children }) {
   const { userData } = useUserContext();
@@ -62,8 +54,7 @@ function CheckSuperAdmin() {
     if (permissions.includes("HOME")) return <Dashboard />;
     if (permissions.includes("INVENTORY")) return <Navigate to={"products"} />;
     if (permissions.includes("SALES")) return <Navigate to={"orders"} />;
-    if (permissions.includes("ANNOUNCEMENT"))
-      return <Navigate to={"announcements"} />;
+    if (permissions.includes("ANNOUNCEMENT")) return <Navigate to={"announcements"} />;
     if (permissions.includes("USERS")) return <Navigate to={"users"} />;
     if (permissions.includes("USERS")) return <Navigate to={"roles"} />;
     if (permissions.includes("BILLING")) return <Navigate to={"billing"} />;
@@ -120,6 +111,15 @@ export const router = createBrowserRouter([
           </CheckPermission>
         ),
       },
+      {
+        path: "group_products/:id",
+        element: (
+          <CheckPermission requiredPermission={"INVENTORY"}>
+            <ProductsByGroup />
+          </CheckPermission>
+        ),
+      },
+
       {
         path: "orders",
         element: (

@@ -1,114 +1,85 @@
-{
-  "products": [
-    {
-      "id": "1",
-      "name": "Product 1",
-      "price": 10,
-      "quantity": 0,
-      "group": "Group A",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      "rating": 4.5,
-      "reviews": 20,
-      "image": "path_to_image/product1.jpg"
+[
+  {
+    "productId": "1",
+    "createdAt": "2024-05-26T12:00:00",
+    "name": "Laptop sdagkjdsag ajsdhgksjadlghsda hgkjsdaglasdjgkljdshga ajgkljsdal;gkja;ksd jgajlkasgasghlk ashdkjghsdakljghalkjdgh ksajhdglajsdhgkjasdhgkjdha glkjashdlgkjhsdalg",
+    "price": 1200.0,
+    "discount": {
+      "value": 100,
+      "startDate": "2024-06-01T00:00:00",
+      "endDate": "2024-06-30T23:59:59"
     },
-    {
-      "id": "2",
-      "name": "Product 2",
-      "price": 15,
-      "quantity": 50,
-      "group": "Group B",
-      "description": "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      "rating": 3.8,
-      "reviews": 15,
-      "image": "path_to_image/product2.jpg"
+    "description": "Powerful laptop with high performance. Laptop sdagkjdsag ajsdhgksjadlghsda hgkjsdaglasdjgkljdshga ajgkljsdal;gkja;ksd jgajlkasgasghlk ashdkjghsdakljghalkjdgh ksajhdglajsdhgkjasdhgkjdha glkjashdlgkjhsdalgLaptop sdagkjdsag ajsdhgksjadlghsda hgkjsdaglasdjgkljdshga ajgkljsdal;gkja;ksd jgajlkasgasghlk ashdkjghsdakljghalkjdgh ksajhdglajsdhgkjasdhgkjdha glkjashdlgkjhsdalgLaptop sdagkjdsag ajsdhgksjadlghsda hgkjsdaglasdjgkljdshga ajgkljsdal;gkja;ksd jgajlkasgasghlk ashdkjghsdakljghalkjdgh ksajhdglajsdhgkjasdhgkjdha glkjashdlgkjhsdalg \n Laptop sdagkjdsag ajsdhgksjadlghsda hgkjsdaglasdjgkljdshga ajgkljsdal;gkja;ksd jgajlkasgasghlk ashdkjghsdakljghalkjdgh ksajhdglajsdhgkjasdhgkjdha glkjashdlgkjhsdalg \n Laptop sdagkjdsag ajsdhgksjadlghsda hgkjsdaglasdjgkljdshga ajgkljsdal;gkja;ksd jgajlkasgasghlk ashdkjghsdakljghalkjdgh ksajhdglajsdhgkjasdhgkjdha glkjashdlgkjhsdalg",
+    "reference": "REF-LAPTOP-001",
+    "quantity": 50,
+    "minimumQuantity": 5,
+    "imagePaths": ["https://storage.googleapis.com/orderly-af56f.appspot.com/announcements%2F1254_1717493180270.PNG", "https://storage.googleapis.com/orderly-af56f.appspot.com/announcements%2F68_1717449806064.jpg"],
+    "numberOfRates": 15,
+    "rate": 4.7,
+    "productsGroupId": "group-1"
+  },
+  {
+    "productId": "2",
+    "createdAt": "2024-05-25T15:30:00",
+    "name": "Smartphone",
+    "price": 800.0,
+    "discount": null,
+    "description": "High-end smartphone with advanced features.",
+    "reference": "REF-SMARTPHONE-001",
+    "quantity": 9,
+    "minimumQuantity": 10,
+    "imagePaths": ["https://storage.googleapis.com/orderly-af56f.appspot.com/announcements%2F68_1717449806064.jpg", "https://storage.googleapis.com/orderly-af56f.appspot.com/announcements%2F1254_1717493180270.PNG"],
+    "numberOfRates": 25,
+    "rate": 4.5,
+    "productsGroupId": "group-1"
+  },
+  {
+    "productId": "3",
+    "createdAt": "2024-05-24T10:00:00",
+    "name": "Dress",
+    "price": 150.0,
+    "discount": {
+      "value": 20,
+      "startDate": "2024-06-01T00:00:00",
+      "endDate": "2024-06-15T23:59:59"
     },
-    {
-      "id": "3",
-      "name": "Product 3",
-      "price": 20,
-      "quantity": 80,
-      "group": "Group A",
-      "description": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-      "rating": 4.2,
-      "reviews": 25,
-      "image": "path_to_image/product3.jpg"
-    },
-    {
-      "id": "4",
-      "name": "Product 4",
-      "price": 25,
-      "quantity": 0,
-      "group": "Group C",
-      "description": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-      "rating": 4.7,
-      "reviews": 30,
-      "image": "path_to_image/product4.jpg"
-    },
-    {
-      "id": "5",
-      "name": "Product 5",
-      "price": 18,
-      "quantity": 60,
-      "group": "Group B",
-      "description": "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-      "rating": 4.0,
-      "reviews": 18,
-      "image": "path_to_image/product5.jpg"
-    },
-    {
-      "id": "6",
-      "name": "Product 6",
-      "price": 30,
-      "quantity": 90,
-      "group": "Group A",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      "rating": 4.3,
-      "reviews": 22,
-      "image": "path_to_image/product6.jpg"
-    },
-    {
-      "id": "7",
-      "name": "Product 7",
-      "price": 22,
-      "quantity": 75,
-      "group": "Group C",
-      "description": "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.",
-      "rating": 4.8,
-      "reviews": 35,
-      "image": "path_to_image/product7.jpg"
-    },
-    {
-      "id": "8",
-      "name": "Product 8",
-      "price": 12,
-      "quantity": 0,
-      "group": "Group B",
-      "description": "Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.",
-      "rating": 4.6,
-      "reviews": 28,
-      "image": "path_to_image/product8.jpg"
-    },
-    {
-      "id": "9",
-      "name": "Product 9",
-      "price": 28,
-      "quantity": 40,
-      "group": "Group A",
-      "description": "Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?",
-      "rating": 3.9,
-      "reviews": 16,
-      "image": "path_to_image/product9.jpg"
-    },
-    {
-      "id": "10",
-      "name": "Product 10",
-      "price": 17,
-      "quantity": 85,
-      "group": "Group C",
-      "description": "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?",
-      "rating": 4.1,
-      "reviews": 21,
-      "image": "path_to_image/product10.jpg"
-    }
-  ]
-}
+    "description": "Elegant dress made from premium fabric.",
+    "reference": "REF-DRESS-001",
+    "quantity": 30,
+    "minimumQuantity": 3,
+    "imagePaths": ["https://storage.googleapis.com/orderly-af56f.appspot.com/announcements%2F68_1717449806064.jpg"],
+    "numberOfRates": 12,
+    "rate": 4.8,
+    "productsGroupId": "group-2"
+  },
+  {
+    "productId": "4",
+    "createdAt": "2024-05-23T08:45:00",
+    "name": "Watch",
+    "price": 250.0,
+    "discount": null,
+    "description": "Luxury watch with Swiss movement.",
+    "reference": "REF-WATCH-001",
+    "quantity": 20,
+    "minimumQuantity": 2,
+    "imagePaths": ["https://storage.googleapis.com/orderly-af56f.appspot.com/announcements%2F1254_1717493180270.PNG", "https://storage.googleapis.com/orderly-af56f.appspot.com/announcements%2F68_1717449806064.jpg"],
+    "numberOfRates": 5,
+    "rate": 4.9,
+    "productsGroupId": "group-2"
+  },
+  {
+    "productId": "5",
+    "createdAt": "2024-05-22T14:20:00",
+    "name": "Sneakers",
+    "price": 120.0,
+    "discount": null,
+    "description": "Comfortable sneakers for everyday use.",
+    "reference": "REF-SNEAKERS-001",
+    "quantity": 50,
+    "minimumQuantity": 5,
+    "imagePaths": ["https://storage.googleapis.com/orderly-af56f.appspot.com/announcements%2F68_1717449806064.jpg", "https://storage.googleapis.com/orderly-af56f.appspot.com/announcements%2F1254_1717493180270.PNG"],
+    "numberOfRates": 18,
+    "rate": 4.3,
+    "productsGroupId": "group-3"
+  }
+]

@@ -1,12 +1,25 @@
-import React, { useState } from "react";
+import React, { useReducer, useState } from "react";
 import PopUp1 from "./PopUp1";
-import categoriesData from "../home/inventory/groupProducts.json"; // Importing categories JSON data
+import { supplairAPI } from "../../utils/axios";
+import Cookies from "universal-cookie";
+import { toast } from "react-toastify";
 
-const UpdateGroupProductPopup = ({ isOpen, onClose }) => {
-  const [formData, setFormData] = useState({
-    name: "",
-    category: "",
+const UpdateGroupProductPopup = ({ onClose, productGroupData, setUpdateGet }) => {
+  const [loading, setLoading] = useState(false);
+
+  const [updated, setUpdated] = useState(false);
+  const updateReducer = (state, newValue) => {
+    setUpdated(true);
+    return newValue;
+  };
+  const [formData, setFormData] = useReducer(updateReducer, {
+    name: productGroupData.name,
   });
+
+  let closePopup = (e) => {
+    if (!updated) onClose();
+    else if (confirm("Are you sure you want to cancel ?")) onClose();
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -14,12 +27,42 @@ const UpdateGroupProductPopup = ({ isOpen, onClose }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add your logic here to handle form submission
+
+    if (updated && !loading) {
+      const cookies = new Cookies();
+      const storedAccessToken = cookies.get("access_token");
+      setLoading(true);
+      supplairAPI
+        .put(
+          `products-srv/command/products_group/${productGroupData.productsGroupId}`,
+          {
+            name: formData.name,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${storedAccessToken}`,
+            },
+          }
+        )
+        .then((response) => {
+          toast.success(response.data);
+          setUpdateGet((prev) => !prev);
+          onClose(false);
+        })
+        .catch((err) => {
+          toast.error(err.message);
+          setUpdated(true);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+
     onClose();
   };
 
   return (
-    <PopUp1 closeMe={onClose} title="Update Group Product">
+    <PopUp1 closeMe={closePopup} title="Update Group Product">
       <form onSubmit={handleSubmit}>
         <div className="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
           <div className="sm:flex sm:items-start">
@@ -42,35 +85,29 @@ const UpdateGroupProductPopup = ({ isOpen, onClose }) => {
                 <label htmlFor="category" className="block text-sm font-medium text-gray-700">
                   Category
                 </label>
-                {/* Select field populated with categories */}
-                <select
-                  name="category"
-                  id="category"
-                  onChange={handleChange}
-                  value={formData.category}
-                  className="block w-full p-2 mt-1 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  required
-                >
-                  <option value="">Select Category</option>
-                  {categoriesData.map((category) => (
-                    <option key={category.id} value={category.name}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
+                <div className="block w-full p-2 mt-1 bg-gray-200 border rounded-md shadow-sm">
+                  {productGroupData.categoryId}
+                </div>
               </div>
             </div>
           </div>
         </div>
         <div className="flex justify-end gap-5">
-          <button
-            onClick={onClose}
-            type="button"
-            className="cancelBtn "
-          >
+          <button onClick={closePopup} className="cancelBtn" type="button">
             Cancel
           </button>
-        <input type="submit" value="Save" className="approveBtn" />
+          <input
+            type="submit"
+            value="Save"
+            className={`${updated || loading ? `hover:cursor-pointer approveBtn` : "cancelBtn"} `}
+          />
+          {loading ? (
+            <div className="pt-[6px]">
+              <ClockLoader size={"30px"} />
+            </div>
+          ) : (
+            <></>
+          )}
         </div>
       </form>
     </PopUp1>

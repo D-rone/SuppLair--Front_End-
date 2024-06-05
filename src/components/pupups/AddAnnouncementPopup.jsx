@@ -15,7 +15,7 @@ function AddAnnouncementPopup({ close, setUpdateGet }) {
 
   const handleAddAnnouncement = (e) => {
     e.preventDefault();
-    if (updated) {
+    if (updated && !loading) {
       let sDate = new Date(begin);
       let eDate = new Date(end);
       if (sDate > eDate) {
@@ -116,7 +116,7 @@ function AddAnnouncementPopup({ close, setUpdateGet }) {
             <input
               type="submit"
               value="Save"
-              className={`${updated ? `hover:cursor-pointer approveBtn` : "cancelBtn"} `}
+              className={`${updated || loading ? `hover:cursor-pointer approveBtn` : "cancelBtn"} `}
             />
             {loading ? (
               <div className="pt-[6px]">

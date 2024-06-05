@@ -18,6 +18,10 @@ function Pagination({ totalPages, page, setPage }) {
   let changePage = (e) => {
     if (e.key == "Enter") {
       let tmp = thisPage;
+      if (thisPage < 0) {
+        setThisPage(0);
+        tmp = 0;
+      }
       if (thisPage > totalPages - 1) {
         setThisPage(totalPages - 1);
         tmp = totalPages - 1;
