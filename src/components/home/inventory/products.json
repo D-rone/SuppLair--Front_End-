@@ -16,7 +16,7 @@
     "imagePaths": ["https://storage.googleapis.com/orderly-af56f.appspot.com/announcements%2F1254_1717493180270.PNG", "https://storage.googleapis.com/orderly-af56f.appspot.com/announcements%2F68_1717449806064.jpg"],
     "numberOfRates": 15,
     "rate": 4.7,
-    "productsGroupId": "group-1"
+    "productsGroupId": "32cfba97-0635-4bbd-90f4-a300f6c26fbf"
   },
   {
     "productId": "2",
@@ -31,7 +31,7 @@
     "imagePaths": ["https://storage.googleapis.com/orderly-af56f.appspot.com/announcements%2F68_1717449806064.jpg", "https://storage.googleapis.com/orderly-af56f.appspot.com/announcements%2F1254_1717493180270.PNG"],
     "numberOfRates": 25,
     "rate": 4.5,
-    "productsGroupId": "group-1"
+    "productsGroupId": "32cfba97-0635-4bbd-90f4-a300f6c26fbf"
   },
   {
     "productId": "3",
@@ -50,7 +50,7 @@
     "imagePaths": ["https://storage.googleapis.com/orderly-af56f.appspot.com/announcements%2F68_1717449806064.jpg"],
     "numberOfRates": 12,
     "rate": 4.8,
-    "productsGroupId": "group-2"
+    "productsGroupId": "32cfba97-0635-4bbd-90f4-a300f6c26fbf"
   },
   {
     "productId": "4",
@@ -65,7 +65,7 @@
     "imagePaths": ["https://storage.googleapis.com/orderly-af56f.appspot.com/announcements%2F1254_1717493180270.PNG", "https://storage.googleapis.com/orderly-af56f.appspot.com/announcements%2F68_1717449806064.jpg"],
     "numberOfRates": 5,
     "rate": 4.9,
-    "productsGroupId": "group-2"
+    "productsGroupId": "32cfba97-0635-4bbd-90f4-a300f6c26fbf"
   },
   {
     "productId": "5",
@@ -80,6 +80,6 @@
     "imagePaths": ["https://storage.googleapis.com/orderly-af56f.appspot.com/announcements%2F68_1717449806064.jpg", "https://storage.googleapis.com/orderly-af56f.appspot.com/announcements%2F1254_1717493180270.PNG"],
     "numberOfRates": 18,
     "rate": 4.3,
-    "productsGroupId": "group-3"
+    "productsGroupId": "32cfba97-0635-4bbd-90f4-a300f6c26fbf"
   }
 ]

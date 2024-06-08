@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import dummyData from "./products.json";
 import AddProductPopup from "../../pupups/AddProductPopup";
 import UpdateProductPopup from "../../pupups/UpdateProductPopup";
-import _defaultPic from "../../../assets/images/noProfilePic.png";
 import ProductsTable from "./ProductsTable";
 import { useParams } from "react-router-dom";
 import { supplairAPI } from "../../../utils/axios";
 import Pagination from "../../utils/Pagination";
 import Cookies from "universal-cookie";
+import { toast } from "react-toastify";
+import { ScaleLoader } from "react-spinners";
 
 function ProductsByGroup() {
   const [groupName, setGroupName] = useState("");
@@ -50,6 +51,36 @@ function ProductsByGroup() {
       });
   };
 
+  const [categories, setCategories] = useState([]);
+  const [groups, setGroups] = useState([]);
+  useEffect(() => {
+    const cookies = new Cookies();
+    const storedAccessToken = cookies.get("access_token");
+
+    supplairAPI
+      .get("products-srv/query/supplier/myProductsGroups?page=0&size=100", {
+        headers: {
+          Authorization: `Bearer ${storedAccessToken}`,
+        },
+      })
+      .then((data) => {
+        const result = data?.data?.content.reduce((acc, item) => {
+          const { categoryId, name, productsGroupId } = item;
+          if (!acc[categoryId]) {
+            acc[categoryId] = [];
+          }
+          acc[categoryId].push({ name, productsGroupId });
+          return acc;
+        }, {});
+        setCategories(result);
+        setGroups(data?.data?.content);
+      })
+      .catch((err) => {
+        if (Math.floor(err?.response?.status / 100) == 5) toast.error("Server Error");
+        else toast.error(err.message);
+      });
+  }, []);
+
   useEffect(() => {
     makeRequest(page);
   }, [page, updateGet]);
@@ -77,7 +108,19 @@ function ProductsByGroup() {
         </div>
       </div>
       <div>
-        <ProductsTable products={products} menuProduct={menuProduct} setMenuProduct={setMenuProduct} setUpdateProduct={setUpdateProduct} />
+        {loading ? (
+          <div className="h-[70vh] w-full flex items-center justify-center">
+            <ScaleLoader />
+          </div>
+        ) : (
+          <ProductsTable
+            products={products}
+            menuProduct={menuProduct}
+            setMenuProduct={setMenuProduct}
+            setUpdateProduct={setUpdateProduct}
+            groups={groups}
+          />
+        )}
         <div className="h-16"></div>
         <div className="fixed bg-white bottom-5 right-10">
           <Pagination
@@ -87,8 +130,21 @@ function ProductsByGroup() {
             makeRequest={makeRequest}
           />
         </div>
-        {addProduct && <AddProductPopup close={setAddProduct} />}
-        {updateProduct && <UpdateProductPopup product={updateProduct} close={setUpdateProduct} />}
+        {addProduct && (
+          <AddProductPopup
+            close={setAddProduct}
+            categories={categories}
+            setUpdateGet={setUpdateGet}
+          />
+        )}
+        {updateProduct && (
+          <AddProductPopup
+            product={updateProduct}
+            close={setUpdateProduct}
+            categories={categories}
+            setUpdateGet={setUpdateGet}
+          />
+        )}
       </div>
     </div>
   );

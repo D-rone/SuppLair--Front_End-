@@ -46,7 +46,7 @@ function TopBar({ profileDropdown, setProfileDropdown }) {
   return (
     // TOP BAR
     <div
-      className="fixed z-10 flex items-center w-full h-14 bg-supplair-secondary"
+      className="fixed z-30 flex items-center w-full h-14 bg-supplair-secondary"
       onClick={() => {
         setProfileDropdown(false);
       }}

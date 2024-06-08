@@ -4,46 +4,88 @@ import AddProductPopup from "../../pupups/AddProductPopup";
 import UpdateProductPopup from "../../pupups/UpdateProductPopup";
 import _defaultPic from "../../../assets/images/noProfilePic.png";
 import ProductsTable from "./ProductsTable";
+import { supplairAPI } from "../../../utils/axios";
+import { ScaleLoader } from "react-spinners";
+import Pagination from "../../utils/Pagination";
+import Cookies from "universal-cookie";
 
 function Products() {
-  const [products, setProducts] = useState(dummyData);
+  const [products, setProducts] = useState([]);
+
   const [updateProduct, setUpdateProduct] = useState(null);
-  const [deleteProduct, setDeleteProduct] = useState(null);
   const [addProduct, setAddProduct] = useState(false);
-  const [filterStatus, setFilterStatus] = useState("all");
 
+  const [loading, setLoading] = useState(true);
+  const [updateGet, setUpdateGet] = useState(false);
 
+  const [totalPages, setTotalPages] = useState(1);
+
+  const [page, setPage] = useState(0);
+
+  let makeRequest = (page) => {
+    setLoading(true);
+    const cookies = new Cookies();
+    const storedAccessToken = cookies.get("access_token");
+
+    supplairAPI
+      .get("products-srv/query/supplier/myProducts?page=" + page + "&size=8", {
+        headers: {
+          Authorization: `Bearer ${storedAccessToken}`,
+        },
+      })
+      .then((data) => {
+        console.log(data?.data);
+        setProducts(data?.data?.content);
+        setTotalPages(data?.data?.totalPages);
+        setLoading(false);
+      })
+      .catch((err) => {
+        if (Math.floor(err?.response?.status / 100) == 5) toast.error("Server Error");
+        else toast.error(err.message);
+        setLoading(false);
+      });
+  };
+
+  const [categories, setCategories] = useState([]);
+  const [groups, setGroups] = useState([]);
+  useEffect(() => {
+    const cookies = new Cookies();
+    const storedAccessToken = cookies.get("access_token");
+
+    supplairAPI
+      .get("products-srv/query/supplier/myProductsGroups?page=0&size=100", {
+        headers: {
+          Authorization: `Bearer ${storedAccessToken}`,
+        },
+      })
+      .then((data) => {
+        const result = data?.data?.content.reduce((acc, item) => {
+          const { categoryId, name, productsGroupId } = item;
+          if (!acc[categoryId]) {
+            acc[categoryId] = [];
+          }
+          acc[categoryId].push({ name, productsGroupId });
+          return acc;
+        }, {});
+        setCategories(result);
+        setGroups(data?.data?.content);
+      })
+      .catch((err) => {
+        if (Math.floor(err?.response?.status / 100) == 5) toast.error("Server Error");
+        else toast.error(err.message);
+      });
+  }, []);
+
+  useEffect(() => {
+    makeRequest(page);
+  }, [page, updateGet]);
+
+  const [menuProduct, setMenuProduct] = useState(null);
   const hideProductOptions = () => {
     setMenuProduct(null);
   };
 
-  const getProducts = () => {
-    let filteredProducts = [];
-    if (filterStatus === "all") {
-      filteredProducts = dummyData;
-    } else if (filterStatus === "available") {
-      filteredProducts = dummyData.filter((product) => product.quantity > product.minimumQuantity);
-    } else if (filterStatus === "out_of_stock") {
-      filteredProducts = dummyData.filter((product) => product.quantity < product.minimumQuantity);
-    }
-    setProducts(filteredProducts);
-  };
-
-  useEffect(() => {
-    getProducts();
-  }, [filterStatus]);
-
-  useEffect(() => {
-    // Update products array whenever there's a change in products state
-    // Check if quantity is 0 and set inactive status
-    const updatedProducts = products.map((product) => ({
-      ...product,
-      status: product.quantity < product.minimumQuantity ? "inactive" : "active",
-    }));
-    setProducts(updatedProducts);
-  }, [products]);
-
-
+  const [filterStatus, setFilterStatus] = useState("");
 
   return (
     <div onClick={hideProductOptions}>
@@ -72,9 +114,43 @@ function Products() {
         </div>
       </div>
       <div>
-        <ProductsTable products={products} />
-        {addProduct && <AddProductPopup close={setAddProduct} />}
-        {updateProduct && <UpdateProductPopup product={updateProduct} close={setUpdateProduct} />}
+        {loading ? (
+          <div className="h-[70vh] w-full flex items-center justify-center">
+            <ScaleLoader />
+          </div>
+        ) : (
+          <ProductsTable
+            products={products}
+            menuProduct={menuProduct}
+            setMenuProduct={setMenuProduct}
+            setUpdateProduct={setUpdateProduct}
+            groups={groups}
+          />
+        )}
+        <div className="h-16"></div>
+        <div className="fixed bg-white bottom-5 right-10">
+          <Pagination
+            totalPages={totalPages}
+            page={page}
+            setPage={setPage}
+            makeRequest={makeRequest}
+          />
+        </div>
+        {addProduct && (
+          <AddProductPopup
+            close={setAddProduct}
+            categories={categories}
+            setUpdateGet={setUpdateGet}
+          />
+        )}
+        {updateProduct && (
+          <AddProductPopup
+            product={updateProduct}
+            close={setUpdateProduct}
+            categories={categories}
+            setUpdateGet={setUpdateGet}
+          />
+        )}
       </div>
     </div>
   );

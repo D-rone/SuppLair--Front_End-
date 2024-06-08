@@ -23,7 +23,6 @@ function AddAnnouncementPopup({ close, setUpdateGet }) {
       } else {
         const formData = new FormData();
         formData.append("files", imageRef.current.files[0]);
-        setUpdated(false);
         setLoading(true);
         fileUpload
           .post("/api/upload/announcements", formData, {
@@ -56,12 +55,10 @@ function AddAnnouncementPopup({ close, setUpdateGet }) {
               })
               .catch((err) => {
                 toast.error(err.message);
-                setUpdated(true);
               });
           })
           .catch((err) => {
             toast.error(err.message);
-            setUpdated(true);
           })
           .finally(() => {
             setLoading(false);
