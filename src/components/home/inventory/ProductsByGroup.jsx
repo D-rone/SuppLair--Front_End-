@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import dummyData from "./products.json";
 import AddProductPopup from "../../pupups/AddProductPopup";
-import UpdateProductPopup from "../../pupups/UpdateProductPopup";
 import ProductsTable from "./ProductsTable";
 import { useParams } from "react-router-dom";
 import { supplairAPI } from "../../../utils/axios";
@@ -9,6 +7,7 @@ import Pagination from "../../utils/Pagination";
 import Cookies from "universal-cookie";
 import { toast } from "react-toastify";
 import { ScaleLoader } from "react-spinners";
+import UpdateProductPopup from "../../pupups/UpdateProductPopup";
 
 function ProductsByGroup() {
   const [groupName, setGroupName] = useState("");
@@ -38,7 +37,6 @@ function ProductsByGroup() {
         },
       })
       .then((data) => {
-        console.log(data?.data);
         setGroupName(data?.data?.name);
         setProducts(data?.data?.products?.content);
         setTotalPages(data?.data?.products?.totalPages);
@@ -93,7 +91,7 @@ function ProductsByGroup() {
   return (
     <div onClick={hideProductOptions}>
       <div className="flex items-center h-16 px-8 pt-4 mb-5">
-        <label className="px-4 py-2 m-5 text-2xl font-bold text-gray-800 bg-white rounded-lg shadow-lg w-fit dark:shadow-2x">
+        <label className="px-4 py-2 m-5 w-fit text-2xl text-nowrap font-bold text-gray-800 bg-white rounded-lg shadow-lg  dark:shadow-2x">
           {groupName}
         </label>
         <div className="flex items-center justify-end w-full">
@@ -115,8 +113,7 @@ function ProductsByGroup() {
         ) : (
           <ProductsTable
             products={products}
-            menuProduct={menuProduct}
-            setMenuProduct={setMenuProduct}
+            setUpdateGet={setUpdateGet}
             setUpdateProduct={setUpdateProduct}
             groups={groups}
           />
@@ -138,7 +135,7 @@ function ProductsByGroup() {
           />
         )}
         {updateProduct && (
-          <AddProductPopup
+          <UpdateProductPopup
             product={updateProduct}
             close={setUpdateProduct}
             categories={categories}

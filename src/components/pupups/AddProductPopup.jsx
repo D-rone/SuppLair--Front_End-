@@ -14,21 +14,16 @@ function AddProductPopup({ close, product, categories, setUpdateGet }) {
     return newValue;
   };
 
-  const [formData, setFormData] = useReducer(
-    updateReducer,
-    product
-      ? product
-      : {
-          name: "",
-          reference: "",
-          price: 0,
-          description: "",
-          quantity: 0,
-          minimumQuantity: 0,
-          productsGroupId: "",
-          images: [],
-        }
-  );
+  const [formData, setFormData] = useReducer(updateReducer, {
+    name: "",
+    reference: "",
+    price: 0,
+    description: "",
+    quantity: 0,
+    minimumQuantity: 0,
+    productsGroupId: "",
+    images: [],
+  });
 
   const [loading, setLoading] = useState(false);
 
@@ -58,8 +53,6 @@ function AddProductPopup({ close, product, categories, setUpdateGet }) {
           })
           .then((response) => {
             const imagePaths = response.data;
-
-            console.log(imagePaths);
 
             const cookies = new Cookies();
             const storedAccessToken = cookies.get("access_token");
@@ -108,7 +101,7 @@ function AddProductPopup({ close, product, categories, setUpdateGet }) {
     setFormData({ ...formData, [name]: value });
   };
 
-  const [images, setImages] = useReducer(updateReducer, product ? product.imagePaths : []);
+  const [images, setImages] = useReducer(updateReducer, []);
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);

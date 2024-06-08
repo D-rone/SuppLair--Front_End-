@@ -103,12 +103,12 @@ function TopBar({ profileDropdown, setProfileDropdown }) {
             <div className="py-1">
               <NavLink
                 to="/user_profile"
-                className="flex items-center block border-[1px] border-gray-700 px-8 py-2 text-base h-14 hover:bg-gray-950"
+                className="flex items-center border-[1px] border-gray-700 px-8 py-2 text-base h-14 hover:bg-gray-950"
               >
                 Profile
               </NavLink>
               <button
-                className="flex items-center block border-[1px] border-gray-700 px-8 py-2 text-base h-14 hover:bg-gray-950"
+                className="flex items-center border-[1px] border-gray-700 px-8 py-2 text-base h-14 hover:bg-gray-950"
                 onClick={logout}
                 style={{ width: "100%", border: "none" }}
               >

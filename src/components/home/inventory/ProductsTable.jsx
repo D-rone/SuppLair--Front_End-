@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import showMore from "../../../assets/images/more.svg";
 import { toast } from "react-toastify";
+import Cookies from "universal-cookie";
+import { supplairAPI } from "../../../utils/axios";
 
-function ProductsTable({ products, menuProduct, setMenuProduct, setUpdateProduct, groups }) {
+function ProductsTable({ products, setUpdateGet, setUpdateProduct, groups }) {
   const [showDetails, setShowDetails] = useState(null);
   const [expandedDescriptions, setExpandedDescriptions] = useState({});
   const [showSidebar, setShowSidebar] = useState(false);
@@ -34,6 +36,26 @@ function ProductsTable({ products, menuProduct, setMenuProduct, setUpdateProduct
     if (currentDate < startDate) return "Not Started";
     if (currentDate > endDate) return "Ended";
     return "Active";
+  };
+
+  const deleteProduct = (groupId, productId) => {
+    if (confirm("Are you sure you want to delete this product ?")) {
+      const cookies = new Cookies();
+      const storedAccessToken = cookies.get("access_token");
+      supplairAPI
+        .delete("products-srv/command/products_group/" + groupId + "/product/" + productId, {
+          headers: {
+            Authorization: `Bearer ${storedAccessToken}`,
+          },
+        })
+        .then((response) => {
+          toast.success(response.data);
+          setUpdateGet((prev) => !prev);
+        })
+        .catch((err) => {
+          toast.error(err.message);
+        });
+    }
   };
 
   return (
@@ -84,7 +106,13 @@ function ProductsTable({ products, menuProduct, setMenuProduct, setUpdateProduct
               <td className="px-6 text-xl font-semibold text-center whitespace-no-wrap text-supplair-secondary">
                 <h3 className="inline">{product.quantity}</h3>
               </td>
-              <td className="relative">
+              <td
+                className="relative cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  showProductOptions(product);
+                }}
+              >
                 {selectedProduct === product.productId ? (
                   <div className="absolute right-0 z-10 flex flex-col gap-2 p-2 bg-white rounded-lg shadow-sm -top-3 shadow-black h-fit w-fit">
                     <button
@@ -101,23 +129,15 @@ function ProductsTable({ products, menuProduct, setMenuProduct, setUpdateProduct
                       className="w-40 h-10 px-4 text-lg rounded-lg font-regular hover:text-white hover:bg-red-500 text-start"
                       onClick={(e) => {
                         e.stopPropagation();
-                        toast.success("Product deleted");
-                        setSelectedProduct(null); // Close the options menu after clicking "Delete"
+                        deleteProduct(product.productsGroupId, product.productId);
+                        setSelectedProduct(null);
                       }}
                     >
                       Delete
                     </button>
                   </div>
                 ) : (
-                  <img
-                    src={showMore}
-                    alt=""
-                    className="w-6 cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      showProductOptions(product);
-                    }}
-                  />
+                  <img src={showMore} alt="" className="w-6 " />
                 )}
               </td>
               <td></td>

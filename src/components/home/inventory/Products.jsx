@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import dummyData from "./products.json";
 import AddProductPopup from "../../pupups/AddProductPopup";
-import UpdateProductPopup from "../../pupups/UpdateProductPopup";
 import _defaultPic from "../../../assets/images/noProfilePic.png";
 import ProductsTable from "./ProductsTable";
 import { supplairAPI } from "../../../utils/axios";
 import { ScaleLoader } from "react-spinners";
 import Pagination from "../../utils/Pagination";
 import Cookies from "universal-cookie";
+import UpdateProductPopup from "../../pupups/UpdateProductPopup";
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -22,19 +21,27 @@ function Products() {
 
   const [page, setPage] = useState(0);
 
+  const [filterStatus, setFilterStatus] = useState("all");
+
   let makeRequest = (page) => {
     setLoading(true);
     const cookies = new Cookies();
     const storedAccessToken = cookies.get("access_token");
 
     supplairAPI
-      .get("products-srv/query/supplier/myProducts?page=" + page + "&size=8", {
-        headers: {
-          Authorization: `Bearer ${storedAccessToken}`,
-        },
-      })
+      .get(
+        "products-srv/query/supplier/myProducts?filter=" +
+          filterStatus +
+          "&page=" +
+          page +
+          "&size=8",
+        {
+          headers: {
+            Authorization: `Bearer ${storedAccessToken}`,
+          },
+        }
+      )
       .then((data) => {
-        console.log(data?.data);
         setProducts(data?.data?.content);
         setTotalPages(data?.data?.totalPages);
         setLoading(false);
@@ -78,14 +85,12 @@ function Products() {
 
   useEffect(() => {
     makeRequest(page);
-  }, [page, updateGet]);
+  }, [page, updateGet, filterStatus]);
 
   const [menuProduct, setMenuProduct] = useState(null);
   const hideProductOptions = () => {
     setMenuProduct(null);
   };
-
-  const [filterStatus, setFilterStatus] = useState("");
 
   return (
     <div onClick={hideProductOptions}>
@@ -94,7 +99,10 @@ function Products() {
           <select
             id="selectProductStatus"
             className="text-2xl font-bold text-gray-800 bg-white hover:cursor-pointer"
-            onChange={(e) => setFilterStatus(e.target.value)}
+            onChange={(e) => {
+              setPage(0);
+              setFilterStatus(e.target.value);
+            }}
             value={filterStatus}
           >
             <option value="all">All Products</option>
@@ -121,8 +129,7 @@ function Products() {
         ) : (
           <ProductsTable
             products={products}
-            menuProduct={menuProduct}
-            setMenuProduct={setMenuProduct}
+            setUpdateGet={setUpdateGet}
             setUpdateProduct={setUpdateProduct}
             groups={groups}
           />
@@ -144,7 +151,7 @@ function Products() {
           />
         )}
         {updateProduct && (
-          <AddProductPopup
+          <UpdateProductPopup
             product={updateProduct}
             close={setUpdateProduct}
             categories={categories}
