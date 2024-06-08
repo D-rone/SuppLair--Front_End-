@@ -57,7 +57,7 @@ function UpdateProductPopup({ close, product, categories, setUpdateGet }) {
               description:
                 product.description == formData.description ? null : formData.description,
               quantity: product.quantity == formData.quantity ? null : formData.quantity,
-              naminimumQuantityme:
+              minimumQuantity:
                 product.minimumQuantity == formData.minimumQuantity
                   ? null
                   : formData.minimumQuantity,
