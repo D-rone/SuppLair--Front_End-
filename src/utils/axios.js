@@ -1,9 +1,9 @@
 import axios from "axios";
 
 export const supplairAPI = axios.create({
-  baseURL: "http://localhost:7777",
+  baseURL: "http://192.168.137.1:7777",
 });
 
 export const fileUpload = axios.create({
-  baseURL : "http://localhost:8084"
+  baseURL : "http://192.168.137.1:8084"
 })
