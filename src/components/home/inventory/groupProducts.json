@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "name": "Group Product 1",
+    "category": "Electronics"
+  },
+  {
+    "id": 2,
+    "name": "Group Product 2",
+    "category": "Home & Kitchen"
+  },
+  {
+    "id": 3,
+    "name": "Group Product 3",
+    "category": "Clothing & Accessories"
+  },
+  {
+    "id": 5,
+    "name": "Group Product 1",
+    "category": "Electronics"
+  },
+  {
+    "id": 6,
+    "name": "Group Product 2",
+    "category": "Home & Kitchen"
+  }
+]
