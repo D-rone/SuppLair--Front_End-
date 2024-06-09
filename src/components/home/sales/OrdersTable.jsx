@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import OrderDetailsModal from "./OrderDetailsModal";
-import axios from "axios";
 import { useUserContext } from "../../../pages/HomePage";
+import { supplairAPI } from "../../../utils/axios";
 
 const OrdersTable = ({ filterOption, id }) => {
   const { userData, setUserData } = useUserContext();
@@ -15,8 +15,8 @@ const OrdersTable = ({ filterOption, id }) => {
   const [orderDetails, setOrderDetails] = useState({});
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:8081/api/v1/orders/` + userData.companyName)
+    supplairAPI
+      .get(`orders-srv/api/v1/orders/` + userData.companyName)
       .then((res) => {
         if (id) {
           setOrders(res.data.filter((order) => order.order_number === id));
@@ -31,9 +31,9 @@ const OrdersTable = ({ filterOption, id }) => {
 
   useEffect(() => {
     if (selectedOrder) {
-      axios
+      supplairAPI
         .get(
-          `http://localhost:8081/api/v1/supplier/orders/` +
+          `orders-srv/api/v1/supplier/orders/` +
             selectedOrder.order_number
         )
         .then((res) => {
@@ -47,8 +47,8 @@ const OrdersTable = ({ filterOption, id }) => {
 
   const toggleSidebar = async (orderId) => {
     try {
-      const response = await axios.get(
-        `http://localhost:8081/api/v1/supplier/orders/` + orderId
+      const response = await supplairAPI.get(
+        `orders-srv/api/v1/supplier/orders/` + orderId
       );
 
       setOrderDetails(response.data);

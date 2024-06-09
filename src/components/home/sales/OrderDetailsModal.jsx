@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilePdf as farFilePdf } from "@fortawesome/free-regular-svg-icons";
 import { toast } from "react-toastify";
 import { useUserContext } from "../../../pages/HomePage";
-import axios from "axios";
+import { supplairAPI } from "../../../utils/axios";
 
 const formatDate = (dateStr) => {
   const [year, month, day] = dateStr.split(/[-/]/);
@@ -66,8 +66,8 @@ const OrderDetailsModal = ({
       }
     }
     try {
-      const response = await axios.put(
-        `http://localhost:8081/api/v1/supplier/orders/` + order.order_number,
+      const response = await supplairAPI.put(
+        `orders-srv/api/v1/supplier/orders/` + order.order_number,
         {
           date: deliveryDate,
           orderState: state,

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ClientOrdersSidebar from "./ClientOrdersSidebar";
 import { useUserContext } from "../../../pages/HomePage";
-import axios from "axios";
+import { supplairAPI } from "../../../utils/axios";
 
 const ClientsTable = ({ filterOption }) => {
   const { userData, setUserData } = useUserContext();
@@ -14,8 +14,8 @@ const ClientsTable = ({ filterOption }) => {
   const [clientDetails, setClientDetails] = useState({});
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:8081/api/v1/customers/` + userData.companyName)
+    supplairAPI
+      .get(`orders-srv/api/v1/customers/` + userData.companyName)
       .then((res) => {
         setclientsData(res.data);
       })
@@ -25,10 +25,8 @@ const ClientsTable = ({ filterOption }) => {
   }, []);
   useEffect(() => {
     if (selectedClient) {
-      axios
-        .get(
-          `http://localhost:8081/api/v1/orders/${userData.companyName}/${selectedClient.name}`
-        )
+      supplairAPI
+        .get(`orders-srv/api/v1/orders/${userData.companyName}/${selectedClient.name}`)
         .then((res) => {
           console.log("hhh");
           setClientDetails(res.data);
@@ -47,9 +45,7 @@ const ClientsTable = ({ filterOption }) => {
     } else {
       setOriginalExpandedClient(expandedClient); // Store original expanded client
       setExpandedClient(clientId);
-      const selectedClient = clientsData.find(
-        (client) => client.name === clientId
-      );
+      const selectedClient = clientsData.find((client) => client.name === clientId);
       setSelectedClient(selectedClient);
       setShowSidebar(true);
     }
@@ -63,13 +59,9 @@ const ClientsTable = ({ filterOption }) => {
 
   const getDotColor = (clientId) => {
     const client = clientsData.find((client) => client.name === clientId);
-    const clientOrders = ordersData.filter(
-      (order) => order.client_name === client.name
-    );
+    const clientOrders = ordersData.filter((order) => order.client_name === client.name);
 
-    const hasPayedOrder = clientOrders.some(
-      (order) => order.status === "PAYED"
-    );
+    const hasPayedOrder = clientOrders.some((order) => order.status === "PAYED");
 
     const hasPendingOrder = clientOrders.some(
       (order) =>
@@ -126,22 +118,14 @@ const ClientsTable = ({ filterOption }) => {
                       <tr>
                         <td
                           className={`px-6 py-4 whitespace-nowrap cursor-pointer${
-                            selectedClient?.name === client.name
-                              ? "bg-gray-200"
-                              : ""
+                            selectedClient?.name === client.name ? "bg-gray-200" : ""
                           }`}
                           onClick={() => toggleExpandedClient(client.name)}
                         >
-                          <div className="truncate max-w-xs font-medium">
-                            {client.name}
-                          </div>
+                          <div className="truncate max-w-xs font-medium">{client.name}</div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {client.state}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {client.email}
-                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">{client.state}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">{client.email}</td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div
                             className={`w-3 h-3 rounded-full`}
@@ -157,9 +141,7 @@ const ClientsTable = ({ filterOption }) => {
                             className="bg-supplair-primary hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mr-2"
                             onClick={() => toggleExpandedClient(client.name)}
                           >
-                            {expandedClient !== client.name
-                              ? "Show Orders"
-                              : "Hide Orders"}
+                            {expandedClient !== client.name ? "Show Orders" : "Hide Orders"}
                           </button>
                         </td>
                       </tr>
@@ -169,9 +151,7 @@ const ClientsTable = ({ filterOption }) => {
                         <td
                           colSpan="5" // span the entire row
                           className={`px-6 py-4 whitespace-nowrap cursor-pointer  ${
-                            selectedClient?.name === client.name
-                              ? "bg-gray-200"
-                              : ""
+                            selectedClient?.name === client.name ? "bg-gray-200" : ""
                           }`}
                           onClick={() => toggleExpandedClient(client.name)}
                         >

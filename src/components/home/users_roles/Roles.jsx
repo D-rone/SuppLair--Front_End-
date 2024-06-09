@@ -6,8 +6,8 @@ import { toast } from "react-toastify";
 import UpdateRolePopup from "../../pupups/UpdateRolePopup";
 import AddRolePopup from "../../pupups/AddRolePopup";
 import Cookies from "universal-cookie";
-import axios from "axios";
 import { useUserContext } from "../../../pages/HomePage";
+import { supplairAPI } from "../../../utils/axios";
 
 function Roles() {
   const cookies = new Cookies();
@@ -18,8 +18,8 @@ function Roles() {
   const [update, setUpdate] = useState(false);
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:8080/api/v1/roles/` + userData.companyId, {
+    supplairAPI
+      .get(`auth-srv/api/v1/roles/` + userData.companyId, {
         headers: {
           Authorization: "Bearer " + storedAccessToken,
         },

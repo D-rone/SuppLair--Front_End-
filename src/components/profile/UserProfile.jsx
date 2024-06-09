@@ -5,8 +5,6 @@ import _changeProfilePic from "../../assets/images/plusSign.svg";
 import { toast } from "react-toastify";
 import { useUserContext } from "../../pages/HomePage";
 import defaultProfilePic from "../../assets/images/noProfilePic.png";
-import axios from "axios";
-import Cookies from "universal-cookie";
 
 function UserProfile({ userData, setUpdatedData }) {
   const [name, setName] = useState(userData.name);

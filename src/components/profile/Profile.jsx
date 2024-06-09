@@ -5,8 +5,8 @@ import CompanyProfile from "./CompanyProfile";
 import UserProfile from "./UserProfile";
 import { useUserContext } from "../../pages/HomePage";
 import { toast } from "react-toastify";
-import axios from "axios";
 import Cookies from "universal-cookie";
+import { supplairAPI } from "../../utils/axios";
 
 function Profile() {
   const { userData, setUserData } = useUserContext();
@@ -24,8 +24,8 @@ function Profile() {
 
   const hundleSave = async () => {
     try {
-      const response = await axios.put(
-        `http://localhost:8080/api/v1/profile/` + userData.userId,
+      const response = await supplairAPI.put(
+        `auth-srv/api/v1/profile/` + userData.userId,
         updatedData,
         {
           headers: {

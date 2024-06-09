@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useUserContext } from "../../../pages/HomePage";
+import { supplairAPI } from "../../../utils/axios";
 
 function Billing() {
   const taxe = 500;
@@ -9,8 +9,8 @@ function Billing() {
   const [invoices, setinvoices] = useState([]);
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:8081/api/v1/invoices/` + userData.companyName)
+    supplairAPI
+      .get(`orders-srv/api/v1/invoices/` + userData.companyName)
       .then((res) => {
         setinvoices(res.data);
       })

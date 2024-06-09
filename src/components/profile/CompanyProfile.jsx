@@ -5,8 +5,6 @@ import _changeProfilePic from "../../assets/images/plusSign.svg";
 import { toast } from "react-toastify";
 import { useUserContext } from "../../pages/HomePage";
 import defaultProfilePic from "../../assets/images/noProfilePic.png";
-import axios from "axios";
-import Cookies from "universal-cookie";
 
 function CompanyProfile({
   setUpdatedData,
@@ -20,14 +18,10 @@ function CompanyProfile({
   const [companyName, setCompanyName] = useState(userData.companyName);
   const [address, setAddress] = useState(userData.address);
   const [phone, setPhone] = useState(userData.number || "");
-  const [hasDeliveryDates, setHasDeliveryDates] = useState(
-    userData.hasDeliveryDate
-  );
+  const [hasDeliveryDates, setHasDeliveryDates] = useState(userData.hasDeliveryDate);
   const [email, setEmail] = useState(userData.companyEmail || "");
   const [description, setDescription] = useState(userData.description || "");
-  const [selectedWilayas, setSelectedWilayas] = useState(
-    userData.wilayas || []
-  );
+  const [selectedWilayas, setSelectedWilayas] = useState(userData.wilayas || []);
 
   const wilayas = [
     { value: "01", label: "Adrar" },
@@ -209,11 +203,7 @@ function CompanyProfile({
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
-            <img
-              src={companyPic}
-              alt="Profile Picture"
-              className="rounded-full size-44"
-            />
+            <img src={companyPic} alt="Profile Picture" className="rounded-full size-44" />
             {hovered && (
               <div className="absolute top-0 left-0 bg-black rounded-full size-full bg-opacity-30">
                 <input type="file" className="hidden" />
@@ -511,10 +501,7 @@ function CompanyProfile({
                         handleWilayaChange(wilaya.label);
                       }}
                     />
-                    <label
-                      htmlFor={`wilaya-${wilaya.value}`}
-                      className="text-gray-500"
-                    >
+                    <label htmlFor={`wilaya-${wilaya.value}`} className="text-gray-500">
                       {wilaya.label}
                     </label>
                   </div>
@@ -549,10 +536,7 @@ function CompanyProfile({
             >
               Cancel
             </button>
-            <button
-              onClick={hundleSave}
-              className="hover:cursor-pointer approveBtn"
-            >
+            <button onClick={hundleSave} className="hover:cursor-pointer approveBtn">
               Save
             </button>
           </div>
