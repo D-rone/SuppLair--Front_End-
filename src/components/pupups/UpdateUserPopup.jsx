@@ -1,12 +1,11 @@
 import React, { useEffect, useReducer, useState } from "react";
 import PopUp1 from "./PopUp16";
-import dummyData from "../home/users_roles/DUMMY_DATA.json";
 import { toast } from "react-toastify";
 import Cookies from "universal-cookie";
 import { useUserContext } from "../../pages/HomePage";
 import { supplairAPI } from "../../utils/axios";
 
-function UpdateUserPopup({ user, close }) {
+function UpdateUserPopup({ user, close, reload, setReload, setShowDetails }) {
   const cookies = new Cookies();
   const storedAccessToken = cookies.get("access_token");
   const formData = new FormData();
@@ -15,7 +14,7 @@ function UpdateUserPopup({ user, close }) {
 
   useEffect(() => {
     supplairAPI
-      .get(`auth-srv/api/v1/roles/` + userData.userId, {
+      .get(`auth-srv/api/v1/roles/` + userData.companyId, {
         headers: {
           Authorization: "Bearer " + storedAccessToken,
         },
@@ -51,8 +50,8 @@ function UpdateUserPopup({ user, close }) {
             },
           }
         );
-        console.log(response.data);
-        window.location.reload();
+        toast.success("User Updated")
+        setReload(!reload);
       } catch (error) {
         console.error("Error:", error);
       }

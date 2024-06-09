@@ -18,9 +18,6 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // If validation passes, proceed with sign up process
-    // Example: Send form data to server or perform any other necessary actions
-    console.log("log in successful");
     try {
       const response = await supplairAPI.post(
         "auth-srv/api/v1/auth/authenticate",
@@ -31,13 +28,13 @@ export default function Login() {
       );
       console.log("Response:", response.data);
       const { access_token, refresh_token } = response.data;
-
       document.cookie = `access_token=${access_token}; path=/`;
       document.cookie = `refresh_token=${refresh_token}; path=/`;
+      toast.dismiss();
       navigate("/", { replace: true });
     } catch (error) {
-      toast.error("An error occurred while Logining ");
-      console.error("Error:", error);
+      toast.error(error.response.data, { autoClose: false });
+      return;
     }
   };
   return (

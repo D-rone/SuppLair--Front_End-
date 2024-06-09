@@ -11,20 +11,21 @@ library.add(faEnvelope);
 export default function ResetPwd() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const [loaded, setLoaded] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Perform validation
     if (!email.trim()) {
-      toast.error("Email address is required");
+      toast.error("Email address is required", { autoClose: false });
       return;
     }
     // Regular expression to check if the email is in a valid format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
-      toast.error("Please enter a valid email address");
+      toast.error("Please enter a valid email address", { autoClose: false });
       return;
     }
-    console.log(email);
+    setLoaded(!loaded);
     try {
       const response = await supplairAPI.post(
         "auth-srv/api/v1/auth/send-email",
@@ -32,11 +33,13 @@ export default function ResetPwd() {
           email: email,
         }
       );
-      console.log("Response:", response.data);
-      toast.success("Check your email");
+      toast.dismiss();
+      toast.success("Check your email", { autoClose: false });
+      setLoaded(false);
     } catch (error) {
-      toast.error("request error ");
-      console.error("Error:", error);
+      toast.error(error.response.data, { autoClose: false });
+      setLoaded(false);
+    } finally {
     }
   };
   return (
@@ -60,6 +63,18 @@ export default function ResetPwd() {
             Forgot Password
           </h1>
           <div className="flex flex-col items-center mt-4">
+            {loaded ? (
+              <div
+                style={{
+                  position: "absolute",
+                  left: "50%",
+                  top: "50%",
+                  transform: "translate(-50%, -50%)", // Corrected
+                }}
+              >
+                <ScaleLoader />
+              </div>
+            ) : null}
             <form onSubmit={handleSubmit}>
               <div className="relative flex items-center mb-2">
                 <FontAwesomeIcon

@@ -54,13 +54,10 @@ export default function ConfirmPwd() {
           password: password,
         }
       );
-      console.log("Response:", response.data);
-      toast.success("Password saved successfully");
+      toast.dismiss();
+      toast.success("Password saved successfully", { autoClose: false });
       navigate("/login", { replace: true });
-    } catch (error) {
-      toast.error("request error ");
-      console.error("Error:", error);
-    }
+    } catch (error) {}
   };
   return (
     <>
@@ -123,7 +120,12 @@ export default function ConfirmPwd() {
           </div>
         </>
       ) : (
-        <h1>404 Page</h1>
+        <div>
+          <h1 className="mt-5  ml-5 text-3xl text-left">Reset Your Password</h1>
+          <p className="mt-5 m ml-5 text-lg text-left">
+            Sorry,your password reset link expired
+          </p>
+        </div>
       )}
     </>
   );

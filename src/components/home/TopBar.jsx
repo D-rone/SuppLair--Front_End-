@@ -13,28 +13,85 @@ import Cookies from "universal-cookie";
 import { useNavigate } from "react-router-dom";
 import { supplairAPI } from "../../utils/axios";
 
-let searchFormController = (event) => {
-  event.preventDefault();
-};
 
 function TopBar({ profileDropdown, setProfileDropdown }) {
-  const navigate = useNavigate();
   const cookies = new Cookies();
   const storedAccessToken = cookies.get("access_token");
   const { userData } = useUserContext();
   const [username, setUsername] = useState(userData.name);
   const [profilePic, setProfilePic] = useState(defaultProfilePic);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchCustomers, setSearchCustomers] = useState([]);
+  const [searchProducts, setSearchProducts] = useState([]);
+
+  useEffect(() => {
+    // Mock data for search results
+    const mockData = [
+      { id: 1, title: "Ali" },
+      { id: 2, title: "Mohamed" },
+      { id: 3, title: "Yasser" },
+    ];
+    const mockData2 = [
+      { id: 1, title: "elio Huile 5L" },
+      { id: 1, title: "elio Huile 2L" },
+      { id: 2, title: "Lben" },
+      { id: 3, title: "Sucre" },
+    ];
+
+    // Filter mock data based on search query
+    const filteredProducts = mockData2.filter((result) =>
+      result.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    const filteredClients = mockData.filter((result) =>
+      result.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    // Update search results
+    setSearchCustomers(filteredClients);
+    setSearchProducts(filteredProducts);
+  }, [searchQuery]);
 
   let toggleProfileDropdown = (e) => {
     e.stopPropagation();
     setProfileDropdown(!profileDropdown);
   };
 
-  let { showLogoText } = useScreenContext();
+  const handleSearch = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    // Perform search
+    // Example: fetchSearchResults(searchQuery);
+  };
+
+  const renderSearchCustomers = () => {
+    if (searchQuery === "") return null;
+    return searchCustomers.map((result) => (
+      <div className="text-base font-medium my-2 cursor-pointer" key={result.id}>
+        {result.title}
+      </div>
+    ));
+  };
+  const renderSearchProducts = () => {
+    if (searchQuery === "") return null;
+    return searchProducts.map((result) => (
+      <div className="text-base font-medium my-2 cursor-pointer" key={result.id}>
+        {result.title}
+      </div>
+    ));
+  };
+
+  const { showLogoText } = useScreenContext();
 
   let logout = async () => {
     try {
-      const response = await supplairAPI.post(`auth-srv/api/v1/logout/` + storedAccessToken);
+      const response = await supplairAPI.post(`auth-srv/api/v1/logout/` + storedAccessToken, {
+        headers: {
+          Authorization: "Bearer " + storedAccessToken,
+        },
+      });
       cookies.remove("access_token", { path: "/" });
       cookies.remove("refresh_token", { path: "/" });
       window.location.reload();
@@ -68,16 +125,32 @@ function TopBar({ profileDropdown, setProfileDropdown }) {
         )}
       </div>
       {/* Search Bar */}
-      <div className="w-1/4">
-        <form onSubmit={searchFormController}>
-          <div className="flex items-center w-full h-10 p-2 bg-white border-2 rounded-xl">
+      <div className="w-2/5">
+        <form onSubmit={handleSearchSubmit}>
+          <div className="flex items-center w-full h-10 p-2 bg-white border-2 rounded-md relative">
             <img src={_search} alt="" className="h-7 hover:cursor-pointer" />
-            <img src={_dropDown} alt="" className="h-1.5 hover:cursor-pointer" />
             <input
               type="text"
               placeholder="Search ..."
+              value={searchQuery}
+              onChange={handleSearch}
               className="w-full h-8 pl-2 ml-3 border-l-2 border-gray-300 focus:outline-none"
             />
+            {searchQuery === "" ? (
+              <></>
+            ) : (
+              <div
+                className="absolute left-0 right-0 top-full bg-white p-2 border border-gray-300 border-solid border-t-0 border-b border-l-0 border-r-0 rounded-b-lg overflow-scroll"
+                style={{ maxHeight: "400px" }}
+              >
+                {" "}
+                <h6 className="text-sm text-gray-400">Customers</h6>
+                {renderSearchCustomers()}
+                <div className="w-full h-px bg-gray-300 my-2"></div>
+                <h6 className=" text-sm text-gray-400">Products</h6>
+                {renderSearchProducts()}
+              </div>
+            )}
           </div>
         </form>
       </div>
@@ -103,12 +176,12 @@ function TopBar({ profileDropdown, setProfileDropdown }) {
             <div className="py-1">
               <NavLink
                 to="/user_profile"
-                className="flex items-center border-[1px] border-gray-700 px-8 py-2 text-base h-14 hover:bg-gray-950"
+                className="flex items-center block border-[1px] border-gray-700 px-8 py-2 text-base h-14 hover:bg-gray-950"
               >
                 Profile
               </NavLink>
               <button
-                className="flex items-center border-[1px] border-gray-700 px-8 py-2 text-base h-14 hover:bg-gray-950"
+                className="flex items-center block border-[1px] border-gray-700 px-8 py-2 text-base h-14 hover:bg-gray-950"
                 onClick={logout}
                 style={{ width: "100%", border: "none" }}
               >

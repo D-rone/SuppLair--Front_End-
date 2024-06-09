@@ -6,7 +6,8 @@ import SidePage from "../../components/Side/SidePage";
 import { toast } from "react-toastify";
 import { NavLink, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { supplairAPI } from "../../utils/axios";
+import { fileUpload, supplairAPI } from "../../utils/axios";
+import { ClockLoader, ScaleLoader } from "react-spinners";
 
 library.add(faUpload);
 
@@ -80,62 +81,91 @@ export default function SignUp_2() {
     });
   };
 
+  const [loading, setLoading] = useState(false);
   // Function to handle form submission
   const handleSignUp = async (e) => {
     e.preventDefault();
-    if (!address.trim()) {
-      toast.error("All fields are required");
-      return;
-    }
-    // Additional validation for file types (PDF)
-    for (let i = 0; i < selectedFiles.length; i++) {
-      if (!selectedFiles[i].name.toLowerCase().endsWith(".pdf")) {
-        toast.error("Please upload only PDF files");
+
+    if (!loading) {
+      if (!address.trim()) {
+        toast.error("All fields are required", { autoClose: false });
         return;
       }
-    }
-
-    try {
-      const response = await supplairAPI.post(
-        "auth-srv/api/v1/auth/register/company-infos",
-        {
-          name: companyName,
-          address: address,
-          fileUrls: [],
-          hasDeliveryDate: hasDeliveryDates,
-          wilayas: selectedWilayas,
+      // Additional validation for file types (PDF)
+      for (let i = 0; i < selectedFiles.length; i++) {
+        if (!selectedFiles[i].name.toLowerCase().endsWith(".pdf")) {
+          toast.error("Please upload only PDF files", { autoClose: false });
+          return;
         }
-      );
-      console.log("Response:", response.data);
-      toast.success(
-        "Thank you for signing up! Your registration is now in progress. We're working to create your account. Please be patient, and we'll notify you once it's complete."
-      );
-      navigate("/login", { replace: true });
-    } catch (error) {
-      toast.error("An error occurred while signing up");
-      console.error("Error:", error);
+      }
+      if (hasDeliveryDates && selectedWilayas.length == 0) {
+        toast.error("Wilayas list must not be empty ", { autoClose: false });
+      }
+
+      const formDataRequest = new FormData();
+
+      if (selectedFiles.length > 0) {
+        selectedFiles.forEach((file) => {
+          formDataRequest.append("files", file);
+        });
+
+        setLoading(true);
+
+        console.log(selectedWilayas);
+        fileUpload
+          .post("/api/upload/trade_registries", formDataRequest, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((response) => {
+            const filesPaths = response.data;
+
+            supplairAPI
+              .post("auth-srv/api/v1/auth/register/company-infos", {
+                name: companyName,
+                address: address,
+                fileUrls: filesPaths,
+                hasDeliveryDate: hasDeliveryDates,
+                wilayas: selectedWilayas,
+              })
+              .then(() => {
+                toast.dismiss();
+                toast.success(
+                  "Thank you for signing up! Your registration is now in progress. We're working to create your account. Please be patient, and we'll notify you once it's complete.",
+                  { autoClose: false }
+                );
+                navigate("/login", { replace: true });
+              })
+              .catch((error) => {
+                toast.error(error?.response?.data, { autoClose: false });
+              })
+              .finally(() => {
+              });
+          })
+          .catch((err) => {
+            toast.error(err.message);
+          });
+      } else {
+        toast.error("Each Product should have at least one image");
+      }
     }
   };
 
   // Function to handle file selection
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
+    console.log(e.target.files[0]);
     setSelectedFiles([...selectedFiles, ...files]);
   };
 
-  // Calculate input height based on number of files
-  const inputHeight = 40 + selectedFiles.length * 20; // Assuming each file name occupies 20px height
+  const inputHeight = 40 + selectedFiles.length * 20;
 
   return (
     <>
       <div className="absolute top-0 right-0 mt-2 mr-10">
-        <span className="font-semibold font-Raleway ">
-          Already have an account ?
-        </span>
-        <NavLink
-          to="/login"
-          className="ml-2 font-bold text-supplair-primary font-Raleway"
-        >
+        <span className="font-semibold font-Raleway ">Already have an account ?</span>
+        <NavLink to="/login" className="ml-2 font-bold text-supplair-primary font-Raleway">
           Log In
         </NavLink>
       </div>
@@ -153,7 +183,7 @@ export default function SignUp_2() {
                   htmlFor="organizationName"
                   className={`block text-base font-normal mb-1 ${"text-gray-500"}`}
                 >
-                  Organization Name <span className="text-red-600 ">*</span>
+                  Organization Name <span className=" text-red-600">*</span>
                 </label>
                 <input
                   id="organizationName"
@@ -187,7 +217,7 @@ export default function SignUp_2() {
               <div className=" mr-[255px]">
                 <label
                   htmlFor="fileInput"
-                  className="block mb-1 text-base font-normal text-gray-500"
+                  className="block text-base font-normal mb-1 text-gray-500"
                 >
                   Trade Registry(s) <span className="text-red-600">*</span>
                 </label>
@@ -203,20 +233,18 @@ export default function SignUp_2() {
                   onChange={handleFileChange}
                 />
                 <div
-                  className="flex items-center justify-between h-auto py-2 pl-10 pr-4 border border-gray-300 cursor-pointer w-96 rounded-xl focus:outline-none focus:border-supplair-primary focus:border-2"
+                  className="h-auto py-2 pl-10 pr-4 border border-gray-300 w-96 rounded-xl cursor-pointer flex items-center justify-between focus:outline-none focus:border-supplair-primary focus:border-2"
                   style={{ height: inputHeight }}
                   onClick={() => document.getElementById("fileInput").click()}
                 >
                   {selectedFiles.length > 0 ? (
-                    <ul className="pl-5 list-disc">
+                    <ul className="list-disc pl-5">
                       {selectedFiles.map((file, index) => (
                         <li key={index}>{file.name}</li>
                       ))}
                     </ul>
                   ) : (
-                    <span className="text-gray-500 ">
-                      Upload Trade Registry
-                    </span>
+                    <span className=" text-gray-500">Upload Trade Registry</span>
                   )}
                   <FontAwesomeIcon icon="upload" />
                 </div>
@@ -224,12 +252,12 @@ export default function SignUp_2() {
 
               {/* New Radio Buttons for Delivery Dates */}
               <div
-                className="flex items-center mb-6"
+                className="mb-6 flex items-center"
                 style={{ alignItems: "flex-start", marginBottom: "1rem" }}
               >
                 <label
                   htmlFor="deliveryDates"
-                  className="block mb-1 mr-4 text-base font-normal text-gray-500"
+                  className="block text-base font-normal mb-1 text-gray-500 mr-4"
                 >
                   Does the company have delivery dates?
                 </label>
@@ -238,21 +266,18 @@ export default function SignUp_2() {
                     id="deliveryDatesYes"
                     name="deliveryDates"
                     type="radio"
-                    className="w-4 h-4 mr-1 border-gray-300 text-supplair-primary focus:ring-supplair-primary"
+                    className="h-4 w-4 text-supplair-primary border-gray-300 focus:ring-supplair-primary mr-1"
                     checked={hasDeliveryDates === true}
                     onChange={() => setHasDeliveryDates(true)}
                   />
-                  <label
-                    htmlFor="deliveryDatesYes"
-                    className="mr-4 text-gray-500"
-                  >
+                  <label htmlFor="deliveryDatesYes" className="text-gray-500 mr-4">
                     Yes
                   </label>
                   <input
                     id="deliveryDatesNo"
                     name="deliveryDates"
                     type="radio"
-                    className="w-4 h-4 mr-1 border-gray-300 text-supplair-primary focus:ring-supplair-primary"
+                    className="h-4 w-4 text-supplair-primary border-gray-300 focus:ring-supplair-primary mr-1"
                     checked={hasDeliveryDates === false}
                     onChange={() => setHasDeliveryDates(false)}
                   />
@@ -263,26 +288,23 @@ export default function SignUp_2() {
               </div>
               {/* New Checkboxes for Wilayas */}
               <div className="mb-6">
-                <label className="block mb-1 text-base font-normal text-gray-500">
+                <label className="block text-base font-normal mb-1 text-gray-500">
                   Select Wilayas for Delivery:
                 </label>
                 <div
-                  className="grid grid-cols-1 gap-2 p-2 overflow-y-scroll border border-gray-300 max-h-40 w-96 rounded-xl"
+                  className="grid grid-cols-1 gap-2 max-h-40 overflow-y-scroll w-96 border border-gray-300 rounded-xl p-2"
                   style={{ height: "100px" }}
                 >
                   {wilayas.map((wilaya) => (
-                    <div key={wilaya.value} className="flex items-center">
+                    <div key={wilaya.label} className="flex items-center">
                       <input
-                        id={`wilaya-${wilaya.value}`}
+                        id={`wilaya-${wilaya.label}`}
                         type="checkbox"
-                        className="w-4 h-4 mr-2 border-gray-300 text-supplair-primary focus:ring-supplair-primary"
-                        checked={selectedWilayas.includes(wilaya.value)}
-                        onChange={() => handleWilayaChange(wilaya.value)}
+                        className="h-4 w-4 text-supplair-primary border-gray-300 focus:ring-supplair-primary mr-2"
+                        checked={selectedWilayas.includes(wilaya.label)}
+                        onChange={() => handleWilayaChange(wilaya.label)}
                       />
-                      <label
-                        htmlFor={`wilaya-${wilaya.value}`}
-                        className="text-gray-500"
-                      >
+                      <label htmlFor={`wilaya-${wilaya.label}`} className="text-gray-500">
                         {wilaya.label}
                       </label>
                     </div>
@@ -291,10 +313,10 @@ export default function SignUp_2() {
               </div>
 
               <button
-                className="h-10 mt-5 mb-2 text-white w-96 bg-supplair-primary rounded-xl"
+                className="h-10 flex items-center justify-center mt-5 mb-2 text-white w-96 bg-supplair-primary rounded-xl"
                 type="submit"
               >
-                Get Started
+                {loading ? <ScaleLoader color="white" size={25} /> : <>Get Started</>}
               </button>
             </div>
           </form>

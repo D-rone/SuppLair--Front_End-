@@ -1,32 +1,40 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
-import ordersData from "./orders.json";
+import { useNavigate } from "react-router-dom";
 
-const ClientOrdersSidebar = ({ client, onClose }) => {
-  const [address, setAddress] = useState(null); // State for the address
+const ClientOrdersSidebar = ({ client, onClose, clientDetails }) => {
+  const navigate = useNavigate();
 
-  const clientOrders = ordersData.filter(
-    (order) => order.client_name === client.name
-  );
+  const orderSelected = (orderId) => {
+    console.log(orderId);
+    navigate("/orders/" + orderId);
+  };
 
   return (
     <div className="flex flex-col h-full p-6">
       <div className="flex justify-between mb-4">
         <div>
-          <h2 className="text-2xl leading-6 font-bold text-black mb-6">
-            {client.name}
-          </h2>
-          <p className="mt-1 text-lg font-semibold text-black">
-            Email: {client.email}
-          </p>
-          <p className="mt-1 text-lg font-semibold text-black">
-            Address: {address || "East Region; Oran"}{" "}
-          </p>
+          <div>
+            <span className="mt-1 text-lg font-semibold text-black">
+              Email :
+            </span>
+            <span className="mt-1 text-lg font-meduim text-black">
+              {" " + clientDetails.email}
+            </span>
+          </div>
+          <div>
+            <span className="mt-1 text-lg font-semibold text-black">
+              Address :
+            </span>
+            <span className="mt-1 text-lg font-meduim text-black">
+              {" " + clientDetails.address}
+            </span>
+          </div>
         </div>
       </div>
 
       <div className="overflow-auto">
-        <h3 className="text-lg leading-6 font-medium text-gray-900">Orders</h3>
+        <h3 className="mt-1 text-lg font-semibold text-black">Orders :</h3>
         <div className="mt-4">
           <table className="w-full divide-y divide-gray-400">
             <thead className="bg-gray-50">
@@ -45,9 +53,12 @@ const ClientOrdersSidebar = ({ client, onClose }) => {
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-supplair-primary">
-              {clientOrders.map((order) => (
-                <tr key={order.order_number}>
+            <tbody className="bg-white divide-y divide-supplair-primary cursor-pointer">
+              {clientDetails.orderRowDtos?.map((order) => (
+                <tr
+                  key={order.order_number}
+                  onClick={() => orderSelected(order.order_number)}
+                >
                   <td className="px-6 py-4 whitespace-nowrap">
                     {order.delivery_date}
                   </td>
@@ -55,12 +66,7 @@ const ClientOrdersSidebar = ({ client, onClose }) => {
                     {order.order_number}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {order.details
-                      .reduce(
-                        (acc, curr) => acc + curr.quantity * curr.unit_price,
-                        0
-                      )
-                      .toFixed(2)}
+                    {order.totalAmount}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {order.status}

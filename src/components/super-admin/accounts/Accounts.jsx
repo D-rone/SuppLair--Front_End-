@@ -2,11 +2,17 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPenToSquare,
+  faAddressBook,
+  faEnvelope,
+  faPhone,
+  faTrademark,
   faTimes,
   faDownload,
   faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
 import Cookies from "universal-cookie";
+import { ScaleLoader } from "react-spinners";
+import { toast } from "react-toastify";
 import { supplairAPI } from "../../../utils/axios";
 
 function SuperAdminAccounts() {
@@ -18,6 +24,7 @@ function SuperAdminAccounts() {
   const [updatedData, setUpdatedData] = useState([]);
   const [data, setData] = useState([]);
   const [companyDetails, setCompanyDetails] = useState(null);
+  const [loaded, setLoaded] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState({
     data: [],
     showCategoryMenu: false,
@@ -40,7 +47,6 @@ function SuperAdminAccounts() {
     "GOURMET_AND_SPECIALTY",
     "FOOD_SERVICE_EQUIPMENT_AND_SUPPLIES",
   ];
-  
   const cookies = new Cookies();
   const storedAccessToken = cookies.get("access_token");
   const formData = new FormData();
@@ -92,7 +98,6 @@ function SuperAdminAccounts() {
           Authorization: "Bearer " + storedAccessToken,
         },
       });
-      console.log(response.data);
       setCompanyDetails(response.data);
       setSelectedCategories({
         data: response.data.categories,
@@ -168,8 +173,12 @@ function SuperAdminAccounts() {
         ...selectedCompany,
         state: state,
       };
-      console.log(state);
-
+      if (selectedCategories.data.length === 0) {
+        toast.error("You does not select any category", { autoClose: false });
+        return;
+      }
+      toast.dismiss();
+      setLoaded(true);
       try {
         const response = await supplairAPI.put(
           "auth-srv/api/v1/companies",
@@ -185,10 +194,13 @@ function SuperAdminAccounts() {
             },
           }
         );
-        console.log(response.data);
+        toast.success("Company Updated");
       } catch (error) {
         console.error("Error:", error);
+      } finally {
+        setLoaded(false);
       }
+
       supplairAPI
         .get(`auth-srv/api/v1/companies`, {
           headers: {
@@ -206,155 +218,179 @@ function SuperAdminAccounts() {
     };
 
     return (
-      <div
-        id="sidebar"
-        className="fixed top-0 right-0 flex flex-col w-2/3 h-full p-6 overflow-auto bg-white shadow-lg "
-        style={{
-          maxHeight: `calc(100vh - ${sidebarHeight > window.innerHeight ? 0 : 48}px)`,
-        }}
-      >
-        <div className="flex items-center justify-between mt-10 mb-4">
-          <p className="text-xl font-bold ">{selectedCompany?.companyName}</p>
-          <button
-            className="text-supplair-primary hover:text-supplair-primary-darker"
-            onClick={() => setShowSidebar(false)}
-          >
-            <FontAwesomeIcon icon={faTimes} className="w-6 h-6" />
-          </button>
-        </div>
-        <div className="flex items-center mb-4">
-          <span className="px-2 py-1 mr-2 rounded-md text-supplair-primary">email</span>
-          <span>{companyDetails.email}</span>
-        </div>
-        <div className="flex items-center mb-4">
-          <span className="px-2 py-1 mr-2 rounded-md text-supplair-primary">phone</span>
-          <span>{companyDetails.number}</span>
-        </div>
-        <div className="flex items-center mb-4">
-          <span className="px-2 py-1 mr-2 rounded-md text-supplair-primary">address</span>
-          <span>{companyDetails.address}</span>
-        </div>
-        <div className="flex items-center mb-4">
-          <span className="px-2 py-1 mr-2 rounded-md text-supplair-primary">trade registry</span>
-          <FontAwesomeIcon
-            icon={faDownload}
-            className="ml-2 cursor-pointer text-supplair-primary"
-          />
-        </div>
-        <div className="relative flex flex-col mb-8">
-          <div className="mb-1">
-            <span className="text-supplair-primary">Select Categories</span>
-          </div>
-          <div className="relative inline-block w-full text-left">
-            <div>
-              <button
-                type="button"
-                className="inline-flex justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-supplair-primary"
-                id="categories-menu"
-                aria-haspopup="true"
-                aria-expanded={selectedCategories.showCategoryMenu}
-                onClick={toggleCategoryMenu}
-              >
-                {selectedCategories.length > 0
-                  ? `${selectedCategories.length} selected`
-                  : "Select Categories"}
-                <FontAwesomeIcon icon={faChevronDown} className="w-5 h-5 ml-2 -mr-1" />
-              </button>
-            </div>
-            {selectedCategories.showCategoryMenu && (
-              <div className="absolute right-0 z-10 w-full mt-2 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5">
-                <div
-                  className="py-1"
-                  role="menu"
-                  aria-orientation="vertical"
-                  aria-labelledby="categories-menu"
-                  style={{ height: "150px", overflow: "scroll" }}
-                >
-                  {categories.map((category) => (
-                    <label
-                      key={category}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                    >
-                      <input
-                        type="checkbox"
-                        className="mr-2 leading-tight"
-                        checked={selectedCategories.data.includes(category)}
-                        onChange={() => handleCategorySelect(category)}
-                      />
-                      <span className="ml-2">{category}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-        <div className="flex-shrink-0 mb-4">
-          <div className="mb-1">
-            <span className="text-supplair-primary">Select state</span>
-          </div>
-          <div className="relative inline-block w-full text-left">
-            <div>
-              <button
-                type="button"
-                className="inline-flex justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-supplair-primary"
-                id="state-menu"
-                aria-haspopup="true"
-                aria-expanded={showStateMenu}
-                onClick={toggleStateMenu}
-              >
-                {state || "inactive"}
-                <FontAwesomeIcon icon={faChevronDown} className="w-5 h-5 ml-2 -mr-1" />
-              </button>
-            </div>
-            {showStateMenu && (
-              <div className="absolute right-0 w-full mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5">
-                <div
-                  className="py-1"
-                  role="menu"
-                  aria-orientation="vertical"
-                  aria-labelledby="state-menu"
-                >
-                  {/* Radio button options */}
-                  <label className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900">
-                    <input
-                      type="radio"
-                      className="mr-2 leading-tight"
-                      checked={state === "ACTIVE"}
-                      onChange={() => handleStateChange("ACTIVE")}
-                    />
-                    <span className="ml-2">active</span>
-                  </label>
-                  <label className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900">
-                    <input
-                      type="radio"
-                      className="mr-2 leading-tight"
-                      checked={state === "INACTIVE"}
-                      onChange={() => handleStateChange("INACTIVE")}
-                    />
-                    <span className="ml-2">inactive</span>
-                  </label>
-                  <label className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900">
-                    <input
-                      type="radio"
-                      className="mr-2 leading-tight"
-                      checked={state === "BLOCKER"}
-                      onChange={() => handleStateChange("BLOCKED")}
-                    />
-                    <span className="ml-2">blocked</span>
-                  </label>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <button
-          className="px-4 py-2 text-white rounded bg-supplair-primary"
-          onClick={handleSaveChanges}
+      <div style={{ position: "relative" }}>
+        <div
+          id="sidebar"
+          className="fixed top-0 right-0 h-full w-2/3 bg-white shadow-lg p-6 flex flex-col overflow-auto "
+          style={{
+            maxHeight: `calc(100vh - ${sidebarHeight > window.innerHeight ? 0 : 48}px)`,
+          }}
         >
-          Save
-        </button>
+          <div className="flex justify-between items-center mt-10 mb-4">
+            <p className="text-xl font-bold ">{selectedCompany?.companyName}</p>
+            <button
+              className="text-supplair-primary hover:text-supplair-primary-darker"
+              onClick={() => setShowSidebar(false)}
+            >
+              <FontAwesomeIcon icon={faTimes} className="h-6 w-6" />
+            </button>
+          </div>
+          <div className="mb-4 flex items-center">
+            <span className=" text-supplair-primary px-2 py-1 rounded-md mr-2">email</span>
+            <span>{companyDetails.email}</span>
+          </div>
+          <div className="mb-4 flex items-center">
+            <span className="text-supplair-primary px-2 py-1 rounded-md mr-2">phone</span>
+            <span>{companyDetails.number}</span>
+          </div>
+          <div className="mb-4 flex items-center">
+            <span className="text-supplair-primary px-2 py-1 rounded-md mr-2">address</span>
+            <span>{companyDetails.address}</span>
+          </div>
+          <div className="mb-4 flex flex-col">
+            <span className="text-supplair-primary px-2 py-1 rounded-md mr-2">
+              trade registries:
+            </span>
+            {companyDetails.fileUrls.map((filepath, i) => (
+              <div className="px-10 py-2">
+                <span>Trade Registry {i}</span>
+                <a key={i} href={filepath} target="_blank">
+                  <FontAwesomeIcon
+                    size="lg"
+                    icon={faDownload}
+                    className="text-supplair-primary ml-2 cursor-pointer"
+                  />
+                </a>
+              </div>
+            ))}
+          </div>
+          <div className="mb-8 flex flex-col relative">
+            <div className="mb-1">
+              <span className="text-supplair-primary">Select Categories</span>
+            </div>
+            <div className="relative inline-block text-left w-full">
+              <div>
+                <button
+                  type="button"
+                  className="inline-flex justify-between w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-supplair-primary"
+                  id="categories-menu"
+                  aria-haspopup="true"
+                  aria-expanded={selectedCategories.showCategoryMenu}
+                  onClick={toggleCategoryMenu}
+                >
+                  {selectedCategories.length > 0
+                    ? `${selectedCategories.length} selected`
+                    : "Select Categories"}
+                  <FontAwesomeIcon icon={faChevronDown} className="-mr-1 ml-2 h-5 w-5" />
+                </button>
+              </div>
+              {selectedCategories.showCategoryMenu && (
+                <div className="absolute z-10 right-0 mt-2 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                  <div
+                    className="py-1"
+                    role="menu"
+                    aria-orientation="vertical"
+                    aria-labelledby="categories-menu"
+                    style={{ height: "150px", overflow: "scroll" }}
+                  >
+                    {categories.map((category) => (
+                      <label
+                        key={category}
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      >
+                        <input
+                          type="checkbox"
+                          className="mr-2 leading-tight"
+                          checked={selectedCategories.data.includes(category)}
+                          onChange={() => handleCategorySelect(category)}
+                        />
+                        <span className="ml-2">{category}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="flex-shrink-0 mb-4">
+            <div className="mb-1">
+              <span className="text-supplair-primary">Select state</span>
+            </div>
+            <div className="relative inline-block text-left w-full">
+              <div>
+                <button
+                  type="button"
+                  className="inline-flex justify-between w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-supplair-primary"
+                  id="state-menu"
+                  aria-haspopup="true"
+                  aria-expanded={showStateMenu}
+                  onClick={toggleStateMenu}
+                >
+                  {state || "inactive"}
+                  <FontAwesomeIcon icon={faChevronDown} className="-mr-1 ml-2 h-5 w-5" />
+                </button>
+              </div>
+              {showStateMenu && (
+                <div className="origin-top-right absolute right-0 mt-2 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                  <div
+                    className="py-1"
+                    role="menu"
+                    aria-orientation="vertical"
+                    aria-labelledby="state-menu"
+                  >
+                    {/* Radio button options */}
+                    <label className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900">
+                      <input
+                        type="radio"
+                        className="mr-2 leading-tight"
+                        checked={state === "ACTIVE"}
+                        onChange={() => handleStateChange("ACTIVE")}
+                      />
+                      <span className="ml-2">active</span>
+                    </label>
+                    <label className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900">
+                      <input
+                        type="radio"
+                        className="mr-2 leading-tight"
+                        checked={state === "INACTIVE"}
+                        onChange={() => handleStateChange("INACTIVE")}
+                      />
+                      <span className="ml-2">inactive</span>
+                    </label>
+                    <label className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900">
+                      <input
+                        type="radio"
+                        className="mr-2 leading-tight"
+                        checked={state === "BLOCKER"}
+                        onChange={() => handleStateChange("BLOCKED")}
+                      />
+                      <span className="ml-2">blocked</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <button
+            className="bg-supplair-primary text-white px-4 py-2 rounded"
+            onClick={handleSaveChanges}
+          >
+            Save
+          </button>
+          {loaded ? (
+            <div
+              style={{
+                position: "absolute",
+                left: "50%",
+                top: "50%",
+                transform: "translate(-50%, -50%)", // Corrected
+              }}
+            >
+              <ScaleLoader />
+            </div>
+          ) : null}
+        </div>
       </div>
     );
   };
@@ -362,10 +398,10 @@ function SuperAdminAccounts() {
   return (
     <div className="absolute top-8 left-0 right-0 mx-auto w-[95%]">
       <div className="flex items-center justify-between">
-        <div className="relative flex items-center">
-          <h2 className="mr-2 text-2xl font-bold">All Accounts</h2>
+        <div className="flex items-center relative">
+          <h2 className="text-2xl font-bold mr-2">All Accounts</h2>
           <button className="p-2 rounded-md text-supplair-primary" onClick={toggleAccountsMenu}>
-            <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path
                 fillRule="evenodd"
                 d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
@@ -374,27 +410,27 @@ function SuperAdminAccounts() {
             </svg>
           </button>
           {showAccountsMenu && (
-            <div className="absolute left-0 w-48 p-2 bg-white rounded-md shadow-lg top-10">
+            <div className="absolute top-10 left-0 bg-white shadow-lg rounded-md p-2 w-48">
               <div
-                className="px-4 py-2 rounded-md cursor-pointer hover:bg-supplair-primary hover:text-white"
+                className="px-4 py-2 hover:bg-supplair-primary hover:text-white rounded-md cursor-pointer"
                 onClick={() => handleFilterChange("All")}
               >
                 All
               </div>
               <div
-                className="px-4 py-2 rounded-md cursor-pointer hover:bg-supplair-primary hover:text-white"
+                className="px-4 py-2 hover:bg-supplair-primary hover:text-white rounded-md cursor-pointer"
                 onClick={() => handleFilterChange("Active")}
               >
                 Active
               </div>
               <div
-                className="px-4 py-2 rounded-md cursor-pointer hover:bg-supplair-primary hover:text-white"
+                className="px-4 py-2 hover:bg-supplair-primary hover:text-white rounded-md cursor-pointer"
                 onClick={() => handleFilterChange("Inactive")}
               >
                 Inactive
               </div>
               <div
-                className="px-4 py-2 rounded-md cursor-pointer hover:bg-supplair-primary hover:text-white"
+                className="px-4 py-2 hover:bg-supplair-primary hover:text-white rounded-md cursor-pointer"
                 onClick={() => handleFilterChange("Blocked")}
               >
                 Blocked
@@ -409,12 +445,12 @@ function SuperAdminAccounts() {
           {!showSidebar && (
             <thead>
               <tr>
-                <th className="py-2 text-left text-gray-500 border-b-2 border-gray-300">
+                <th className="text-left text-gray-500 py-2 border-b-2 border-gray-300">
                   Company Name
                 </th>
-                <th className="py-2 text-left text-gray-500 border-b-2 border-gray-300">Contact</th>
-                <th className="py-2 text-left text-gray-500 border-b-2 border-gray-300">State</th>
-                <th className="py-2 text-center text-gray-500 border-b-2 border-gray-300">Edit</th>
+                <th className="text-left text-gray-500 py-2 border-b-2 border-gray-300">Contact</th>
+                <th className="text-left text-gray-500 py-2 border-b-2 border-gray-300">State</th>
+                <th className="text-center text-gray-500 py-2 border-b-2 border-gray-300">Edit</th>
               </tr>
             </thead>
           )}
@@ -461,7 +497,7 @@ function SuperAdminAccounts() {
                     >
                       <FontAwesomeIcon
                         icon={faPenToSquare}
-                        className="cursor-pointer text-supplair-primary"
+                        className="text-supplair-primary cursor-pointer"
                       />
                     </button>
                   </td>
@@ -471,7 +507,7 @@ function SuperAdminAccounts() {
         </table>
       </div>
       {showSidebar && (
-        <div className="fixed top-0 right-0 flex flex-col h-screen bg-white shadow-lg">
+        <div className="fixed top-0 right-0 h-screen bg-white shadow-lg flex flex-col">
           <Sidebar selectedCompany={selectedCompany} onSaveChanges={handleSaveChanges} />
         </div>
       )}

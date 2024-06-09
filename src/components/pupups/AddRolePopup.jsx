@@ -1,12 +1,11 @@
 import React, { useEffect, useReducer, useState } from "react";
 import PopUp1 from "./PopUp16";
-import dummyData from "../home/users_roles/DUMMY_DATA.json";
 import { toast } from "react-toastify";
 import Cookies from "universal-cookie";
 import { useUserContext } from "../../pages/HomePage";
 import { supplairAPI } from "../../utils/axios";
 
-function AddRolePopup({ close }) {
+function AddRolePopup({ close, setUpdate }) {
   const cookies = new Cookies();
   const storedAccessToken = cookies.get("access_token");
   const formData = new FormData();
@@ -27,8 +26,6 @@ function AddRolePopup({ close }) {
       if (rights.length == 0) {
         toast.error("Rights must be not empty");
         return;
-      } else {
-        toast.success("Role added");
       }
       try {
         const response = await supplairAPI.post(
@@ -44,10 +41,21 @@ function AddRolePopup({ close }) {
             },
           }
         );
-        window.location.reload();
+        toast.success("Role added");
       } catch (error) {
-        console.error("Error:", error);
+        if (error.response) {
+          console.error("Server Error:", error.response.data);
+          console.error("Status Code:", error.response.status);
+        } else if (error.request) {
+          console.error("No response received:", error.request);
+        } else {
+          console.error("Error:", error.message);
+        }
+        toast.error(error.response.data, { autoClose: false });
+        return;
       }
+
+      setUpdate(false);
       close(null);
     }
   };
@@ -124,7 +132,7 @@ function AddRolePopup({ close }) {
                   className="mx-4 my-2 size-4 hover:cursor-pointer"
                   onChange={handleCheckboxChange}
                 />
-                <label htmlFor="ANNOUCEMENT">Announcements</label>
+                <label htmlFor="ANNOUNCEMENT">Announcements</label>
               </div>
               <div className="flex items-center">
                 <input
@@ -154,7 +162,7 @@ function AddRolePopup({ close }) {
               type="submit"
               value="Save"
               className={`${
-                updated  ? `hover:cursor-pointer approveBtn` : "cancelBtn"
+                updated ? `hover:cursor-pointer approveBtn` : "cancelBtn"
               } `}
             />
           </div>

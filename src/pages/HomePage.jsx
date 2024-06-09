@@ -1,4 +1,9 @@
-import React, { createContext, useContext, useDebugValue, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import TopBar from "../components/home/TopBar";
 import SideBar from "../components/home/SideBar";
 import HomeBody from "../components/home/HomeBody";
@@ -14,12 +19,13 @@ function HomePage() {
   const [profileDropdown, setProfileDropdown] = useState(false);
   const [userData, setUserData] = useState(null);
   const [loaded, setLoaded] = useState(false);
+  const [reload, setReload] = useState(false);
+  const cookies = new Cookies();
+  const storedAccessToken = cookies.get("access_token");
+  const formData = new FormData();
+  formData.append("token", storedAccessToken);
 
   useEffect(() => {
-    const cookies = new Cookies();
-    const storedAccessToken = cookies.get("access_token");
-    const formData = new FormData();
-    formData.append("token", storedAccessToken);
     supplairAPI
       .post(`auth-srv/api/v1/auth/verify-token`, formData)
       .then((res) => {
@@ -48,6 +54,22 @@ function HomePage() {
         });
     }
   }, []);
+  useEffect(() => {
+    supplairAPI
+      .get(`auth-srv/api/v1/user-details`, {
+        headers: {
+          Authorization: "Bearer " + storedAccessToken,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setLoaded(true);
+        setUserData(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [reload]);
 
   let closeProfilePopUp = () => {
     setProfileDropdown((old) => {
@@ -58,14 +80,25 @@ function HomePage() {
   return (
     <div>
       {loaded ? (
-        <UserContext.Provider value={{ userData, setUserData }}>
-          <TopBar profileDropdown={profileDropdown} setProfileDropdown={setProfileDropdown} />
+        <UserContext.Provider
+          value={{ userData, setUserData, reload, setReload }}
+        >
+          <TopBar
+            profileDropdown={profileDropdown}
+            setProfileDropdown={setProfileDropdown}
+          />
 
           {/* Top Bar Spacer */}
           <div className="h-14"></div>
-          <div className="relative flex font-raleway" onClick={closeProfilePopUp}>
+          <div
+            className="relative flex font-raleway"
+            onClick={closeProfilePopUp}
+          >
             <SideBar />
-            <HomeBody closeProfilePopUp={closeProfilePopUp} />
+            <HomeBody
+              closeProfilePopUp={closeProfilePopUp}
+              setLoaded={setLoaded}
+            />
           </div>
         </UserContext.Provider>
       ) : (

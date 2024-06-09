@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import showMore from "../../../assets/images/more.svg";
 import { v4 } from "uuid";
-import { toast } from "react-toastify";
 import UpdateRolePopup from "../../pupups/UpdateRolePopup";
 import AddRolePopup from "../../pupups/AddRolePopup";
 import Cookies from "universal-cookie";
@@ -14,7 +13,7 @@ function Roles() {
   const formData = new FormData();
   const { userData, setUserData } = useUserContext();
   const [roles, setRoles] = useState([]);
-  const [role, setRole] = useState("");
+  const [update, setUpdate] = useState(false);
 
   useEffect(() => {
     supplairAPI
@@ -25,11 +24,12 @@ function Roles() {
       })
       .then((res) => {
         setRoles(res.data);
+        hideDetails();
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [update]);
 
   const [updateRole, setUpdateRole] = useState(null);
 
@@ -53,6 +53,7 @@ function Roles() {
             className="self-end w-40 h-10 text-white rounded-lg bg-supplair-primary"
             onClick={() => {
               setAddRole(true);
+              setUpdate(true);
             }}
           >
             Add Role
@@ -84,6 +85,7 @@ function Roles() {
                         className="w-40 h-10 px-4 text-lg font-semibold rounded-lg hover:text-white hover:bg-supplair-primary text-start"
                         onClick={(e) => {
                           e.stopPropagation();
+                          setUpdate(true);
                           showRoleOptions(role);
                         }}
                       >
@@ -108,11 +110,19 @@ function Roles() {
           </tbody>
         </table>
         {updateRole != null ? (
-          <UpdateRolePopup role={updateRole} close={setUpdateRole} />
+          <UpdateRolePopup
+            role={updateRole}
+            close={setUpdateRole}
+            setUpdate={setUpdate}
+          />
         ) : (
           <></>
         )}
-        {addRole ? <AddRolePopup close={setAddRole} /> : <></>}
+        {addRole ? (
+          <AddRolePopup close={setAddRole} setUpdate={setUpdate} />
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );

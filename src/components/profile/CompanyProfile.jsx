@@ -5,27 +5,24 @@ import _changeProfilePic from "../../assets/images/plusSign.svg";
 import { toast } from "react-toastify";
 import { useUserContext } from "../../pages/HomePage";
 import defaultProfilePic from "../../assets/images/noProfilePic.png";
-import Cookies from "universal-cookie";
-import { supplairAPI } from "../../utils/axios";
 
-function CompanyProfile() {
-  const cookies = new Cookies();
-  const storedAccessToken = cookies.get("access_token");
-  const formData = new FormData();
-  formData.append("token", storedAccessToken);
-  const { userData, setUserData } = useUserContext();
+function CompanyProfile({
+  setUpdatedData,
+  UpdatedData,
+  hundleSave,
+  setUserData,
+  userData,
+  setReload,
+}) {
+  const [edit, setEdit] = useState("");
   const [companyName, setCompanyName] = useState(userData.companyName);
   const [address, setAddress] = useState(userData.address);
-  const [phone, setPhone] = useState(userData.number);
-  const [hasDeliveryDates, setHasDeliveryDates] = useState(
-    userData.hasDeliveryDate
-  );
-  const [email, setEmail] = useState(userData.companyEmail);
-  const [description, setDescription] = useState(userData.description);
-  const [edit, setEdit] = useState("");
-  const [selectedWilayas, setSelectedWilayas] = useState(
-    userData.wilayas || []
-  );
+  const [phone, setPhone] = useState(userData.number || "");
+  const [hasDeliveryDates, setHasDeliveryDates] = useState(userData.hasDeliveryDate);
+  const [email, setEmail] = useState(userData.companyEmail || "");
+  const [description, setDescription] = useState(userData.description || "");
+  const [selectedWilayas, setSelectedWilayas] = useState(userData.wilayas || []);
+
   const wilayas = [
     { value: "01", label: "Adrar" },
     { value: "02", label: "Chlef" },
@@ -77,113 +74,94 @@ function CompanyProfile() {
     { value: "48", label: "Relizane" },
   ];
 
+  useEffect(() => {
+    setUpdatedData((old) => ({ ...old, wilayas: selectedWilayas }));
+  }, [selectedWilayas, hasDeliveryDates]);
+
+  useEffect(() => {
+    if (!hasDeliveryDates) {
+      setUpdatedData((old) => ({ ...old, wilayas: [] }));
+      setSelectedWilayas([]);
+    }
+  }, [hasDeliveryDates]);
+
   const handleWilayaChange = (wilaya) => {
-    setSelectedWilayas((prevSelectedWilayas) => {
-      if (prevSelectedWilayas.includes(wilaya)) {
-        return prevSelectedWilayas.filter((item) => item !== wilaya);
+    setSelectedWilayas((selectedWilayas) => {
+      if (selectedWilayas.includes(wilaya)) {
+        return selectedWilayas.filter((item) => item !== wilaya);
       } else {
-        return [...prevSelectedWilayas, wilaya];
+        return [...selectedWilayas, wilaya];
       }
     });
   };
 
   const handleUpdate = (field) => {
     setEdit("");
+    toast.dismiss();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (field == "companyName") {
       if (companyName != userData.companyName) {
         if (companyName.trim().length < 3) {
-          toast.error("Company Name length should be >= 3");
+          toast.error("Company Name length should be >= 3", {
+            autoClose: false,
+          });
           setCompanyName(userData.companyName);
         } else {
-          setUserData((old) => ({ ...old, companyName: companyName }));
           toast.success(`Filed ${field} can be updated`);
-          fetchData({
-            companyName: companyName,
-          });
+          setUpdatedData((old) => ({ ...old, companyName: companyName }));
         }
       }
     } else if (field == "description") {
       if (description != userData.description) {
         if (description == "") {
-          toast.error("Description is empty !!");
+          toast.error("Description is empty", { autoClose: false });
           setDescription(userData.description);
         } else {
-          setUserData((old) => ({ ...old, description: description }));
           toast.success(`Filed ${field} can be updated`);
-          fetchData({
-            description: description,
-          });
+          setUpdatedData((old) => ({ ...old, description: description }));
         }
       }
     } else if (field == "email") {
       if (email != userData.companyEmail) {
         if (!emailRegex.test(email.trim())) {
-          toast.error("Please enter a valid email address");
+          toast.error("Please enter a valid email address", {
+            autoClose: false,
+          });
           setEmail(userData.companyEmail);
           return;
         } else {
-          setUserData((old) => ({ ...old, CompanyEmail: email }));
           toast.success(`Filed ${field} can be updated`);
-          fetchData({
-            companyEmail: email,
-          });
+          setUpdatedData((old) => ({ ...old, companyEmail: email }));
         }
       }
     } else if (field == "address") {
       if (address != userData.address) {
         if (address.trim().length < 3) {
-          toast.error("Invalid Address");
+          toast.error("Invalid Address", { autoClose: false });
           setAddress(userData.address);
         } else {
-          setUserData((old) => ({ ...old, address: address }));
           toast.success(`Filed ${field} can be updated`);
-          fetchData({
-            adress: address,
-          });
+          setUpdatedData((old) => ({ ...old, adress: address }));
         }
       }
     } else if (field == "phone") {
       if (phone != userData.phone) {
         const phoneRegex = /^^[0-9+\-_]{10,}$/;
         if (!phoneRegex.test(phone.trim())) {
-          toast.error("Invalid phone !");
+          toast.error("Invalid phone !", { autoClose: false });
           setPhone(userData.number);
         } else {
-          setUserData((old) => ({ ...old, phone: phone }));
           toast.success(`Filed ${field} can be updated`);
-          fetchData({
-            number: phone,
-          });
+          setUpdatedData((old) => ({ ...old, number: phone }));
         }
       }
     } else if (field == "hasDeliveryDates") {
       setHasDeliveryDates(!hasDeliveryDates);
-      fetchData({
+      toast.success(`Filed ${field} can be updated`);
+      setUpdatedData((old) => ({
+        ...old,
         hasDeliveryDates: !hasDeliveryDates,
-      });
-    } else if ((field = "wilayas")) {
-      console.log(selectedWilayas);
-      fetchData({
-        wilayas: selectedWilayas,
-      });
-      toast.success(`Filed ${field} updated`);
-    }
-  };
-  const fetchData = async (body) => {
-    try {
-      const response = await supplairAPI.put(
-        `auth-srv/api/v1/profile/` + userData.userId,
-        body,
-        {
-          headers: {
-            Authorization: "Bearer " + storedAccessToken,
-          },
-        }
-      );
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error:", error);
+      }));
     }
   };
 
@@ -218,18 +196,14 @@ function CompanyProfile() {
 
   return (
     <div className="h-full max-w-[1000px] w-full ">
-      <div className="flex justify-center">
+      <form className="flex justify-center">
         <div className="flex flex-col items-center w-1/3 pt-3">
           <div
             className="relative inline-block rounded-full size-44"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
-            <img
-              src={companyPic}
-              alt="Profile Picture"
-              className="rounded-full size-44"
-            />
+            <img src={companyPic} alt="Profile Picture" className="rounded-full size-44" />
             {hovered && (
               <div className="absolute top-0 left-0 bg-black rounded-full size-full bg-opacity-30">
                 <input type="file" className="hidden" />
@@ -388,20 +362,20 @@ function CompanyProfile() {
                 id="deliveryDatesYes"
                 name="deliveryDates"
                 type="radio"
-                className="w-4 h-4 mr-1 border-gray-300 text-supplair-primary focus:ring-supplair-primary"
+                className="h-4 w-4 text-supplair-primary border-gray-300 focus:ring-supplair-primary mr-1"
                 checked={hasDeliveryDates === true}
                 onChange={() => {
                   handleUpdate("hasDeliveryDates");
                 }}
               />
-              <label htmlFor="deliveryDatesYes" className="mr-4 text-gray-500">
+              <label htmlFor="deliveryDatesYes" className="text-gray-500 mr-4">
                 Yes
               </label>
               <input
                 id="deliveryDatesNo"
                 name="deliveryDates"
                 type="radio"
-                className="w-4 h-4 mr-1 border-gray-300 text-supplair-primary focus:ring-supplair-primary"
+                className="h-4 w-4 text-supplair-primary border-gray-300 focus:ring-supplair-primary mr-1"
                 checked={hasDeliveryDates === false}
                 onChange={() => {
                   handleUpdate("hasDeliveryDates");
@@ -509,9 +483,9 @@ function CompanyProfile() {
             <label style={{ fontWeight: "700" }} className="w-5/12">
               Select Wilayas for Delivery:
             </label>
-            <div className="grid w-7/12 grid-cols-1 gap-2 overflow-y-scroll max-h-40">
+            <div className="grid grid-cols-1 gap-2 max-h-40 overflow-y-scroll w-7/12">
               <div
-                className="p-2 overflow-y-scroll border border-gray-300 rounded-xl"
+                className="overflow-y-scroll border border-gray-300 rounded-xl p-2"
                 style={{ height: "100px", width: "95%" }}
               >
                 {wilayas.map((wilaya) => (
@@ -519,17 +493,15 @@ function CompanyProfile() {
                     <input
                       id={`wilaya-${wilaya.value}`}
                       type="checkbox"
-                      disabled={edit != "wilayas"}
-                      className="w-4 h-4 mr-2 border-gray-300 text-supplair-primary focus:ring-supplair-primary"
+                      disabled={edit !== "wilayas" || !hasDeliveryDates}
+                      className="h-4 w-4 text-supplair-primary border-gray-300 focus:ring-supplair-primary mr-2"
                       checked={selectedWilayas.includes(wilaya.label)}
                       onChange={() => {
+                        console.log(wilaya.label);
                         handleWilayaChange(wilaya.label);
                       }}
                     />
-                    <label
-                      htmlFor={`wilaya-${wilaya.value}`}
-                      className="text-gray-500"
-                    >
+                    <label htmlFor={`wilaya-${wilaya.value}`} className="text-gray-500">
                       {wilaya.label}
                     </label>
                   </div>
@@ -556,8 +528,20 @@ function CompanyProfile() {
               )}
             </span>
           </div>
+          <div className="flex px-8 py-4 justify-end">
+            <button
+              className="cancelBtn mr-2"
+              type="button"
+              onClick={() => window.location.reload()}
+            >
+              Cancel
+            </button>
+            <button onClick={hundleSave} className="hover:cursor-pointer approveBtn">
+              Save
+            </button>
+          </div>
         </div>
-      </div>
+      </form>
       <div style={{ paddingBottom: "100px" }}></div>
     </div>
   );

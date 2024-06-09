@@ -1,12 +1,11 @@
 import React, { useEffect, useReducer, useState } from "react";
 import PopUp1 from "./PopUp16";
-import dummyData from "../home/users_roles/DUMMY_DATA.json";
 import { toast } from "react-toastify";
 import Cookies from "universal-cookie";
 import { useUserContext } from "../../pages/HomePage";
 import { supplairAPI } from "../../utils/axios";
 
-function UpdateRolePopup({ role, close }) {
+function UpdateRolePopup({ role, close, setUpdate }) {
   const cookies = new Cookies();
   const storedAccessToken = cookies.get("access_token");
   const formData = new FormData();
@@ -45,8 +44,7 @@ function UpdateRolePopup({ role, close }) {
             },
           }
         );
-        console.log(response.data);
-        window.location.reload();
+        setUpdate(false);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -125,12 +123,12 @@ function UpdateRolePopup({ role, close }) {
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  value="ANNOUCEMENT"
+                  value="ANNOUNCEMENT"
                   className="mx-4 my-2 size-4 hover:cursor-pointer"
-                  checked={rights.includes("ANNOUCEMENT")}
+                  checked={rights.includes("ANNOUNCEMENT")}
                   onChange={handleCheckboxChange}
                 />
-                <label htmlFor="ANNOUCEMENT">Announcements</label>
+                <label htmlFor="ANNOUNCEMENT">Announcements</label>
               </div>
               <div className="flex items-center">
                 <input

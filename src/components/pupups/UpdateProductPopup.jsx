@@ -281,7 +281,11 @@ function UpdateProductPopup({ close, product, categories, setUpdateGet }) {
                       <input
                         type="date"
                         required
-                        value={formData?.discount?.startDate.split("T")[0]}
+                        value={
+                          formData?.discount?.startDate
+                            ? formData?.discount?.startDate.split("T")[0]
+                            : ""
+                        }
                         name="discount.startDate"
                         onChange={handleChange}
                         className="w-full h-10 px-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
@@ -290,7 +294,11 @@ function UpdateProductPopup({ close, product, categories, setUpdateGet }) {
                       <input
                         type="date"
                         required
-                        value={formData?.discount?.endDate.split("T")[0]}
+                        value={
+                          formData?.discount?.endDate
+                            ? formData?.discount?.endDate.split("T")[0]
+                            : ""
+                        }
                         name="discount.endDate"
                         onChange={handleChange}
                         className="w-full h-10 px-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"

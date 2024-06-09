@@ -32,9 +32,15 @@ const Users = lazy(() => import("../components/home/users_roles/Users"));
 const Roles = lazy(() => import("../components/home/users_roles/Roles"));
 const Billing = lazy(() => import("../components/home/billing/Billing"));
 
-const SuperAdminAccounts = lazy(() => import("../components/super-admin/accounts/Accounts"));
-const SuperAdminUsers = lazy(() => import("../components/super-admin/users/Users"));
-const SuperAdminBilling = lazy(() => import("../components/super-admin/billing/Billing"));
+const SuperAdminAccounts = lazy(() =>
+  import("../components/super-admin/accounts/Accounts")
+);
+const SuperAdminUsers = lazy(() =>
+  import("../components/super-admin/users/Users")
+);
+const SuperAdminBilling = lazy(() =>
+  import("../components/super-admin/billing/Billing")
+);
 
 function CheckPermission({ requiredPermission, children }) {
   const { userData } = useUserContext();
@@ -127,6 +133,16 @@ export const router = createBrowserRouter([
             <Orders />
           </CheckPermission>
         ),
+        children: [
+          {
+            path: ":id",
+            element: (
+              <CheckPermission requiredPermission={"SALES"}>
+                <Orders />
+              </CheckPermission>
+            ),
+          },
+        ],
       },
       {
         path: "clients",

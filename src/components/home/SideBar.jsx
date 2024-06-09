@@ -29,7 +29,6 @@ function SideBar() {
       default:
         if (currentPathname.includes("/group_products")) inventory();
         else def();
-        break;
     }
   };
 

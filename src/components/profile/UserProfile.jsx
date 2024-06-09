@@ -5,17 +5,10 @@ import _changeProfilePic from "../../assets/images/plusSign.svg";
 import { toast } from "react-toastify";
 import { useUserContext } from "../../pages/HomePage";
 import defaultProfilePic from "../../assets/images/noProfilePic.png";
-import Cookies from "universal-cookie";
-import { supplairAPI } from "../../utils/axios";
 
-function UserProfile() {
-  const { userData, setUserData } = useUserContext();
-  const cookies = new Cookies();
-  const storedAccessToken = cookies.get("access_token");
-  const formData = new FormData();
-  formData.append("token", storedAccessToken);
+function UserProfile({ userData, setUpdatedData }) {
   const [name, setName] = useState(userData.name);
-  const [email, setEmail] = useState(userData.email);
+  const email = userData.email;
   const [edit, setEdit] = useState("");
 
   const handleUpdate = (field) => {
@@ -23,34 +16,14 @@ function UserProfile() {
     if (field == "name") {
       if (name != userData.name) {
         if (name.trim().length < 3) {
-          toast.error("Company Name length should be >= 3");
+          toast.error("FullName length should be >= 3", { autoClose: false });
           setName(userData.name);
-
           return;
         } else {
-          setUserData((old) => ({ ...old, name: name }));
           toast.success(`Filed ${field} can be updated`);
-          fetchData({
-            fullname: name,
-          });
+          setUpdatedData((old) => ({ ...old, fullname: name }));
         }
       }
-    }
-  };
-  const fetchData = async (body) => {
-    try {
-      const response = await supplairAPI.put(
-        `auth-srv/api/v1/profile/` + userData.userId,
-        body,
-        {
-          headers: {
-            Authorization: "Bearer " + storedAccessToken,
-          },
-        }
-      );
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error:", error);
     }
   };
 

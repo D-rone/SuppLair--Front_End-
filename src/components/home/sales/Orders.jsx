@@ -1,9 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import OrdersTable from "./OrdersTable";
 import FilterDropdown from "./FilterDropdown";
 
 function Orders() {
   const [filterOption, setFilterOption] = useState("ALL");
+  const [id, setId] = useState(null);
+
+  useEffect(() => {
+    const url = window.location.href;
+    const idRegex = /orders\/([^\/]+)/;
+    const match = url.match(idRegex);
+    if (match) {
+      setId(match[1]);
+    } else {
+      setId(null);
+    }
+  }, []);
 
   const handleFilterChange = (option) => {
     setFilterOption(option);
@@ -17,7 +29,7 @@ function Orders() {
           <FilterDropdown onFilterChange={handleFilterChange} />
         </h1>
       </div>
-      <OrdersTable filterOption={filterOption} />
+      <OrdersTable filterOption={filterOption} id={id} />
     </div>
   );
 }

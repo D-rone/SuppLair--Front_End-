@@ -1,21 +1,68 @@
-import React, { useState } from "react";
-import ordersData from "./orders.json";
+import React, { useEffect, useState } from "react";
 import OrderDetailsModal from "./OrderDetailsModal";
+import { useUserContext } from "../../../pages/HomePage";
+import { supplairAPI } from "../../../utils/axios";
 
-const OrdersTable = ({ filterOption }) => {
+const OrdersTable = ({ filterOption, id }) => {
+  const { userData, setUserData } = useUserContext();
+
   const [expandedOrder, setExpandedOrder] = useState(null);
-  const [showSidebar, setShowSidebar] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [originalStatus, setOriginalStatus] = useState(null); // New state to store original status
+  const [orders, setOrders] = useState([]);
+  const [orderSelected, setOrderSelected] = useState([]);
+  const [orderDetails, setOrderDetails] = useState({});
 
-  const toggleSidebar = (orderId) => {
+  useEffect(() => {
+    supplairAPI
+      .get(`orders-srv/api/v1/orders/` + userData.companyName)
+      .then((res) => {
+        if (id) {
+          setOrders(res.data.filter((order) => order.order_number === id));
+        } else {
+          setOrders(res.data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [id]);
+
+  useEffect(() => {
+    if (selectedOrder) {
+      supplairAPI
+        .get(
+          `orders-srv/api/v1/supplier/orders/` +
+            selectedOrder.order_number
+        )
+        .then((res) => {
+          setOrderDetails(res.data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
+  }, [selectedOrder]);
+
+  const toggleSidebar = async (orderId) => {
+    try {
+      const response = await supplairAPI.get(
+        `orders-srv/api/v1/supplier/orders/` + orderId
+      );
+
+      setOrderDetails(response.data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+
     if (orderId === expandedOrder) {
       setExpandedOrder(null);
       setSelectedOrder(null);
       setShowSidebar(false);
     } else {
       setExpandedOrder(orderId);
-      const selectedOrder = ordersData.find(
+      const selectedOrder = orders.find(
         (order) => order.order_number === orderId
       );
       setSelectedOrder(selectedOrder);
@@ -26,8 +73,8 @@ const OrdersTable = ({ filterOption }) => {
 
   const filteredOrders =
     filterOption === "ALL"
-      ? ordersData
-      : ordersData.filter((order) => order.status === filterOption);
+      ? orders
+      : orders.filter((order) => order.status === filterOption);
 
   const handleCloseSidebar = () => {
     setExpandedOrder(null);
@@ -36,21 +83,20 @@ const OrdersTable = ({ filterOption }) => {
   };
 
   const handleNavigateOrder = (orderId) => {
-    const selectedOrder = ordersData.find(
+    const selectedOrder = orders.find(
       (order) => order.order_number === orderId
     );
     setSelectedOrder(selectedOrder);
     setOriginalStatus(selectedOrder.status); // Set original status when navigating
   };
 
-  const updateOrderStatus = (orderId, newStatus) => {
-    // Find the index of the order in the ordersData array
-    const index = ordersData.findIndex(
-      (order) => order.order_number === orderId
-    );
+  const updateOrderStatus = (orderId, newStatus, deliveryDate) => {
+    // Find the index of the order in the orders array
+    const index = orders.findIndex((order) => order.order_number === orderId);
     if (index !== -1) {
-      // Update the status of the order in the ordersData array
-      ordersData[index].status = newStatus;
+      // Update the status of the order in the orders array
+      orders[index].status = newStatus;
+      orders[index].delivery_date = deliveryDate;
     }
   };
 
@@ -64,19 +110,19 @@ const OrdersTable = ({ filterOption }) => {
                 <tr>
                   {!showSidebar && (
                     <>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         Delivery Date
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         Reference#
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         Client Name
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         Amount
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         Status
                       </th>
                       <th className="px-6 py-3"></th>
@@ -96,9 +142,9 @@ const OrdersTable = ({ filterOption }) => {
                         }`}
                         onClick={() => handleNavigateOrder(order.order_number)}
                       >
-                        <td className="px-6 py-4 whitespace-nowrap font-bold text-lg">
+                        <td className="px-6 py-4 whitespace-nowrap font-semibold text-lg">
                           {order.client_name}
-                          <span className="text-supplair-primary block">
+                          <span className="text-supplair-primary block font-semibold ">
                             {" "}
                             (#{order.order_number})
                           </span>
@@ -112,25 +158,19 @@ const OrdersTable = ({ filterOption }) => {
                             : ""
                         }
                       >
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 whitespace-nowrap font-semibold">
                           {order.delivery_date}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 whitespace-nowrap font-semibold">
                           {order.order_number}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 whitespace-nowrap font-semibold">
                           {order.client_name}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {order.details
-                            .reduce(
-                              (acc, curr) =>
-                                acc + curr.quantity * curr.unit_price,
-                              0
-                            )
-                            .toFixed(2)}
+                        <td className="px-6 py-4 whitespace-nowrap font-semibold">
+                          {order.totalAmount}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 whitespace-nowrap font-semibold">
                           {order.status}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-end items-center">
@@ -156,6 +196,7 @@ const OrdersTable = ({ filterOption }) => {
             {showSidebar && selectedOrder && (
               <OrderDetailsModal
                 order={selectedOrder}
+                orderDetails={orderDetails}
                 onClose={handleCloseSidebar}
                 originalStatus={originalStatus}
                 updateOrderStatus={updateOrderStatus} // Pass the function to update status

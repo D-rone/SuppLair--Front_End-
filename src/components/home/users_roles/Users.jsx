@@ -16,6 +16,10 @@ function Users() {
   const { userData, setUserData } = useUserContext();
   const [allUsers, setAllUsers] = useState([]);
   const [users, setUsers] = useState([]);
+  const [reload, setReload] = useState(false);
+  const [updateUser, setUpdateUser] = useState(null);
+  const [inviteUser, setInviteUser] = useState(false);
+  const [showDetails, setShowDetails] = useState(null);
 
   useEffect(() => {
     supplairAPI
@@ -28,28 +32,22 @@ function Users() {
         console.log(res.data);
         setAllUsers(res.data);
         setUsers(res.data);
+        setShowDetails(null);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [reload]);
 
   let getUsers = (state) => {
     if (state == "all") setUsers(allUsers);
-    else if (state == "active")
-      setUsers(allUsers.filter((u) => u.stateType == "ACTIVE"));
-    else if (state == "inactive")
-      setUsers(allUsers.filter((u) => u.stateType == "INACTIVE"));
+    else if (state == "active") setUsers(allUsers.filter((u) => u.stateType == "ACTIVE"));
+    else if (state == "inactive") setUsers(allUsers.filter((u) => u.stateType == "INACTIVE"));
   };
-
-  const [updateUser, setUpdateUser] = useState(null);
 
   let showUserOptions = (user) => {
     setUpdateUser(user);
   };
-
-  const [inviteUser, setInviteUser] = useState(false);
-  const [showDetails, setShowDetails] = useState(null);
 
   let hideDetails = () => {
     setShowDetails(null);
@@ -102,9 +100,7 @@ function Users() {
                     src={user.profilePic || _defualtPic}
                     className="inline h-12 mx-4 border-2 rounded-full border-supplair-primary"
                   />
-                  <h3 className="inline font-semibold text-supplair-primary">
-                    {user.fullname}
-                  </h3>
+                  <h3 className="inline font-semibold text-supplair-primary">{user.fullname}</h3>
                 </td>
                 <td className="text-center">{user.roleName}</td>
                 <td className="text-center">{user.stateType}</td>
@@ -115,7 +111,6 @@ function Users() {
                       <button
                         className="w-40 h-10 px-4 text-lg font-semibold rounded-lg hover:text-white hover:bg-supplair-primary text-start"
                         onClick={(e) => {
-                          e.stopPropagation();
                           showUserOptions(user);
                         }}
                       >
@@ -140,11 +135,25 @@ function Users() {
           </tbody>
         </table>
         {updateUser != null ? (
-          <UpdateUserPopup user={updateUser} close={setUpdateUser} />
+          <UpdateUserPopup
+            user={updateUser}
+            close={setUpdateUser}
+            reload={reload}
+            setReload={setReload}
+          />
         ) : (
           <></>
         )}
-        {inviteUser ? <InviteUserPopup close={setInviteUser} /> : <></>}
+        {inviteUser ? (
+          <InviteUserPopup
+            close={setInviteUser}
+            reload={reload}
+            setReload={setReload}
+            setShowDetails={setShowDetails}
+          />
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );

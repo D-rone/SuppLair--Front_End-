@@ -22,7 +22,6 @@ export default function SignUp() {
     const parts = _email.split("@");
     return parts[0];
   }
-  // Function to handle form submission
   const handleSignUp = async (e) => {
     e.preventDefault();
     // Perform validation
@@ -32,18 +31,19 @@ export default function SignUp() {
       !password.trim() ||
       !confirmPassword.trim()
     ) {
-      toast.error("All fields are required");
+      toast.error("All fields are required", { autoClose: false });
       return;
     }
+    
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
-      toast.error("Please enter a valid email address");
+      toast.error("Please enter a valid email address", { autoClose: false });
       return;
     }
 
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
+      toast.error("Passwords do not match", { autoClose: false });
       return;
     }
 
@@ -60,6 +60,7 @@ export default function SignUp() {
         }
       );
       console.log("Response:", response.data);
+      toast.dismiss();
       navigate("/signup2", {
         state: { companyName: companyName },
         replace: true,
